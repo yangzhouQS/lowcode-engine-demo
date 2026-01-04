@@ -206,6 +206,88 @@ pkg-docs/
    - [`widgets/tip-container.md`](editor-core/widgets/tip-container.md) - 提示容器，渲染提示内容
    - [`widgets/title.md`](editor-core/widgets/title.md) - 标题组件，显示标题文本
 
+### Engine 模块
+
+`@alilc/lowcode-engine` 是低代码引擎的核心模块，负责初始化和协调所有子系统，包括编辑器、设计器、骨架、插件管理等。它是低代码引擎的入口点，提供了完整的低代码编辑器功能。
+
+#### 核心功能
+
+- **引擎初始化**: 初始化编辑器实例、设计器实例、骨架实例、工作区实例
+- **内置插件管理**: 注册和管理内置插件（组件元数据解析器、Setter 注册器、默认面板注册器、内置快捷键、默认右键菜单、命令插件、大纲面板插件）
+- **模块集成**: 集成 Editor Core、Designer、Skeleton、Workspace 等子系统
+- **插件上下文组装**: 为每个插件组装 API，提供插件上下文
+- **引擎销毁**: 清理所有文档、卸载 DOM 容器
+- **实时编辑支持**: 支持文本实时编辑和表达式实时编辑
+- **国际化支持**: 提供中英文语言包
+
+#### 主要模块
+
+1. **核心模块** (Core)
+   - [`engine-core.md`](engine/engine-core.md) - 引擎核心，负责初始化和协调所有子系统
+   - [`index.ts`](engine/index.md) - 模块入口，导出所有公共 API
+
+2. **内置插件模块** (Inner Plugins)
+   - [`inner-plugins/builtin-hotkey.md`](engine/inner-plugins/builtin-hotkey.md) - 内置快捷键，提供删除、复制粘贴、撤销重做、节点选择和移动等功能
+   - [`inner-plugins/component-meta-parser.md`](engine/inner-plugins/component-meta-parser.md) - 组件元数据解析器，监听物料变化并构建组件元数据映射表
+   - [`inner-plugins/default-context-menu.md`](engine/inner-plugins/default-context-menu.md) - 默认右键菜单，提供选择组件、复制粘贴、删除等功能
+   - [`inner-plugins/default-panel-registry.md`](engine/inner-plugins/default-panel-registry.md) - 默认面板注册器，注册设计器和设置面板
+   - [`inner-plugins/setter-registry.md`](engine/inner-plugins/setter-registry.md) - Setter 注册器，注册默认的 Setter
+
+3. **语言包模块** (Locale)
+   - [`locale/en-US.json`](engine/locale/en-US.json) - 英文语言包
+   - [`locale/zh-CN.json`](engine/locale/zh-CN.json) - 中文语言包
+   - [`locale/index.ts`](engine/locale/index.ts) - 国际化入口，提供多语言支持
+
+4. **模块定义模块** (Modules)
+   - [`modules/classes.ts`](engine/modules/classes.ts) - 类定义，导出 Shell 模块的所有类
+   - [`modules/designer-types.ts`](engine/modules/designer-types.ts) - 设计器类型定义
+   - [`modules/live-editing.ts`](engine/modules/live-editing.md) - 实时编辑，支持文本和表达式实时编辑
+   - [`modules/lowcode-types.ts`](engine/modules/lowcode-types.ts) - 低代码类型定义
+   - [`modules/shell-model-factory.ts`](engine/modules/shell-model-factory.md) - Shell 模型工厂，创建 Node 和 SettingField 实例
+   - [`modules/skeleton-types.ts`](engine/modules/skeleton-types.ts) - 骨架类型定义
+   - [`modules/symbols.ts`](engine/modules/symbols.ts) - 符号导出，导出内部符号
+
+`@alilc/lowcode-editor-core` 是低代码编辑器的核心模块，提供编辑器的核心功能，包括编辑器生命周期管理、事件系统、命令系统、配置管理等。
+
+#### 核心功能
+
+- **编辑器管理**: 管理编辑器的生命周期，包括初始化、销毁等
+- **事件系统**: 提供完整的事件发布订阅机制，支持模块级事件总线
+- **命令系统**: 管理命令的注册、执行、批量执行等功能
+- **配置管理**: 管理引擎配置、设计器配置、偏好设置等
+- **快捷键系统**: 管理快捷键的绑定、激活、取消绑定等功能
+- **依赖注入**: 提供 IOC 容器，管理依赖注入
+- **国际化**: 提供多语言支持，支持 ICU MessageFormat 语法
+- **状态管理**: 集成 MobX，提供响应式状态管理
+- **偏好设置**: 管理用户偏好设置，支持 localStorage 持久化
+
+#### 主要模块
+
+1. **核心模块** (Core)
+   - [`editor.md`](editor-core/editor.md) - Editor 核心类，管理编辑器生命周期
+   - [`event-bus.md`](editor-core/event-bus.md) - 事件总线，提供事件发布订阅机制
+   - [`command.md`](editor-core/command.md) - 命令系统，管理命令注册和执行
+   - [`config.md`](editor-core/config.md) - 配置管理，管理引擎配置和偏好设置
+   - [`hotkey.md`](editor-core/hotkey.md) - 快捷键系统，管理快捷键绑定和激活
+
+2. **依赖注入模块** (DI)
+   - [`di/setter.md`](editor-core/di/setter.md) - Setter 管理，管理属性编辑器
+   - [`di/ioc-context.md`](editor-core/di/ioc-context.md) - IOC 上下文，提供依赖注入容器
+
+3. **国际化模块** (Intl)
+   - [`intl/index.md`](editor-core/intl/index.md) - 国际化入口，提供多语言支持
+
+4. **工具模块** (Utils)
+   - [`utils/index.md`](editor-core/utils/index.md) - 工具函数入口
+   - [`utils/logger.md`](editor-core/utils/logger.md) - 日志工具，提供日志记录功能
+   - [`utils/obx.md`](editor-core/utils/obx.md) - MobX 集成，提供响应式状态管理
+   - [`utils/preference.md`](editor-core/utils/preference.md) - 偏好设置，管理用户偏好设置
+
+5. **组件模块** (Widgets)
+   - [`widgets/tip.md`](editor-core/widgets/tip.md) - 提示组件，显示提示信息
+   - [`widgets/tip-container.md`](editor-core/widgets/tip-container.md) - 提示容器，渲染提示内容
+   - [`widgets/title.md`](editor-core/widgets/title.md) - 标题组件，显示标题文本
+
 ## 文档特点
 
 ### 详细的代码说明
@@ -344,3 +426,79 @@ skeleton.add({
 - 提交 GitHub Issue
 - 参与社区讨论
 - 联系维护团队
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
