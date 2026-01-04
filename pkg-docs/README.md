@@ -107,33 +107,64 @@ pkg-docs/
 │       ├── shell-model-factory.ts
 │       ├── skeleton-types.ts
 │       └── symbols.ts
-└── designer/                 # Designer 模块文档
-    ├── index.md             # Designer 概览
-    ├── designer/            # 设计器核心
-    │   ├── designer.md      # Designer 核心类
-    │   ├── dragon.md        # Dragon 拖拽引擎
-    │   ├── detecting.md     # 悬停检测
-    │   ├── location.md      # 位置管理
-    │   └── setting/         # 设置面板
-    │       └── setting-top-entry.md
-    ├── document/            # 文档模型
-    │   ├── document-model.md # 文档模型
-    │   ├── selection.md     # 选择管理
-    │   ├── history.md       # 历史记录
-    │   └── node/            # 节点系统
-    │       ├── node.md      # 节点类
-    │       └── props/       # 属性管理
-    │           └── props.md
-    ├── project/             # 项目管理
-    │   └── project.md      # 项目类
-    ├── builtin-simulator/    # 内置模拟器
-    │   ├── host.md         # 模拟器宿主
-    │   └── renderer.md     # 渲染器接口
-    ├── plugin/              # 插件系统
-    │   └── plugin-manager.md # 插件管理器
-    ├── component-actions.md # 组件操作管理
-    ├── component-meta.md    # 组件元数据
-    └── context-menu-actions.md # 右键菜单操作
+├── designer/                 # Designer 模块文档
+│   ├── index.md             # Designer 概览
+│   ├── designer/            # 设计器核心
+│   │   ├── designer.md      # Designer 核心类
+│   │   ├── dragon.md        # Dragon 拖拽引擎
+│   │   ├── detecting.md     # 悬停检测
+│   │   ├── location.md      # 位置管理
+│   │   └── setting/         # 设置面板
+│   │       └── setting-top-entry.md
+│   ├── document/            # 文档模型
+│   │   ├── document-model.md # 文档模型
+│   │   ├── selection.md     # 选择管理
+│   │   ├── history.md       # 历史记录
+│   │   └── node/            # 节点系统
+│   │       ├── node.md      # 节点类
+│   │       └── props/       # 属性管理
+│   │           └── props.md
+│   ├── project/             # 项目管理
+│   │   └── project.md      # 项目类
+│   ├── builtin-simulator/    # 内置模拟器
+│   │   ├── host.md         # 模拟器宿主
+│   │   └── renderer.md     # 渲染器接口
+│   ├── plugin/              # 插件系统
+│   │   └── plugin-manager.md # 插件管理器
+│   ├── component-actions.md # 组件操作管理
+│   ├── component-meta.md    # 组件元数据
+│   └── context-menu-actions.md # 右键菜单操作
+└── renderer-core/            # Renderer Core 模块文档
+    ├── README.md            # Renderer Core 概览
+    ├── adapter/             # 运行时适配器
+    │   └── index.md       # 运行时适配器
+    ├── context/             # 上下文管理
+    │   └── index.md       # 上下文工厂
+    ├── hoc/                 # 高阶组件
+    │   ├── index.md        # HOC 入口
+    │   └── leaf.md        # Leaf HOC
+    ├── renderer/             # 渲染器
+    │   ├── index.md        # 渲染器入口
+    │   ├── base.md         # 基础渲染器
+    │   ├── page.md         # 页面渲染器
+    │   ├── component.md    # 组件渲染器
+    │   ├── block.md        # 区块渲染器
+    │   ├── addon.md        # 插件渲染器
+    │   ├── temp.md         # 临时渲染器
+    │   └── renderer.md    # 渲染器入口组件
+    ├── components/           # 基础组件
+    │   ├── Div.tsx        # Div 组件
+    │   └── VisualDom/     # 虚拟 DOM 组件
+    │       ├── index.tsx
+    │       └── index.css
+    ├── types/               # 类型定义
+    │   └── index.md       # 所有类型定义
+    └── utils/               # 工具函数
+        ├── index.md        # 工具函数入口
+        ├── common.ts       # 通用工具函数
+        ├── data-helper.ts  # 数据源管理
+        ├── logger.ts       # 日志工具
+        └── request.ts      # 请求工具
 ```
 
 ## 文档说明
@@ -204,9 +235,9 @@ pkg-docs/
    - [`icons/variable.md`](editor-skeleton/icons/variable.md) - 变量图标
 
 7. **国际化模块** (Locale)
-     - [`locale/index.md`](editor-skeleton/locale/index.md) - 国际化入口
-     - [`locale/zh-CN.md`](editor-skeleton/locale/zh-CN.md) - 中文语言包
-     - [`locale/en-US.md`](editor-skeleton/locale/en-US.md) - 英文语言包
+   - [`locale/index.md`](editor-skeleton/locale/index.md) - 国际化入口
+   - [`locale/zh-CN.md`](editor-skeleton/locale/zh-CN.md) - 中文语言包
+   - [`locale/en-US.md`](editor-skeleton/locale/en-US.md) - 英文语言包
 
 ### Editor Core 模块
 
@@ -269,7 +300,7 @@ pkg-docs/
 
 1. **核心模块** (Core)
    - [`engine-core.md`](engine/engine-core.md) - 引擎核心，负责初始化和协调所有子系统
-   - [`index.ts`](engine/index.md) - 模块入口，导出所有公共 API
+   - [`index.md`](engine/index.md) - 模块入口，导出所有公共 API
 
 2. **内置插件模块** (Inner Plugins)
    - [`inner-plugins/builtin-hotkey.md`](engine/inner-plugins/builtin-hotkey.md) - 内置快捷键，提供删除、复制粘贴、撤销重做、节点选择和移动等功能
@@ -320,6 +351,1191 @@ pkg-docs/
    - [`designer/setting/setting-top-entry.md`](designer/designer/setting/setting-top-entry.md) - 设置面板入口，管理属性编辑
 
 2. **文档模型模块** (Document)
+   - [`document/document-model.md`](designer/document/document-model.md) - 文档模型，管理节点树、选择、历史
+   - [`document/selection.md`](designer/document/selection.md) - 选择管理，管理节点的选择状态
+   - [`document/history.md`](designer/document/history.md) - 历史记录，管理撤销和重做
+   - [`document/node/node.md`](designer/document/node/node.md) - 节点类，表示节点树中的节点
+   - [`document/node/props/props.md`](designer/document/node/props/props.md) - 属性管理，管理节点的属性
+
+3. **项目管理模块** (Project)
+   - [`project/project.md`](designer/project/project.md) - 项目类，管理多个文档
+
+4. **模拟器模块** (Simulator)
+   - [`builtin-simulator/host.md`](designer/builtin-simulator/host.md) - 模拟器宿主，管理画布渲染
+
+5. **插件模块** (Plugin)
+   - [`plugin/plugin-manager.md`](designer/plugin/plugin-manager.md) - 插件管理器，管理插件生命周期
+
+6. **组件管理模块** (Component)
+   - [`component-actions.md`](designer/component-actions.md) - 组件操作管理，管理组件的内置操作
+   - [`component-meta.md`](designer/component-meta.md) - 组件元数据，管理组件的元数据配置
+   - [`context-menu-actions.md`](designer/context-menu-actions.md) - 右键菜单操作，管理右键菜单操作
+
+### Renderer Core 模块
+
+`@alilc/lowcode-renderer-core` 是低代码引擎的渲染器核心模块，负责将低代码 Schema 渲染为 React 组件。它提供了完整的渲染能力，包括组件渲染、属性解析、数据源管理、循环渲染、插槽渲染等。
+
+#### 核心功能
+
+- **Schema 驱动渲染**: 将低代码 Schema 渲染为 React 组件
+- **运行时适配**: 支持 React 和 Rax 两种运行时框架
+- **表达式解析**: 支持 JS 表达式解析和求值，支持 `this` 上下文
+- **数据源管理**: 支持数据源的配置、请求、缓存和更新
+- **循环渲染**: 支持基于数据源的循环渲染
+- **插槽渲染**: 支持插槽内容的渲染和注入
+- **生命周期管理**: 完整的组件生命周期管理
+- **错误处理**: 提供错误边界和错误组件
+- **国际化支持**: 支持多语言国际化
+- **设计模式支持**: 支持设计模式和预览模式
+
+#### 主要模块
+
+1. **适配器模块** (Adapter)
+   - [`adapter/index.md`](renderer-core/adapter/index.md) - 运行时适配器，支持 React 和 Rax
+
+2. **上下文模块** (Context)
+   - [`context/index.md`](renderer-core/context/index.md) - 上下文工厂，提供 AppContext
+
+3. **高阶组件模块** (HOC)
+   - [`hoc/index.md`](renderer-core/hoc/index.md) - HOC 入口
+   - [`hoc/leaf.md`](renderer-core/hoc/leaf.md) - Leaf HOC，设计模式事件处理
+
+4. **渲染器模块** (Renderer)
+   - [`renderer/index.md`](renderer-core/renderer/index.md) - 渲染器入口
+   - [`renderer/base.md`](renderer-core/renderer/base.md) - 基础渲染器，核心渲染逻辑
+   - [`renderer/page.md`](renderer-core/renderer/page.md) - 页面渲染器
+   - [`renderer/component.md`](renderer-core/renderer/component.md) - 组件渲染器
+   - [`renderer/block.md`](renderer-core/renderer/block.md) - 区块渲染器
+   - [`renderer/addon.md`](renderer-core/renderer/addon.md) - 插件渲染器
+   - [`renderer/temp.md`](renderer-core/renderer/temp.md) - 临时渲染器
+   - [`renderer/renderer.md`](renderer-core/renderer/renderer.md) - 渲染器入口组件
+
+5. **组件模块** (Components)
+   - [`components/Div.tsx`](renderer-core/components/Div.tsx) - Div 组件
+   - [`components/VisualDom/index.tsx`](renderer-core/components/VisualDom/index.tsx) - 虚拟 DOM 组件
+   - [`components/VisualDom/index.css`](renderer-core/components/VisualDom/index.css) - 虚拟 DOM 样式
+
+6. **类型模块** (Types)
+   - [`types/index.md`](renderer-core/types/index.md) - 所有类型定义
+
+7. **工具模块** (Utils)
+   - [`utils/index.md`](renderer-core/utils/index.md) - 工具函数入口
+   - [`utils/common.ts`](renderer-core/utils/common.ts) - 通用工具函数
+   - [`utils/data-helper.ts`](renderer-core/utils/data-helper.ts) - 数据源管理
+   - [`utils/logger.ts`](renderer-core/utils/logger.ts) - 日志工具
+   - [`utils/request.ts`](renderer-core/utils/request.ts) - 请求工具
+
+## 文档特点
+
+### 详细的代码说明
+
+每个文档都包含：
+- **功能概述**: 简要描述文件的主要功能
+- **主要功能**: 列出核心功能点
+- **类/函数定义**: 完整的类型定义和签名
+- **属性/参数说明**: 详细的属性和参数说明
+- **方法说明**: 每个方法的功能和行为
+- **使用示例**: 实际的代码示例
+- **注意事项**: 使用时需要注意的要点
+
+### 代码文档结合方式
+
+文档采用代码文档结合的方式：
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+- 创建 Engine 模块文档
+- 创建 Designer 模块文档
+- 创建 Designer 核心模块文档（designer、dragon、detecting、location、setting-top-entry）
+- 创建 Document 模块文档（document-model、selection、history、node、props）
+- 创建 Project 模块文档（project）
+- 创建 Simulator 模块文档（host）
+- 创建 Plugin 模块文档（plugin-manager）
+- 创建 Component 模块文档（component-actions、component-meta、context-menu-actions）
+- 创建 Renderer Core 模块文档
+- 创建 Renderer Core 核心模块文档（adapter、context、hoc、renderer、types、utils）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+   - [`document/document-model.md`](designer/document/document-model.md) - 文档模型，管理节点树、选择、历史
+   - [`document/selection.md`](designer/document/selection.md) - 选择管理，管理节点的选择状态
+   - [`document/history.md`](designer/document/history.md) - 历史记录，管理撤销和重做
+   - [`document/node/node.md`](designer/document/node/node.md) - 节点类，表示节点树中的节点
+   - [`document/node/props/props.md`](designer/document/node/props/props.md) - 属性管理，管理节点的属性
+
+3. **项目管理模块** (Project)
+   - [`project/project.md`](designer/project/project.md) - 项目类，管理多个文档
+
+4. **模拟器模块** (Simulator)
+   - [`builtin-simulator/host.md`](designer/builtin-simulator/host.md) - 模拟器宿主，管理画布渲染
+
+5. **插件模块** (Plugin)
+   - [`plugin/plugin-manager.md`](designer/plugin/plugin-manager.md) - 插件管理器，管理插件生命周期
+
+6. **组件管理模块** (Component)
+   - [`component-actions.md`](designer/component-actions.md) - 组件操作管理，管理组件的内置操作
+   - [`component-meta.md`](designer/component-meta.md) - 组件元数据，管理组件的元数据配置
+   - [`context-menu-actions.md`](designer/context-menu-actions.md) - 右键菜单操作，管理右键菜单操作
+
+### Renderer Core 模块
+
+`@alilc/lowcode-renderer-core` 是低代码引擎的渲染器核心模块，负责将低代码 Schema 渲染为 React 组件。它提供了完整的渲染能力，包括组件渲染、属性解析、数据源管理、循环渲染、插槽渲染等。
+
+#### 核心功能
+
+- **Schema 驱动渲染**: 将低代码 Schema 渲染为 React 组件
+- **运行时适配**: 支持 React 和 Rax 两种运行时框架
+- **表达式解析**: 支持 JS 表达式解析和求值，支持 `this` 上下文
+- **数据源管理**: 支持数据源的配置、请求、缓存和更新
+- **循环渲染**: 支持基于数据源的循环渲染
+- **插槽渲染**: 支持插槽内容的渲染和注入
+- **生命周期管理**: 完整的组件生命周期管理
+- **错误处理**: 提供错误边界和错误组件
+- **国际化支持**: 支持多语言国际化
+- **设计模式支持**: 支持设计模式和预览模式
+
+#### 主要模块
+
+1. **适配器模块** (Adapter)
+   - [`adapter/index.md`](renderer-core/adapter/index.md) - 运行时适配器，支持 React 和 Rax
+
+2. **上下文模块** (Context)
+   - [`context/index.md`](renderer-core/context/index.md) - 上下文工厂，提供 AppContext
+
+3. **高阶组件模块** (HOC)
+   - [`hoc/index.md`](renderer-core/hoc/index.md) - HOC 入口
+   - [`hoc/leaf.md`](renderer-core/hoc/leaf.md) - Leaf HOC，设计模式事件处理
+
+4. **渲染器模块** (Renderer)
+   - [`renderer/index.md`](renderer-core/renderer/index.md) - 渲染器入口
+   - [`renderer/base.md`](renderer-core/renderer/base.md) - 基础渲染器，核心渲染逻辑
+   - [`renderer/page.md`](renderer-core/renderer/page.md) - 页面渲染器
+   - [`renderer/component.md`](renderer-core/renderer/component.md) - 组件渲染器
+   - [`renderer/block.md`](renderer-core/renderer/block.md) - 区块渲染器
+   - [`renderer/addon.md`](renderer-core/renderer/addon.md) - 插件渲染器
+   - [`renderer/temp.md`](renderer-core/renderer/temp.md) - 临时渲染器
+   - [`renderer/renderer.md`](renderer-core/renderer/renderer.md) - 渲染器入口组件
+
+5. **组件模块** (Components)
+   - [`components/Div.tsx`](renderer-core/components/Div.tsx) - Div 组件
+   - [`components/VisualDom/index.tsx`](renderer-core/components/VisualDom/index.tsx) - 虚拟 DOM 组件
+   - [`components/VisualDom/index.css`](renderer-core/components/VisualDom/index.css) - 虚拟 DOM 样式
+
+6. **类型模块** (Types)
+   - [`types/index.md`](renderer-core/types/index.md) - 所有类型定义
+
+7. **工具模块** (Utils)
+   - [`utils/index.md`](renderer-core/utils/index.md) - 工具函数入口
+   - [`utils/common.ts`](renderer-core/utils/common.ts) - 通用工具函数
+   - [`utils/data-helper.ts`](renderer-core/utils/data-helper.ts) - 数据源管理
+   - [`utils/logger.ts`](renderer-core/utils/logger.ts) - 日志工具
+   - [`utils/request.ts`](renderer-core/utils/request.ts) - 请求工具
+
+## 文档特点
+
+### 详细的代码说明
+
+每个文档都包含：
+- **功能概述**: 简要描述文件的主要功能
+- **主要功能**: 列出核心功能点
+- **类/函数定义**: 完整的类型定义和签名
+- **属性/参数说明**: 详细的属性和参数说明
+- **方法说明**: 每个方法的功能和行为
+- **使用示例**: 实际的代码示例
+- **注意事项**: 使用时需要注意的要点
+
+### 代码文档结合方式
+
+文档采用代码文档结合的方式：
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+- 创建 Engine 模块文档
+- 创建 Designer 模块文档
+- 创建 Designer 核心模块文档（designer、dragon、detecting、location、setting-top-entry）
+- 创建 Document 模块文档（document-model、selection、history、node、props）
+- 创建 Project 模块文档（project）
+- 创建 Simulator 模块文档（host）
+- 创建 Plugin 模块文档（plugin-manager）
+- 创建 Component 模块文档（component-actions、component-meta、context-menu-actions）
+- 创建 Renderer Core 模块文档
+- 创建 Renderer Core 核心模块文档（adapter、context、hoc、renderer、types、utils）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+- 创建 Engine 模块文档
+- 创建 Designer 模块文档
+- 创建 Designer 核心模块文档（designer、dragon、detecting、location、setting-top-entry）
+- 创建 Document 模块文档（document-model、selection、history、node、props）
+- 创建 Project 模块文档（project）
+- 创建 Simulator 模块文档（host）
+- 创建 Plugin 模块文档（plugin-manager）
+- 创建 Component 模块文档（component-actions、component-meta、context-menu-actions）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+文档采用代码文档结合的方式：
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+
    - [`document/document-model.md`](designer/document/document-model.md) - 文档模型，管理节点树、选择、历史
    - [`document/selection.md`](designer/document/selection.md) - 选择管理，管理节点的选择状态
    - [`document/history.md`](designer/document/history.md) - 历史记录，管理撤销和重做
@@ -1281,5 +2497,969 @@ skeleton.add({
 - 提交 GitHub Issue
 - 参与社区讨论
 - 联系维护团队
+
+
+
+   - [`document/selection.md`](designer/document/selection.md) - 选择管理，管理节点的选择状态
+   - [`document/history.md`](designer/document/history.md) - 历史记录，管理撤销和重做
+   - [`document/node/node.md`](designer/document/node/node.md) - 节点类，表示节点树中的节点
+   - [`document/node/props/props.md`](designer/document/node/props/props.md) - 属性管理，管理节点的属性
+
+3. **项目管理模块** (Project)
+   - [`project/project.md`](designer/project/project.md) - 项目类，管理多个文档
+
+4. **模拟器模块** (Simulator)
+   - [`builtin-simulator/host.md`](designer/builtin-simulator/host.md) - 模拟器宿主，管理画布渲染
+
+5. **插件模块** (Plugin)
+   - [`plugin/plugin-manager.md`](designer/plugin/plugin-manager.md) - 插件管理器，管理插件生命周期
+
+6. **组件管理模块** (Component)
+   - [`component-actions.md`](designer/component-actions.md) - 组件操作管理，管理组件的内置操作
+   - [`component-meta.md`](designer/component-meta.md) - 组件元数据，管理组件的元数据配置
+   - [`context-menu-actions.md`](designer/context-menu-actions.md) - 右键菜单操作，管理右键菜单操作
+
+## 文档特点
+
+### 详细的代码说明
+
+每个文档都包含：
+- **功能概述**: 简要描述文件的主要功能
+- **主要功能**: 列出核心功能点
+- **类/函数定义**: 完整的类型定义和签名
+- **属性/参数说明**: 详细的属性和参数说明
+- **方法说明**: 每个方法的功能和行为
+- **使用示例**: 实际的代码示例
+- **注意事项**: 使用时需要注意的要点
+
+### 代码文档结合方式
+
+文档采用代码文档结合的方式：
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+- 创建 Engine 模块文档
+- 创建 Designer 模块文档
+- 创建 Designer 核心模块文档（designer、dragon、detecting、location、setting-top-entry）
+- 创建 Document 模块文档（document-model、selection、history、node、props）
+- 创建 Project 模块文档（project）
+- 创建 Simulator 模块文档（host）
+- 创建 Plugin 模块文档（plugin-manager）
+- 创建 Component 模块文档（component-actions、component-meta、context-menu-actions）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+- **注意事项**: 使用时需要注意的要点
+
+### 代码文档结合方式
+
+文档采用代码文档结合的方式：
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+- 创建 Engine 模块文档
+- 创建 Designer 模块文档
+- 创建 Designer 核心模块文档（designer、dragon、detecting、location、setting-top-entry）
+- 创建 Document 模块文档（document-model、selection、history、node、props）
+- 创建 Project 模块文档（project）
+- 创建 Simulator 模块文档（host）
+- 创建 Plugin 模块文档（plugin-manager）
+- 创建 Component 模块文档（component-actions、component-meta、context-menu-actions）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+文档采用代码文档结合的方式：
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
+
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
+
+## 贡献指南
+
+### 添加新文档
+
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
+
+### 文档格式
+
+建议使用以下格式：
+
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
+
 
 
