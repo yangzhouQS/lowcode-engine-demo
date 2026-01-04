@@ -64,6 +64,27 @@ pkg-docs/
 │       ├── index.md
 │       ├── zh-CN.md
 │       └── en-US.md
+├── editor-core/              # Editor Core 模块文档
+│   ├── README.md            # Editor Core 概览
+│   ├── editor.md            # Editor 核心类
+│   ├── event-bus.md         # 事件总线
+│   ├── command.md           # 命令系统
+│   ├── config.md            # 配置管理
+│   ├── hotkey.md            # 快捷键系统
+│   ├── di/                  # 依赖注入
+│   │   ├── setter.md       # Setter 管理
+│   │   └── ioc-context.md  # IOC 上下文
+│   ├── intl/                # 国际化
+│   │   └── index.md        # 国际化入口
+│   ├── utils/               # 工具函数
+│   │   ├── index.md        # 工具函数入口
+│   │   ├── logger.md       # 日志工具
+│   │   ├── obx.md          # MobX 集成
+│   │   └── preference.md   # 偏好设置
+│   └── widgets/             # UI 组件
+│       ├── tip.md          # 提示组件
+│       ├── tip-container.md # 提示容器
+│       └── title.md        # 标题组件
 └── [其他模块文档...]
 ```
 
@@ -138,9 +159,52 @@ pkg-docs/
    - [`icons/variable.md`](editor-skeleton/icons/variable.md) - 变量图标
 
 7. **国际化模块** (Locale)
-   - [`locale/index.md`](editor-skeleton/locale/index.md) - 国际化入口
-   - [`locale/zh-CN.md`](editor-skeleton/locale/zh-CN.md) - 中文语言包
-   - [`locale/en-US.md`](editor-skeleton/locale/en-US.md) - 英文语言包
+    - [`locale/index.md`](editor-skeleton/locale/index.md) - 国际化入口
+    - [`locale/zh-CN.md`](editor-skeleton/locale/zh-CN.md) - 中文语言包
+    - [`locale/en-US.md`](editor-skeleton/locale/en-US.md) - 英文语言包
+
+### Editor Core 模块
+
+`@alilc/lowcode-editor-core` 是低代码编辑器的核心模块，提供编辑器的核心功能，包括编辑器生命周期管理、事件系统、命令系统、配置管理等。
+
+#### 核心功能
+
+- **编辑器管理**: 管理编辑器的生命周期，包括初始化、销毁等
+- **事件系统**: 提供完整的事件发布订阅机制，支持模块级事件总线
+- **命令系统**: 管理命令的注册、执行、批量执行等功能
+- **配置管理**: 管理引擎配置、设计器配置、偏好设置等
+- **快捷键系统**: 管理快捷键的绑定、激活、取消绑定等功能
+- **依赖注入**: 提供 IOC 容器，管理依赖注入
+- **国际化**: 提供多语言支持，支持 ICU MessageFormat 语法
+- **状态管理**: 集成 MobX，提供响应式状态管理
+- **偏好设置**: 管理用户偏好设置，支持 localStorage 持久化
+
+#### 主要模块
+
+1. **核心模块** (Core)
+   - [`editor.md`](editor-core/editor.md) - Editor 核心类，管理编辑器生命周期
+   - [`event-bus.md`](editor-core/event-bus.md) - 事件总线，提供事件发布订阅机制
+   - [`command.md`](editor-core/command.md) - 命令系统，管理命令注册和执行
+   - [`config.md`](editor-core/config.md) - 配置管理，管理引擎配置和偏好设置
+   - [`hotkey.md`](editor-core/hotkey.md) - 快捷键系统，管理快捷键绑定和激活
+
+2. **依赖注入模块** (DI)
+   - [`di/setter.md`](editor-core/di/setter.md) - Setter 管理，管理属性编辑器
+   - [`di/ioc-context.md`](editor-core/di/ioc-context.md) - IOC 上下文，提供依赖注入容器
+
+3. **国际化模块** (Intl)
+   - [`intl/index.md`](editor-core/intl/index.md) - 国际化入口，提供多语言支持
+
+4. **工具模块** (Utils)
+   - [`utils/index.md`](editor-core/utils/index.md) - 工具函数入口
+   - [`utils/logger.md`](editor-core/utils/logger.md) - 日志工具，提供日志记录功能
+   - [`utils/obx.md`](editor-core/utils/obx.md) - MobX 集成，提供响应式状态管理
+   - [`utils/preference.md`](editor-core/utils/preference.md) - 偏好设置，管理用户偏好设置
+
+5. **组件模块** (Widgets)
+   - [`widgets/tip.md`](editor-core/widgets/tip.md) - 提示组件，显示提示信息
+   - [`widgets/tip-container.md`](editor-core/widgets/tip-container.md) - 提示容器，渲染提示内容
+   - [`widgets/title.md`](editor-core/widgets/title.md) - 标题组件，显示标题文本
 
 ## 文档特点
 
@@ -212,6 +276,12 @@ skeleton.add({
 - 创建布局模块文档（workbench）
 - 创建转换器模块文档（parse-func）
 - 创建组件模块文档（settings-pane、widget-views）
+- 创建 Editor Core 模块文档
+- 创建核心模块文档（editor、event-bus、command、config、hotkey）
+- 创建依赖注入模块文档（setter、ioc-context）
+- 创建国际化模块文档（intl）
+- 创建工具模块文档（logger、obx、preference）
+- 创建组件模块文档（tip、tip-container、title）
 
 ## 贡献指南
 
