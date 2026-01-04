@@ -65,29 +65,31 @@ pkg-docs/
 │   ├── stage-system.md                 # 阶段系统
 │   ├── layout-system.md               # 布局系统
 │   └── component-library.md           # 组件库
-├── 08-plugins/                        # 插件模块文档
+├── 08-ignitor/                        # Ignitor 模块文档
+│   └── index.md                        # 模块总览
+├── 09-plugins/                        # 插件模块文档
 │   ├── index.md                        # 插件总览
 │   ├── plugin-command.md               # 命令插件
 │   ├── plugin-designer.md              # 设计器插件
 │   ├── plugin-outline-pane.md          # 大纲面板插件
 │   └── plugin-development.md           # 插件开发指南
-├── 09-shell/                         # Shell 模块文档
+├── 10-shell/                         # Shell 模块文档
 │   ├── index.md                        # 模块总览
 │   ├── shell-models.md                 # Shell 模型
 │   └── api-exposure.md                 # API 暴露
-├── 10-types/                         # Types 模块文档
+├── 11-types/                         # Types 模块文档
 │   ├── index.md                        # 类型定义总览
 │   ├── core-types.md                   # 核心类型
 │   ├── model-types.md                  # 模型类型
 │   ├── shell-types.md                  # Shell 类型
 │   └── type-utilities.md              # 类型工具
-├── 11-utils/                         # Utils 模块文档
+├── 12-utils/                         # Utils 模块文档
 │   ├── index.md                        # 工具总览
 │   ├── schema-utils.md                 # Schema 工具
 │   ├── node-utils.md                  # 节点工具
 │   ├── check-types.md                 # 类型检查工具
 │   └── common-utils.md                # 通用工具
-└── 12-workspace/                     # Workspace 模块文档
+└── 13-workspace/                     # Workspace 模块文档
     ├── index.md                        # 模块总览
     ├── workspace-core.md               # 工作区核心
     └── window-management.md           # 窗口管理
