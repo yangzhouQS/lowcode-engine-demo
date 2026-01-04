@@ -1,169 +1,276 @@
-# LowCode Engine Packages 技术文档
+# Package Docs
 
-## 文档概述
+本目录包含各个模块包的详细功能文档。
 
-本文档库提供了 LowCode Engine 项目中所有核心模块的深度技术设计文档，涵盖架构设计、数据流向、接口定义、类与函数详细说明、依赖关系映射、核心算法实现细节以及设计模式应用。
-
-## 文档结构
+## 目录结构
 
 ```
 pkg-docs/
-├── README.md                           # 本文档
-├── 00-overview/                        # 整体架构概览
-│   ├── architecture-overview.md         # 系统架构总览
-│   ├── module-dependencies.md           # 模块依赖关系
-│   └── design-patterns.md              # 设计模式应用
-├── 01-designer/                       # Designer 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── designer-core.md                 # Designer 核心类
-│   ├── document-model.md               # 文档模型
-│   ├── node-system.md                  # 节点系统
-│   ├── props-system.md                 # 属性系统
-│   ├── selection-system.md             # 选区系统
-│   ├── history-system.md               # 历史记录系统
-│   ├── simulator-host.md               # 模拟器宿主
-│   ├── drag-drop-system.md             # 拖拽系统
-│   ├── detecting-system.md             # 检测系统
-│   ├── plugin-system.md                # 插件系统
-│   └── component-meta.md               # 组件元数据
-├── 02-editor-core/                    # Editor Core 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── editor-class.md                 # Editor 类详解
-│   ├── event-system.md                 # 事件系统
-│   ├── config-system.md                # 配置系统
-│   ├── hotkey-system.md                # 快捷键系统
-│   ├── di-container.md                 # 依赖注入容器
-│   └── intl-system.md                 # 国际化系统
-├── 03-engine/                         # Engine 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── engine-core.md                  # Engine 核心
-│   ├── inner-plugins.md                # 内置插件
-│   ├── shell-factory.md               # Shell 模型工厂
-│   └── initialization.md              # 初始化流程
-├── 04-renderer-core/                  # Renderer Core 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── renderer-factory.md             # 渲染器工厂
-│   ├── base-renderer.md               # 基础渲染器
-│   ├── component-renderer.md           # 组件渲染器
-│   ├── page-renderer.md                # 页面渲染器
-│   ├── block-renderer.md               # 区块渲染器
-│   ├── adapter-system.md               # 适配器系统
-│   └── hoc-system.md                  # 高阶组件系统
-├── 05-react-renderer/                 # React Renderer 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── renderer-implementation.md       # 渲染器实现
-│   └── integration-guide.md            # 集成指南
-├── 06-react-simulator-renderer/        # React Simulator Renderer 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── simulator-renderer.md           # 模拟器渲染器
-│   └── bridge-communication.md        # 桥接通信
-├── 07-editor-skeleton/                # Editor Skeleton 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── skeleton-core.md                # 骨架核心
-│   ├── panel-system.md                 # 面板系统
-│   ├── widget-system.md                # 组件系统
-│   ├── stage-system.md                 # 阶段系统
-│   ├── layout-system.md               # 布局系统
-│   └── component-library.md           # 组件库
-├── 08-ignitor/                        # Ignitor 模块文档
-│   └── index.md                        # 模块总览
-├── 09-plugins/                        # 插件模块文档
-│   ├── index.md                        # 插件总览
-│   ├── plugin-command.md               # 命令插件
-│   ├── plugin-designer.md              # 设计器插件
-│   ├── plugin-outline-pane.md          # 大纲面板插件
-│   └── plugin-development.md           # 插件开发指南
-├── 10-shell/                         # Shell 模块文档
-│   ├── index.md                        # 模块总览
-│   ├── shell-models.md                 # Shell 模型
-│   └── api-exposure.md                 # API 暴露
-├── 11-types/                         # Types 模块文档
-│   ├── index.md                        # 类型定义总览
-│   ├── core-types.md                   # 核心类型
-│   ├── model-types.md                  # 模型类型
-│   ├── shell-types.md                  # Shell 类型
-│   └── type-utilities.md              # 类型工具
-├── 12-utils/                         # Utils 模块文档
-│   ├── index.md                        # 工具总览
-│   ├── schema-utils.md                 # Schema 工具
-│   ├── node-utils.md                  # 节点工具
-│   ├── check-types.md                 # 类型检查工具
-│   └── common-utils.md                # 通用工具
-└── 13-workspace/                     # Workspace 模块文档
-    ├── index.md                        # 模块总览
-    ├── workspace-core.md               # 工作区核心
-    └── window-management.md           # 窗口管理
+├── README.md                 # 本文档
+├── editor-skeleton/          # Editor Skeleton 模块文档
+│   ├── README.md            # Editor Skeleton 概览
+│   ├── area.md             # Area 区域管理
+│   ├── skeleton.md          # Skeleton 核心类
+│   ├── types.md            # 类型定义
+│   ├── widget/             # Widget 组件
+│   │   ├── widget.md       # Widget 基类
+│   │   ├── panel.md        # Panel 类
+│   │   ├── widget-container.md # Widget 容器
+│   │   ├── dock.md         # Dock 类
+│   │   ├── panel-dock.md   # PanelDock 类
+│   │   └── stage.ts        # Stage 类
+│   ├── components/         # UI 组件
+│   │   ├── settings/       # 设置面板组件
+│   │   │   ├── settings-pane.md
+│   │   │   └── settings-primary-pane.md
+│   │   ├── field/          # 字段组件
+│   │   │   ├── index.md
+│   │   │   └── fields.md
+│   │   ├── widget-views/   # Widget 视图组件
+│   │   │   └── index.md
+│   │   ├── popup/          # 弹窗组件
+│   │   │   └── index.md
+│   │   ├── draggable-line/ # 可拖拽分割线
+│   │   │   └── index.md
+│   │   ├── stage-box/      # Stage 盒子组件
+│   │   │   └── index.md
+│   │   └── settings/       # 设置面板
+│   │       └── index.md
+│   ├── layouts/           # 布局组件
+│   │   ├── workbench.md    # 工作台
+│   │   ├── left-area.md    # 左侧区域
+│   │   ├── left-float-pane.md  # 左侧浮动面板
+│   │   ├── left-fixed-pane.md  # 左侧固定面板
+│   │   ├── right-area.md   # 右侧区域
+│   │   ├── top-area.md     # 顶部区域
+│   │   ├── sub-top-area.md # 子顶部区域
+│   │   ├── bottom-area.md  # 底部区域
+│   │   ├── main-area.md    # 主区域
+│   │   └── toolbar.md      # 工具栏
+│   ├── transducers/       # 数据转换器
+│   │   ├── parse-func.md  # 函数解析器
+│   │   ├── parse-props.md  # 属性解析器
+│   │   └── addon-combine.md # 插件组合器
+│   ├── icons/            # 图标组件
+│   │   ├── arrow.md
+│   │   ├── fix.md
+│   │   ├── float.md
+│   │   ├── exit.md
+│   │   ├── clear.md
+│   │   ├── convert.md
+│   │   ├── slot.md
+│   │   └── variable.md
+│   └── locale/           # 国际化
+│       ├── index.md
+│       ├── zh-CN.md
+│       └── en-US.md
+└── [其他模块文档...]
 ```
 
-## 文档阅读指南
+## 文档说明
 
-### 按角色阅读
+### Editor Skeleton 模块
 
-#### 架构师
-- 首先阅读 `00-overview/` 下的所有文档
-- 然后根据需要深入各个模块的架构设计部分
-- 关注设计模式应用和模块依赖关系
+`@alilc/lowcode-editor-skeleton` 是低代码编辑器的骨架模块，负责编辑器界面的布局、面板管理和组件渲染。
 
-#### 开发者
-- 从 `00-overview/architecture-overview.md` 开始了解整体架构
-- 根据开发任务深入对应模块文档
-- 重点关注接口定义、类与函数说明、使用场景
+#### 核心功能
 
-#### 插件开发者
-- 阅读 `08-plugins/plugin-development.md`
-- 了解插件系统和插件上下文
-- 参考现有插件实现
+- **布局管理**: 提供多个预定义区域（左侧、顶部、底部、右侧、主区域等）用于放置插件
+- **面板系统**: 支持固定面板和浮动面板，可动态切换显示状态
+- **Widget 系统**: 提供可复用的 Widget 组件，支持 Dock、Panel、Stage 等类型
+- **设置面板**: 提供属性配置界面，支持多种 Setter 类型
+- **国际化**: 内置中英文支持
+- **事件系统**: 完整的事件发布订阅机制
 
-### 按学习路径阅读
+#### 主要模块
 
-1. **入门路径**
-   - `00-overview/architecture-overview.md`
-   - `03-engine/index.md`
-   - `01-designer/index.md`
+1. **核心模块** (Core)
+   - [`area.md`](editor-skeleton/area.md) - 区域管理，定义编辑器的各个布局区域
+   - [`skeleton.md`](editor-skeleton/skeleton.md) - 骨架核心类，管理所有 Widget 和面板
+   - [`types.md`](editor-skeleton/types.md) - 类型定义，包括 Widget、Dock、Panel 等配置类型
+   - [`context.md`](editor-skeleton/context.md) - React Context，提供 Skeleton 实例
+   - [`register-defaults.md`](editor-skeleton/register-defaults.md) - 注册默认的配置转换器
 
-2. **深入路径**
-   - `01-designer/designer-core.md`
-   - `01-designer/document-model.md`
-   - `01-designer/node-system.md`
+2. **Widget 模块** (Widget)
+   - [`widget/widget.md`](editor-skeleton/widget/widget.md) - Widget 基类
+   - [`widget/panel.md`](editor-skeleton/widget/panel.md) - 面板 Widget
+   - [`widget/dock.md`](editor-skeleton/widget/dock.md) - Dock Widget
+   - [`widget/panel-dock.md`](editor-skeleton/widget/panel-dock.md) - 面板 Dock Widget
+   - [`widget/stage.md`](editor-skeleton/widget/stage.md) - Stage Widget
+   - [`widget/widget-container.md`](editor-skeleton/widget/widget-container.md) - Widget 容器
+   - [`widget/utils.ts`](editor-skeleton/widget/utils.md) - 工具函数
 
-3. **扩展路径**
-   - `08-plugins/plugin-development.md`
-   - `09-shell/api-exposure.md`
-   - `10-types/core-types.md`
+3. **组件模块** (Components)
+   - [`components/settings/settings-pane.md`](editor-skeleton/components/settings/settings-pane.md) - 设置面板组件
+   - [`components/settings/settings-primary-pane.md`](editor-skeleton/components/settings/settings-primary-pane.md) - 主设置面板
+   - [`components/field/index.md`](editor-skeleton/components/field/index.md) - 字段组件入口
+   - [`components/field/fields.md`](editor-skeleton/components/field/fields.md) - 字段组件实现
+   - [`components/widget-views/index.md`](editor-skeleton/components/widget-views/index.md) - Widget 视图组件
+   - [`components/popup/index.md`](editor-skeleton/components/popup/index.md) - 弹窗组件
+   - [`components/draggable-line/index.md`](editor-skeleton/components/draggable-line/index.md) - 可拖拽分割线
+   - [`components/stage-box/index.md`](editor-skeleton/components/stage-box/index.md) - Stage 盒子组件
 
-## 技术术语表
+4. **布局模块** (Layouts)
+   - [`layouts/workbench.md`](editor-skeleton/layouts/workbench.md) - 工作台主布局
+   - [`layouts/left-area.md`](editor-skeleton/layouts/left-area.md) - 左侧区域
+   - [`layouts/left-float-pane.md`](editor-skeleton/layouts/left-float-pane.md) - 左侧浮动面板
+   - [`layouts/left-fixed-pane.md`](editor-skeleton/layouts/left-fixed-pane.md) - 左侧固定面板
+   - [`layouts/right-area.md`](editor-skeleton/layouts/right-area.md) - 右侧区域
+   - [`layouts/top-area.md`](editor-skeleton/layouts/top-area.md) - 顶部区域
+   - [`layouts/sub-top-area.md`](editor-skeleton/layouts/sub-top-area.md) - 子顶部区域
+   - [`layouts/bottom-area.md`](editor-skeleton/layouts/bottom-area.md) - 底部区域
+   - [`layouts/main-area.md`](editor-skeleton/layouts/main-area.md) - 主区域
+   - [`layouts/toolbar.md`](editor-skeleton/layouts/toolbar.md) - 工具栏
 
-| 术语 | 英文 | 说明 |
-|------|------|------|
-| 设计器 | Designer | 负责可视化编辑的核心模块 |
-| 模拟器 | Simulator | 负责组件渲染和交互的沙箱环境 |
-| 文档模型 | Document Model | 描述页面结构的树形数据模型 |
-| 节点 | Node | 文档模型中的基本单元 |
-| 属性 | Prop | 节点的属性描述 |
-| 选区 | Selection | 当前选中的节点集合 |
-| 渲染器 | Renderer | 负责将 Schema 渲染为组件 |
-| Shell | Shell | 对外暴露的 API 层 |
-| 插件 | Plugin | 扩展引擎功能的模块 |
-| 骨架 | Skeleton | 编辑器 UI 框架结构 |
+5. **转换器模块** (Transducers)
+   - [`transducers/parse-func.md`](editor-skeleton/transducers/parse-func.md) - 函数解析器
+   - [`transducers/parse-props.md`](editor-skeleton/transducers/parse-props.md) - 属性解析器
+   - [`transducers/addon-combine.md`](editor-skeleton/transducers/addon-combine.md) - 插件组合器
 
-## 版本信息
+6. **图标模块** (Icons)
+   - [`icons/arrow.md`](editor-skeleton/icons/arrow.md) - 箭头图标
+   - [`icons/fix.md`](editor-skeleton/icons/fix.md) - 固定图标
+   - [`icons/float.md`](editor-skeleton/icons/float.md) - 浮动图标
+   - [`icons/exit.md`](editor-skeleton/icons/exit.md) - 退出图标
+   - [`icons/clear.md`](editor-skeleton/icons/clear.md) - 清除图标
+   - [`icons/convert.md`](editor-skeleton/icons/convert.md) - 转换图标
+   - [`icons/slot.md`](editor-skeleton/icons/slot.md) - 插槽图标
+   - [`icons/variable.md`](editor-skeleton/icons/variable.md) - 变量图标
 
-- LowCode Engine 版本: 1.x
-- 文档生成日期: 2026-01-04
-- 文档版本: 1.0.0
+7. **国际化模块** (Locale)
+   - [`locale/index.md`](editor-skeleton/locale/index.md) - 国际化入口
+   - [`locale/zh-CN.md`](editor-skeleton/locale/zh-CN.md) - 中文语言包
+   - [`locale/en-US.md`](editor-skeleton/locale/en-US.md) - 英文语言包
+
+## 文档特点
+
+### 详细的代码说明
+
+每个文档都包含：
+- **功能概述**: 简要描述文件的主要功能
+- **主要功能**: 列出核心功能点
+- **类/函数定义**: 完整的类型定义和签名
+- **属性/参数说明**: 详细的属性和参数说明
+- **方法说明**: 每个方法的功能和行为
+- **使用示例**: 实际的代码示例
+- **注意事项**: 使用时需要注意的要点
+
+### 代码文档结合方式
+
+文档采用代码文档结合的方式：
+1. **代码分析**: 深入分析源代码的实现逻辑
+2. **功能总结**: 提炼出核心功能和使用场景
+3. **API 文档**: 提供完整的 API 说明
+4. **示例代码**: 提供实际可用的代码示例
+5. **最佳实践**: 给出使用建议和注意事项
+
+## 使用指南
+
+### 查找文档
+
+1. 根据模块名称查找对应的目录
+2. 在目录中查找具体的文件文档
+3. 阅读文档了解功能和使用方法
+
+### 文档阅读顺序
+
+建议按照以下顺序阅读文档：
+
+1. 先阅读模块的 [`README.md`](editor-skeleton/README.md) 了解整体架构
+2. 阅读核心模块文档（如 [`skeleton.md`](editor-skeleton/skeleton.md)）了解核心功能
+3. 阅读具体组件文档（如 [`widget/widget.md`](editor-skeleton/widget/widget.md)）了解组件实现
+4. 阅读使用示例，学习如何使用
+
+### 代码示例
+
+所有文档都包含实际可用的代码示例，可以直接复制使用：
+
+```typescript
+import { Skeleton } from '@alilc/lowcode-editor-skeleton';
+
+const skeleton = new Skeleton(editor);
+
+skeleton.add({
+  type: 'Panel',
+  name: 'myPanel',
+  area: 'leftFloatArea',
+  props: {
+    title: '我的面板',
+  },
+  content: MyPanelComponent,
+});
+```
+
+## 更新日志
+
+### 2026-01-04
+
+- 初始化文档结构
+- 创建 Editor Skeleton 模块文档
+- 创建核心模块文档（area、skeleton、types）
+- 创建 Widget 模块文档（widget、panel、widget-container）
+- 创建布局模块文档（workbench）
+- 创建转换器模块文档（parse-func）
+- 创建组件模块文档（settings-pane、widget-views）
 
 ## 贡献指南
 
-本文档是自动生成的生产级技术文档，如需更新或修正，请遵循以下规范：
+### 添加新文档
 
-1. 保持文档结构与代码同步
-2. 使用 Markdown 格式编写
-3. 包含必要的代码示例和 Mermaid 流程图
-4. 确保文档的准确性和完整性
+1. 在对应的模块目录下创建新的 `.md` 文件
+2. 按照现有文档的格式编写内容
+3. 包含功能概述、API 说明、使用示例等
+4. 更新本 README.md 的目录结构
 
-## 联系方式
+### 文档格式
 
-如有疑问或建议，请通过以下方式联系：
+建议使用以下格式：
 
-- GitHub Issues: [LowCode Engine Issues](https://github.com/alibaba/lowcode-engine/issues)
-- 官方文档: [LowCode Engine Docs](https://lowcode-engine.cn/)
+```markdown
+# 模块名称
+
+## 文件路径
+
+`packages/module-name/src/file-name.ts`
+
+## 功能概述
+
+简述模块的主要功能。
+
+## 主要功能
+
+1. 功能点1
+2. 功能点2
+3. 功能点3
+
+## 类/函数定义
+
+```typescript
+// 代码定义
+```
+
+## 使用示例
+
+```typescript
+// 示例代码
+```
+
+## 注意事项
+
+1. 注意点1
+2. 注意点2
+```
+
+## 相关资源
+
+- [LowCode Engine 官方文档](https://lowcode-engine.cn/)
+- [GitHub 仓库](https://github.com/alibaba/lowcode-engine)
+- [API 文档](https://lowcode-engine.cn/doc/api)
+
+## 反馈与支持
+
+如有问题或建议，请通过以下方式反馈：
+
+- 提交 GitHub Issue
+- 参与社区讨论
+- 联系维护团队
