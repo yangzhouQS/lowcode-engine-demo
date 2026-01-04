@@ -1,0 +1,25 @@
+{
+  "editor-skeleton": {
+    "title": "Editor Skeleton",
+    "widgets": {
+      "leftArea": "Left Area",
+      "topArea": "Top Area",
+      "subTopArea": "Sub Top Area",
+      "toolbar": "Toolbar",
+      "leftFixedArea": "Left Fixed Area",
+      "leftFloatArea": "Left Float Area",
+      "rightArea": "Right Area",
+      "mainArea": "Main Area",
+      "bottomArea": "Bottom Area",
+      "stages": "Stages"
+    },
+    "actions": {
+      "close": "Close",
+      "toggle": "Toggle",
+      "active": "Active",
+      "inactive": "Inactive",
+      "drag": "Drag",
+      "resize": "Resize"
+    }
+  }
+}

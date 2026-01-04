@@ -78,12 +78,14 @@ export class Panel implements IWidget {
 
   private container?: WidgetContainer<Panel, IPublicTypePanelConfig>;
 
-  @obx.ref public parent?: WidgetContainer;
+  @obx.ref parent?: WidgetContainer;
 
   constructor(readonly skeleton: ISkeleton, readonly config: IPublicTypePanelConfig) {
     makeObservable(this);
     const { name, content, props = {} } = config;
-    const { hideTitleBar, title, icon, description, help } = props;
+    const { hideTitleBar,
+      title, icon,
+      description, help } = props;
     this.name = name;
     this.id = uniqueId(`pane:${name}$`);
     this.title = composeTitle(title || name, icon, description);
@@ -217,7 +219,7 @@ export class Panel implements IWidget {
   }
 
   getAssocDocks(): PanelDock[] {
-    return this.skeleton.widgets.filter(item => {
+    return this.skeleton.widgets.filter((item) => {
       return isPanelDock(item) && item.panelName === this.name;
     }) as any;
   }

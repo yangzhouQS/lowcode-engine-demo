@@ -28,7 +28,7 @@ export default class PanelOperationRow extends Component<{ panel: Panel }> {
     if (isRightArea) {
       return null;
     }
-    // can be set fixed by default
+    // can be set fixed by default
     let canSetFixed = true;
     if (panel?.config.props?.canSetFixed === false) {
       canSetFixed = false;

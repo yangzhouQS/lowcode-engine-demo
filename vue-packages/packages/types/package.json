@@ -1,0 +1,25 @@
+{
+  "name": "@vue-lowcode/types",
+  "version": "1.0.0",
+  "description": "Vue 3 types for lowcode engine",
+  "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch"
+  },
+  "keywords": [
+    "lowcode",
+    "vue3",
+    "types"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "vue": "^3.3.4"
+  }
+}

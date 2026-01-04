@@ -10,6 +10,12 @@ export interface Activeable {
   setActive(flag: boolean): void;
 }
 
+/**
+ * 判断一个对象是否具有可激活的能力
+ *
+ * @param obj 要判断的对象
+ * @returns 如果对象具有可激活的能力，则返回 true，否则返回 false
+ */
 function isActiveable(obj: any): obj is Activeable {
   return obj && obj.setActive;
 }

@@ -1,0 +1,9 @@
+export { IconLock } from './lock';
+export { IconHidden } from './hidden';
+export { IconRemove } from './remove';
+export { IconSetting } from './setting';
+export { IconComponent } from './component';
+export { IconClone } from './clone';
+export { IconContainer } from './container';
+export { IconPage } from './page';
+export { IconUnlock } from './unlock';

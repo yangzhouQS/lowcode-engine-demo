@@ -7,12 +7,18 @@ import { ISkeleton } from './skeleton';
 import { IWidget } from './widget/widget';
 
 const logger = new Logger({ level: 'warn', bizName: 'skeleton:area' });
+
 export interface IArea<C, T> {
   isEmpty(): boolean;
+
   add(config: T | C): T;
+
   remove(config: T | string): number;
+
   setVisible(flag: boolean): void;
+
   hide(): void;
+
   show(): void;
 }
 
@@ -37,7 +43,12 @@ export class Area<C extends IPublicTypeWidgetBaseConfig = any, T extends IWidget
 
   private lastCurrent: T | null = null;
 
-  constructor(readonly skeleton: ISkeleton, readonly name: string, handle: (item: T | C) => T, private exclusive?: boolean, defaultSetCurrent = false) {
+  constructor(
+    readonly skeleton: ISkeleton, readonly name: string,
+    handle: (item: T | C) => T,
+    private exclusive?: boolean,
+    defaultSetCurrent = false,
+  ) {
     makeObservable(this);
     this.container = skeleton.createContainer(name, handle, exclusive, () => this.visible, defaultSetCurrent);
   }

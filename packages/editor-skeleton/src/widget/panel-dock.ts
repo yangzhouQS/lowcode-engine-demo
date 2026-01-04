@@ -73,7 +73,8 @@ export class PanelDock implements IWidget {
 
   constructor(readonly skeleton: ISkeleton, readonly config: PanelDockConfig) {
     makeObservable(this);
-    const { content, contentProps, panelProps, name, props } = config;
+    const { content, contentProps,
+      panelProps, name, props } = config;
     this.name = name;
     this.id = uniqueId(`dock:${name}$`);
     this.panelName = config.panelName || name;
