@@ -7,6 +7,42 @@
 ```
 pkg-docs/
 ├── README.md                 # 本文档
+├── workspace/                # Workspace 模块文档
+│   ├── 01-架构设计.md        # 架构设计文档
+│   ├── 02-API设计.md         # API 设计文档
+│   ├── 03-文件功能说明.md    # 文件功能说明文档
+│   └── README.md             # 模块概览文档
+├── utils/                   # Utils 模块文档
+│   ├── 01-架构设计.md        # 架构设计文档
+│   ├── 02-文件功能说明.md    # 文件功能说明文档
+│   └── README.md             # 模块概览文档
+├── react-renderer/           # React Renderer 模块文档
+│   ├── 01-架构设计.md        # 架构设计文档
+│   ├── 02-API设计.md         # API 设计文档
+│   └── 03-文件功能说明.md    # 文件功能说明文档
+├── react-simulator-renderer/ # React Simulator Renderer 模块文档
+│   ├── 01-架构设计.md        # 架构设计文档
+│   ├── 02-API设计.md         # API 设计文档
+│   ├── 03-文件功能说明.md    # 文件功能说明文档
+│   ├── 04-package.json.md     # NPM 包配置文档
+│   ├── 05-src-index.ts.md     # 模块入口文件文档
+│   ├── 06-src-renderer.ts.md   # 核心渲染器实现文档
+│   ├── 07-src-host.ts.md       # 模拟器宿主文档
+│   ├── 08-src-renderer-view.tsx.md  # React 视图组件文档
+│   ├── 09-src-renderer.less.md  # 样式文件文档
+│   ├── 10-src-README.md        # 源码目录说明文档
+│   ├── 11-src-builtin-components-leaf.tsx.md  # Leaf 组件文档
+│   ├── 12-src-builtin-components-slot.tsx.md  # Slot 组件文档
+│   ├── 13-src-locale-index.ts.md  # 国际化工具文档
+│   ├── 14-src-utils-get-client-rects.ts.md  # 客户端矩形工具文档
+│   ├── 15-src-utils-is-dom-node.ts.md  # DOM 节点判断文档
+│   ├── 16-src-utils-misc.ts.md  # 杂项工具文档
+│   ├── 17-src-utils-react-find-dom-nodes.ts.md  # React DOM 查找文档
+│   ├── 18-src-utils-url.ts.md  # URL 工具文档
+│   ├── 19-src-builtin-components-builtin-components.ts.md  # 内置组件文档
+│   ├── 20-src-locale-en-US.json.md  # 英文语言包文档
+│   ├── 21-src-locale-zh-CN.json.md  # 中文语言包文档
+│   └── README.md             # 模块概览文档
 ├── editor-skeleton/          # Editor Skeleton 模块文档
 │   ├── README.md            # Editor Skeleton 概览
 │   ├── area.md             # Area 区域管理
@@ -168,6 +204,230 @@ pkg-docs/
 ```
 
 ## 文档说明
+
+### Workspace 模块
+
+`@alilc/lowcode-workspace` 是低代码引擎的工作空间管理模块，负责管理编辑器的窗口系统、资源管理、插件上下文和布局系统。
+
+#### 核心功能
+
+- **窗口管理**: 管理编辑器窗口的创建、打开、关闭、切换和销毁
+- **资源管理**: 管理编辑器视图资源和 Web 视图资源
+- **插件上下文**: 为插件提供统一的上下文环境
+- **布局系统**: 提供完整的工作台布局
+- **事件系统**: 提供窗口和资源相关的事件通信
+- **多窗口支持**: 支持多窗口管理和窗口队列
+- **窗口休眠**: 支持窗口休眠机制，优化性能
+
+#### 主要文档
+
+1. **架构设计文档** ([`01-架构设计.md`](workspace/01-架构设计.md))
+   - 模块定位和概述
+   - 架构模式（单例模式、上下文模式、工厂模式、观察者模式、事件驱动模式、策略模式、代理模式）
+   - 核心组件说明（Workspace、Resource、EditorWindow、BasicContext、Context）
+   - 数据流设计（窗口管理流程、窗口切换流程、资源初始化流程、插件上下文组装流程）
+   - 关键技术实现（窗口状态管理、窗口队列机制、事件系统、插件上下文组装、响应式布局）
+   - 性能优化（窗口休眠机制、窗口队列、MobX 响应式更新、事件总线）
+   - 扩展性设计（资源类型扩展、插件扩展、视图扩展）
+   - 安全性设计（窗口状态管理、插件上下文隔离、事件系统）
+   - 测试策略（单元测试、集成测试、快照测试）
+   - 总结
+
+2. **API 设计文档** ([`02-API设计.md`](workspace/02-API设计.md))
+   - Workspace 类 API（构造函数、initWindow、openEditorWindowByResource、openEditorWindow、removeEditorWindow、checkWindowQueue、setActive、registerResourceType、事件监听方法）
+   - Resource 类 API（构造函数、init、import、save、url、getEditorView）
+   - EditorWindow 类 API（构造函数、updateState、importSchema、save、init、changeViewName、事件监听方法）
+   - ResourceType 类 API（构造函数、name 属性、type 属性）
+   - BasicContext 类 API（构造函数、核心属性）
+   - Context 类 API（构造函数、init、setActivate、onSimulatorRendererReady、save）
+   - Workbench 组件 API（Props、State）
+   - 类型定义（IWorkspace、IResource、IEditorWindow、IResourceType、IBasicContext、IViewContext、WINDOW_STATE、IWindowInfo）
+   - 使用示例（基本使用、打开窗口、窗口操作、插件开发）
+   - 最佳实践（窗口管理、事件监听、插件开发、错误处理、性能优化）
+   - 注意事项（窗口状态管理、事件监听、插件上下文、资源类型、异步操作）
+   - API 变更历史
+
+3. **文件功能说明文档** ([`03-文件功能说明.md`](workspace/03-文件功能说明.md))
+   - 目录结构总览
+   - 文件功能分类（核心模块、上下文模块、窗口模块、布局模块、视图模块、插件模块、样式模块、配置文件）
+   - 文件依赖关系
+   - 文件功能详解（核心模块文件、上下文模块文件、窗口模块文件、布局模块文件、视图模块文件、插件模块文件、样式模块文件）
+   - 代码统计（总代码行数、各模块代码行数）
+   - 关键文件说明（src/workspace.ts、src/context/base-context.ts、src/window.ts、src/resource.ts、src/layouts/workbench.tsx）
+   - 文件修改建议（性能优化建议、代码质量建议、文档建议、测试建议）
+
+4. **模块概览**
+   - [`README.md`](workspace/README.md) - 模块概览，包含快速开始、核心功能、架构特点、主要功能、技术栈、相关模块、贡献指南、许可证
+
+### Utils 模块
+
+`@alilc/lowcode-utils` 是低代码引擎的工具函数库模块，提供各种通用工具函数、类型检查函数、React 组件和构建辅助函数。该模块为低代码引擎的其他模块提供基础的工具支持。
+
+#### 核心功能
+
+- **工具函数**: 提供深拷贝、唯一 ID 生成、浅比较、原型操作等基础工具函数
+- **类型检查**: 提供运行时类型检查函数，包括对象、函数、React 元素、DOM 元素等类型判断
+- **Schema 类型检查**: 提供 24 个 Schema 相关的类型守卫函数，用于检查低代码 Schema 的各种类型
+- **React 组件**: 提供图标组件、上下文菜单组件、工作区组件等可复用 React 组件
+- **构建辅助**: 提供组件构建、应用辅助、节点辅助、Schema 辅助等构建相关函数
+- **CSS 辅助**: 提供 CSS 样式处理和光标管理功能
+- **日志工具**: 提供统一的日志记录功能
+- **事务管理**: 提供事务管理器，支持批量操作
+- **属性类型检查**: 提供 PropTypes 类型的属性检查功能
+
+#### 主要文档
+
+1. **架构设计文档** ([`01-架构设计.md`](utils/01-架构设计.md))
+   - 模块定位和概述
+   - 架构模式（函数式编程、类型守卫、工厂模式、单例模式）
+   - 核心组件说明（工具函数、类型检查、React 组件、样式辅助）
+   - 数据流设计（单向数据流、无状态设计）
+   - 关键技术实现（深拷贝、唯一 ID 生成、类型守卫、事务管理器）
+   - 性能优化（惰性求值、记忆化、提前返回）
+   - 扩展性设计（函数组合、插件化、配置化）
+   - 安全性设计（类型安全、参数验证、错误处理）
+   - 测试策略（单元测试、快照测试、类型测试）
+   - 总结
+
+2. **文件功能说明文档** ([`02-文件功能说明.md`](utils/02-文件功能说明.md))
+   - 目录结构总览
+   - 文件功能分类（工具函数、类型检查、React 组件、构建辅助、配置文件）
+   - 文件依赖关系
+   - 文件功能详解（工具函数文件、类型检查文件、React 组件文件、构建辅助文件）
+   - 代码统计（总代码行数、各模块代码行数）
+   - 关键文件说明（src/index.ts、src/clone-deep.ts、src/unique-id.ts、src/logger.ts、src/transaction-manager.ts、src/check-types/）
+   - 文件修改建议（性能优化建议、代码质量建议、文档建议、测试建议）
+
+3. **模块概览**
+   - [`README.md`](utils/README.md) - 模块概览，包含快速开始、核心功能、架构特点、主要功能、技术栈、模块统计、相关模块、贡献指南、许可证
+
+### React Renderer 模块
+
+`@alilc/lowcode-react-renderer` 是阿里低代码引擎的 React 渲染器模块，负责将低代码描述的 Schema 转换为实际的 React 组件树并进行渲染。该模块是低代码引擎运行时的核心组件之一。
+
+### React Simulator Renderer 模块
+
+`@alilc/lowcode-react-simulator-renderer` 是低代码引擎的模拟器渲染器模块，负责在设计器中模拟和渲染低代码组件。它是连接低代码设计器和实际运行时环境的桥梁，提供实时的预览和交互能力。
+
+#### 核心功能
+
+- **组件渲染**: 在模拟器环境中渲染低代码组件和页面
+- **实例管理**: 管理组件实例的生命周期和状态
+- **路由模拟**: 提供内存路由，支持多页面应用模拟
+- **国际化支持**: 提供多语言切换能力
+- **设备适配**: 支持不同设备的响应式渲染
+- **事件处理**: 处理组件的交互事件
+- **DOM 操作**: 提供 DOM 节点查询和操作能力
+
+#### 主要文档
+
+1. **架构设计文档** ([`01-架构设计.md`](react-simulator-renderer/01-架构设计.md))
+   - 模块定位和概述
+   - 架构模式（观察者模式、单例模式、工厂模式、适配器模式、策略模式、装饰器模式）
+   - 核心组件说明（DocumentInstance、SimulatorRendererContainer）
+   - 数据流设计
+   - 关键技术实现（React Fiber 遍历、实例生命周期管理、内存路由实现、国际化实现）
+   - 性能优化
+   - 扩展性设计
+   - 安全性设计
+   - 测试策略
+   - 总结
+
+2. **API 设计文档** ([`02-API设计.md`](react-simulator-renderer/02-API设计.md))
+   - SimulatorRendererContainer 属性和方法
+   - DocumentInstance 属性和方法
+   - 工具函数 API
+   - 内置组件 API
+   - 事件系统
+   - 类型定义
+   - 使用示例
+   - 最佳实践
+   - 注意事项
+
+3. **文件功能说明文档** ([`03-文件功能说明.md`](react-simulator-renderer/03-文件功能说明.md))
+   - 目录结构总览
+   - 配置文件说明
+   - 源代码文件说明
+   - 测试文件说明
+   - 文件依赖关系
+   - 文件功能分类
+   - 代码统计
+   - 关键文件说明
+   - 文件修改建议
+
+4. **配置文件文档**
+   - [`04-package.json.md`](react-simulator-renderer/04-package.json.md) - NPM 包配置，包括依赖、脚本和发布配置
+
+5. **源代码文件文档**
+   - [`05-src-index.ts.md`](react-simulator-renderer/05-src-index.ts.md) - 模块入口文件，导出渲染器实例并初始化全局对象
+   - [`06-src-renderer.ts.md`](react-simulator-renderer/06-src-renderer.ts.md) - 核心渲染器实现，包含所有主要逻辑
+
+6. **模块概览**
+   - [`README.md`](react-simulator-renderer/README.md) - 模块概览，包含快速开始、核心概念、架构特点、主要功能、技术栈、性能优化、扩展性、测试、常见问题、相关资源
+
+#### 核心功能
+
+- **Schema 驱动渲染**: 将低代码 Schema 渲染为 React 组件
+- **运行时适配**: 通过适配器模式将 React 框架的能力适配到通用的渲染核心中
+- **多种渲染器类型**: 支持页面、组件、区块、插件、临时组件等多种渲染器类型
+- **组件映射**: 支持自定义组件映射，灵活使用任意 React 组件
+- **工具函数扩展**: 通过 appHelper 提供工具函数和常量
+- **国际化支持**: 内置多语言支持，方便国际化应用开发
+- **类型安全**: 使用 TypeScript 提供完整的类型定义
+
+#### 主要文档
+
+1. **架构设计文档** ([`01-架构设计.md`](react-renderer/01-架构设计.md))
+   - 模块定位和概述
+   - 架构模式（适配器模式、工厂模式、组合模式）
+   - 核心组件说明
+   - 数据流设计
+   - 扩展性设计
+   - 架构优势
+
+2. **API 设计文档** ([`02-API设计.md`](react-renderer/02-API设计.md))
+   - ReactRenderer 组件 Props 接口
+   - 实例方法说明
+   - 类型定义
+   - 使用示例
+   - API 设计原则
+
+3. **文件功能说明文档** ([`03-文件功能说明.md`](react-renderer/03-文件功能说明.md))
+   - 目录结构说明
+   - 核心文件详解
+   - 配置文件说明
+   - 测试文件说明
+   - 示例文件说明
+   - 文件依赖关系
+
+4. **源代码文件文档**
+   - [`04-src-index.ts.md`](react-renderer/04-src-index.ts.md) - 主入口文件，初始化 React 运行时环境并注册渲染器
+   - [`05-package.json.md`](react-renderer/05-package.json.md) - NPM 包配置，包括依赖、脚本和发布配置
+   - [`06-tsconfig.json.md`](react-renderer/06-tsconfig.json.md) - TypeScript 编译配置
+
+5. **构建配置文件文档**
+   - [`07-build.json.md`](react-renderer/07-build.json.md) - 开发和生产构建配置
+   - [`08-jest.config.js.md`](react-renderer/08-jest.config.js.md) - Jest 测试配置
+   - [`09-build.test.json.md`](react-renderer/09-build.test.json.md) - 测试构建配置
+   - [`10-build.umd.json.md`](react-renderer/10-build.umd.json.md) - UMD 构建配置
+
+6. **测试文件文档**
+   - [`11-tests-index.test.tsx.md`](react-renderer/11-tests-index.test.tsx.md) - 主测试文件，使用快照测试验证渲染功能
+   - [`12-tests-fixtures-schema-basic.ts.md`](react-renderer/12-tests-fixtures-schema-basic.ts.md) - 测试 Schema 文件，包含完整的页面结构
+
+7. **Demo 组件文档**
+   - [`13-demo-config-components-index.js.md`](react-renderer/13-demo-config-components-index.js.md) - 组件导出文件，集中导出所有 demo 组件
+   - [`14-demo-config-components-Div.jsx.md`](react-renderer/14-demo-config-components-Div.jsx.md) - Div 容器组件文档
+   - [`15-demo-config-components-Text.jsx.md`](react-renderer/15-demo-config-components-Text.jsx.md) - Text 文本组件文档
+   - [`16-demo-config-components-A.jsx.md`](react-renderer/16-demo-config-components-A.jsx.md) - A 链接组件文档
+   - [`17-demo-config-components-Image.jsx.md`](react-renderer/17-demo-config-components-Image.jsx.md) - Image 图片组件文档
+
+8. **Demo 配置文档**
+   - [`18-demo-config-utils.js.md`](react-renderer/18-demo-config-utils.js.md) - 工具函数文档，包括 Message 和 moment
+   - [`19-demo-config-constants.js.md`](react-renderer/19-demo-config-constants.js.md) - 常量定义文档
+
+9. **Demo 示例文档**
+   - [`20-demo-markdown-files.md`](react-renderer/20-demo-markdown-files.md) - Demo Markdown 文件文档，包括列表、表格、复杂组件、数据源和国际化示例
 
 ### Editor Skeleton 模块
 
@@ -485,6 +745,23 @@ skeleton.add({
 ```
 
 ## 更新日志
+
+### 2026-01-05
+
+- 创建 Types 模块文档
+- 创建模块概览文档（README.md）
+- 更新主 README.md，添加 Types 模块文档链接
+
+- 创建 Utils 模块文档
+- 创建架构设计文档（01-架构设计.md）
+- 创建文件功能说明文档（02-文件功能说明.md）
+- 创建模块概览文档（README.md）
+- 更新主 README.md，添加 Utils 模块文档链接
+
+- 创建 React Renderer 模块文档
+- 创建架构设计文档（01-架构设计.md）
+- 创建 API 设计文档（02-API设计.md）
+- 创建文件功能说明文档（03-文件功能说明.md）
 
 ### 2026-01-04
 
