@@ -1,0 +1,39 @@
+{
+  "name": "@vue3-lowcode/types",
+  "version": "1.0.0",
+  "description": "TypeScript type definitions for Vue3 LowCode Engine",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "vue3",
+    "lowcode",
+    "low-code",
+    "typescript",
+    "types"
+  ],
+  "author": "Vue3 LowCode Engine Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/vue3-lowcode-engine.git",
+    "directory": "packages/types"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/vue3-lowcode-engine/issues"
+  },
+  "homepage": "https://github.com/your-org/vue3-lowcode-engine#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}

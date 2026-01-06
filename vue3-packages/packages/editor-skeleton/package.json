@@ -1,0 +1,39 @@
+{
+  "name": "@vue3-lowcode/editor-skeleton",
+  "version": "1.0.0",
+  "description": "Vue3 LowCode Editor Skeleton - 编辑器骨架",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@vue3-lowcode/types": "workspace:*",
+    "@vue3-lowcode/utils": "workspace:*",
+    "vue": "^3.5.13",
+    "element-plus": "^2.8.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.4.6",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.8",
+    "jsdom": "^25.0.1"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.13",
+    "element-plus": "^2.8.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

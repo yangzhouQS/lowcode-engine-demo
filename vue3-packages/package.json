@@ -1,0 +1,58 @@
+{
+  "name": "vue3-lowcode-engine",
+  "version": "1.0.0",
+  "description": "Vue3 LowCode Engine - A powerful low-code framework based on Vue3",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "eslint . --ext .ts,.vue",
+    "format": "prettier --write .",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "changeset publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/test-utils": "^2.4.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-vue": "^9.19.2",
+    "jsdom": "^23.0.1",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0",
+    "vue": "^3.4.5",
+    "vue-tsc": "^1.8.27"
+  },
+  "keywords": [
+    "vue3",
+    "lowcode",
+    "low-code",
+    "visual-editor",
+    "drag-drop",
+    "component-library",
+    "no-code"
+  ],
+  "author": "Vue3 LowCode Engine Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/vue3-lowcode-engine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/vue3-lowcode-engine/issues"
+  },
+  "homepage": "https://github.com/your-org/vue3-lowcode-engine#readme"
+}

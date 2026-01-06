@@ -1,0 +1,53 @@
+{
+  "name": "@vue3-lowcode/utils",
+  "version": "1.0.0",
+  "description": "Utility functions for Vue3 LowCode Engine",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "vue3",
+    "lowcode",
+    "low-code",
+    "utils",
+    "utilities",
+    "helper"
+  ],
+  "author": "Vue3 LowCode Engine Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/vue3-lowcode-engine.git",
+    "directory": "packages/utils"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/vue3-lowcode-engine/issues"
+  },
+  "homepage": "https://github.com/your-org/vue3-lowcode-engine#readme",
+  "dependencies": {
+    "@vue3-lowcode/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "jsdom": "^23.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
+  }
+}
