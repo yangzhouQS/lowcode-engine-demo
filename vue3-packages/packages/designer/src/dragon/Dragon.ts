@@ -1,264 +1,817 @@
+import { ref, type Ref } from 'vue';
+import {
+  IPublicTypeDragNodeObject,
+  IPublicTypeDragAnyObject,
+  IPublicEnumDragObjectType,
+  IPublicTypeDragNodeDataObject,
+  IPublicModelDragObject,
+  IPublicModelNode,
+  IPublicModelDragon,
+  IPublicModelLocateEvent,
+  IPublicModelSensor,
+  IPublicTypeDisposable,
+} from '@vue3-lowcode/types';
+import { setNativeSelection, cursor } from '@vue3-lowcode/utils';
+import { INode, Node } from '../../document/src/node';
+import { ISimulatorHost, isSimulatorHost } from '../../simulator/src/simulator';
+import { IDesigner } from '../designer';
+import { makeEventsHandler } from './utils';
+
 /**
- * Dragon
- * 
- * 拖拽系统类,实现组件拖拽功能
- * 
- * @public
+ * 定位事件接口
  */
-import { ref, reactive } from 'vue';
+export interface ILocateEvent extends IPublicModelLocateEvent {
+  readonly type: 'LocateEvent';
 
-export interface DragonEvent {
-  type: 'start' | 'drag' | 'end' | 'cancel';
-  data: any;
-  target?: any;
-  position?: { x: number; y: number };
+  /**
+   * 激活的感应器
+   */
+  sensor?: IPublicModelSensor;
 }
 
-export interface DropTarget {
-  node: any;
-  position?: 'before' | 'after' | 'inside';
-  index?: number;
+/**
+ * 判断是否为节点拖拽对象
+ */
+export function isDragNodeObject(obj: any): obj is IPublicTypeDragNodeObject {
+  return obj && obj.type === IPublicEnumDragObjectType.Node;
 }
 
-export class Dragon {
-  private isDragging = ref(false);
-  private dragData: any = null;
-  private dragTarget: any = null;
-  private dragPosition = reactive({ x: 0, y: 0 });
-  private dropTarget: DropTarget | null = null;
-  private eventListeners: Map<string, Set<Function>> = new Map();
+/**
+ * 判断是否为节点数据拖拽对象
+ */
+export function isDragNodeDataObject(obj: any): obj is IPublicTypeDragNodeDataObject {
+  return obj && obj.type === IPublicEnumDragObjectType.NodeData;
+}
+
+/**
+ * 判断是否为任意拖拽对象
+ */
+export function isDragAnyObject(obj: any): obj is IPublicTypeDragAnyObject {
+  return obj && obj.type !== IPublicEnumDragObjectType.NodeData && obj.type !== IPublicEnumDragObjectType.Node;
+}
+
+/**
+ * 判断是否为定位事件
+ */
+export function isLocateEvent(e: any): e is ILocateEvent {
+  return e && e.type === 'LocateEvent';
+}
+
+const SHAKE_DISTANCE = 4;
+
+/**
+ * 鼠标抖动检测
+ * 用于区分点击和拖拽操作
+ */
+export function isShaken(e1: MouseEvent | DragEvent, e2: MouseEvent | DragEvent): boolean {
+  if ((e1 as any).shaken) {
+    return true;
+  }
+  if (e1.target !== e2.target) {
+    return true;
+  }
+  return (
+    Math.pow(e1.clientY - e2.clientY, 2) + Math.pow(e1.clientX - e2.clientX, 2) > SHAKE_DISTANCE
+  );
+}
+
+/**
+ * 判断是否为无效坐标
+ */
+export function isInvalidPoint(e: any, last: any): boolean {
+  return (
+    e.clientX === 0 &&
+    e.clientY === 0 &&
+    last &&
+    (Math.abs(last.clientX - e.clientX) > 5 || Math.abs(last.clientY - e.clientY) > 5)
+  );
+}
+
+/**
+ * 判断两个事件坐标是否相同
+ */
+export function isSameAs(e1: MouseEvent | DragEvent, e2: MouseEvent | DragEvent): boolean {
+  return e1.clientY === e2.clientY && e1.clientX === e2.clientX;
+}
+
+/**
+ * 设置抖动标记
+ */
+export function setShaken(e: any) {
+  e.shaken = true;
+}
+
+/**
+ * 获取源感应器
+ */
+function getSourceSensor(dragObject: IPublicModelDragObject): ISimulatorHost | null {
+  if (!isDragNodeObject(dragObject)) {
+    return null;
+  }
+  return dragObject.nodes[0]?.document?.simulator || null;
+}
+
+/**
+ * 判断是否为拖拽事件
+ */
+function isDragEvent(e: any): e is DragEvent {
+  return e?.type?.startsWith('drag');
+}
+
+/**
+ * Dragon 公共接口扩展
+ */
+export interface IDragon extends IPublicModelDragon<
+  INode,
+  ILocateEvent
+> {
+  emitter: any;
+}
+
+/**
+ * Dragon 拖拽引擎 - Vue3 版本
+ *
+ * 核心职责：
+ * 1. 管理拖拽生命周期（开始、进行中、结束、取消）
+ * 2. 分发拖拽相关事件（dragstart、drag、dragend）
+ * 3. 管理投放感应器（Sensor）
+ * 4. 控制拖拽状态（拖拽态、复制态）
+ * 5. 处理跨 iframe 通信
+ * 6. 坐标系统转换
+ *
+ * @example
+ * ```ts
+ * const dragon = new Dragon(designer);
+ *
+ * // 监听拖拽事件
+ * dragon.onDragstart((e) => {
+ *   console.log('拖拽开始', e.dragObject);
+ * });
+ *
+ * // 启动拖拽
+ * dragon.boost(dragObject, mouseEvent);
+ *
+ * // 绑定 DOM 元素
+ * dragon.from(element, (e) => {
+ *   return { type: 'nodeData', data: [...] };
+ * });
+ * ```
+ */
+export class Dragon implements IDragon {
+  /**
+   * 注册的感应器列表
+   */
+  private sensors: IPublicModelSensor[] = [];
 
   /**
-   * 开始拖拽
-   * 
-   * @param data - 拖拽数据
-   * @param target - 拖拽目标
+   * 是否禁用了节点实例的 pointer-events（用于 RGL）
    */
-  startDrag(data: any, target?: any): void {
-    this.isDragging.value = true;
-    this.dragData = data;
-    this.dragTarget = target;
-    this.dropTarget = null;
-    
-    const event: DragonEvent = {
-      type: 'start',
-      data,
-      target,
-    };
-    this.emit('start', event);
+  private nodeInstPointerEvents = false;
+
+  /**
+   * 唯一标识
+   */
+  key = Math.random();
+
+  /**
+   * 当前激活的感应器
+   */
+  private activeSensor: Ref<IPublicModelSensor | undefined> = ref(undefined);
+
+  /**
+   * 是否正在拖拽（已触发 shaken 检测）
+   */
+  private dragging: Ref<boolean> = ref(false);
+
+  /**
+   * 是否可投放（RGL 专用）
+   */
+  private canDrop: Ref<boolean> = ref(false);
+
+  /**
+   * 拖拽对象
+   */
+  private dragObject: Ref<IPublicModelDragObject | null> = ref(null);
+
+  /**
+   * 事件总线（使用 Vue3 utils 的 EventBus）
+   */
+  emitter: any;
+
+  /**
+   * 视图名称
+   */
+  viewName: string | undefined;
+
+  constructor(readonly designer: IDesigner) {
+    // 使用 @vue3-lowcode/utils 的事件总线
+    const { useEventBus } = require('@vue3-lowcode/utils');
+    this.emitter = useEventBus('Dragon');
+    this.viewName = designer.viewName;
   }
 
   /**
-   * 拖拽中
-   * 
-   * @param position - 拖拽位置
+   * 获取当前激活的感应器
    */
-  onDrag(position: { x: number; y: number }): void {
-    if (!this.isDragging.value) {
-      return;
-    }
-    
-    this.dragPosition.x = position.x;
-    this.dragPosition.y = position.y;
-    
-    const event: DragonEvent = {
-      type: 'drag',
-      data: this.dragData,
-      target: this.dragTarget,
-      position,
-    };
-    this.emit('drag', event);
+  get _activeSensor(): IPublicModelSensor | undefined {
+    return this.activeSensor.value;
   }
 
   /**
-   * 结束拖拽
-   * 
-   * @param dropTarget - 放置目标
+   * 获取拖拽状态
    */
-  endDrag(dropTarget?: DropTarget): void {
-    if (!this.isDragging.value) {
-      return;
-    }
-    
-    this.dropTarget = dropTarget || null;
-    this.isDragging.value = false;
-    
-    const event: DragonEvent = {
-      type: 'end',
-      data: this.dragData,
-      target: this.dragTarget,
-      position: this.dragPosition,
-    };
-    this.emit('end', event);
-    
-    // 重置拖拽状态
-    this.dragData = null;
-    this.dragTarget = null;
+  get isDragging(): boolean {
+    return this.dragging.value;
   }
 
   /**
-   * 取消拖拽
+   * 快速监听容器元素的拖拽行为
+   *
+   * @param shell - 容器元素
+   * @param boost - 从鼠标事件获取拖拽对象的函数
+   * @returns 清理函数
+   *
+   * @example
+   * ```ts
+   * dragon.from(document.querySelector('.component-panel'), (e) => {
+   *   const componentMeta = getComponentMeta(e.target);
+   *   return {
+   *     type: IPublicEnumDragObjectType.NodeData,
+   *     data: [{ componentName: componentMeta.componentName }]
+   *   };
+   * });
+   * ```
    */
-  cancelDrag(): void {
-    if (!this.isDragging.value) {
-      return;
-    }
-    
-    this.isDragging.value = false;
-    
-    const event: DragonEvent = {
-      type: 'cancel',
-      data: this.dragData,
-      target: this.dragTarget,
-    };
-    this.emit('cancel', event);
-    
-    // 重置拖拽状态
-    this.dragData = null;
-    this.dragTarget = null;
-    this.dropTarget = null;
-  }
-
-  /**
-   * 检测是否正在拖拽
-   * 
-   * @returns 是否正在拖拽
-   */
-  isDragActive(): boolean {
-    return this.isDragging.value;
-  }
-
-  /**
-   * 获取拖拽数据
-   * 
-   * @returns 拖拽数据
-   */
-  getDragData(): any {
-    return this.dragData;
-  }
-
-  /**
-   * 获取拖拽目标
-   * 
-   * @returns 拖拽目标
-   */
-  getDragTarget(): any {
-    return this.dragTarget;
-  }
-
-  /**
-   * 获取拖拽位置
-   * 
-   * @returns 拖拽位置
-   */
-  getDragPosition(): { x: number; y: number } {
-    return { x: this.dragPosition.x, y: this.dragPosition.y };
-  }
-
-  /**
-   * 获取放置目标
-   * 
-   * @returns 放置目标
-   */
-  getDropTarget(): DropTarget | null {
-    return this.dropTarget;
-  }
-
-  /**
-   * 设置放置目标
-   * 
-   * @param target - 放置目标
-   */
-  setDropTarget(target: DropTarget | null): void {
-    this.dropTarget = target;
-  }
-
-  /**
-   * 注册事件监听器
-   * 
-   * @param event - 事件类型
-   * @param listener - 监听器函数
-   */
-  on(event: string, listener: Function): void {
-    if (!this.eventListeners.has(event)) {
-      this.eventListeners.set(event, new Set());
-    }
-    this.eventListeners.get(event)!.add(listener);
-  }
-
-  /**
-   * 移除事件监听器
-   * 
-   * @param event - 事件类型
-   * @param listener - 监听器函数
-   */
-  off(event: string, listener: Function): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.delete(listener);
-      if (listeners.size === 0) {
-        this.eventListeners.delete(event);
+  from(shell: Element, boost: (e: MouseEvent) => IPublicModelDragObject | null) {
+    const mousedown = (e: MouseEvent) => {
+      // 忽略右键
+      if (e.which === 3 || e.button === 2) {
+        return;
       }
-    }
+
+      // 获取要拖拽的对象
+      const dragObject = boost(e);
+      if (!dragObject) {
+        return;
+      }
+
+      this.boost(dragObject, e);
+    };
+
+    shell.addEventListener('mousedown', mousedown as any);
+
+    // 返回清理函数
+    return () => {
+      shell.removeEventListener('mousedown', mousedown as any);
+    };
   }
 
   /**
-   * 触发事件
-   * 
-   * @param event - 事件类型
-   * @param data - 事件数据
+   * 启动拖拽
+   *
+   * @param dragObject - 拖拽对象
+   * @param boostEvent - 拖拽初始时的事件
+   * @param fromRglNode - 是否来自 RGL 节点
+   *
+   * @example
+   * ```ts
+   * const node = document.getNode(nodeId);
+   * dragon.boost(
+   *   { type: IPublicEnumDragObjectType.Node, nodes: [node] },
+   *   mouseEvent
+   * );
+   * ```
    */
-  private emit(event: string, data: any): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.forEach(listener => {
-        try {
-          listener(data);
-        } catch (error) {
-          console.error(`Error in dragon event listener for "${event}":`, error);
+  boost(
+    dragObject: IPublicModelDragObject,
+    boostEvent: MouseEvent | DragEvent,
+    fromRglNode?: INode | IPublicModelNode
+  ) {
+    const { designer } = this;
+    const masterSensors = this.getMasterSensors();
+    const handleEvents = makeEventsHandler(boostEvent, masterSensors);
+    const newBie = !isDragNodeObject(dragObject);
+    const forceCopyState =
+      isDragNodeObject(dragObject) &&
+      dragObject.nodes.some(
+        (node: Node | IPublicModelNode) =>
+          (typeof node.isSlot === 'function' ? node.isSlot() : node.isSlot)
+      );
+    const isBoostFromDragAPI = isDragEvent(boostEvent);
+    let lastSensor: IPublicModelSensor | undefined;
+
+    this.dragging.value = false;
+    this.dragObject.value = dragObject;
+
+    /**
+     * 获取 RGL 信息
+     */
+    const getRGL = (e: MouseEvent | DragEvent) => {
+      const locateEvent = createLocateEvent(e);
+      const sensor = chooseSensor(locateEvent);
+      if (!sensor || !sensor.getNodeInstanceFromElement) return {};
+      const nodeInst = sensor.getNodeInstanceFromElement(e.target as Element);
+      return nodeInst?.node?.getRGL?.() || {};
+    };
+
+    /**
+     * ESC 键取消拖拽
+     */
+    const checkesc = (e: KeyboardEvent) => {
+      if (e.keyCode === 27) {
+        designer.clearLocation();
+        over();
+      }
+    };
+
+    let copy = false;
+
+    /**
+     * 检查复制状态（Ctrl/Option 键）
+     */
+    const checkcopy = (e: MouseEvent | DragEvent | KeyboardEvent) => {
+      if (isDragEvent(e) && e.dataTransfer) {
+        if (newBie || forceCopyState) {
+          e.dataTransfer.dropEffect = 'copy';
         }
+        return;
+      }
+      if (newBie) {
+        return;
+      }
+
+      if (e.altKey || e.ctrlKey) {
+        copy = true;
+        this.setCopyState(true);
+        if (isDragEvent(e) && e.dataTransfer) {
+          e.dataTransfer.dropEffect = 'copy';
+        }
+      } else {
+        copy = false;
+        if (!forceCopyState) {
+          this.setCopyState(false);
+          if (isDragEvent(e) && e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move';
+          }
+        }
+      }
+    };
+
+    let lastArrive: any;
+
+    /**
+     * 拖拽进行中
+     */
+    const drag = (e: MouseEvent | DragEvent) => {
+      checkcopy(e);
+
+      if (isInvalidPoint(e, lastArrive)) return;
+
+      if (lastArrive && isSameAs(e, lastArrive)) {
+        lastArrive = e;
+        return;
+      }
+      lastArrive = e;
+
+      const { isRGL, rglNode } = getRGL(e);
+      const locateEvent = createLocateEvent(e);
+      const sensor = chooseSensor(locateEvent);
+
+      if (isRGL) {
+        // RGL 特殊处理
+        const nodes = (dragObject as any).nodes;
+        if (nodes && nodes[0]) {
+          const nodeInst = nodes[0].getDOMNode?.();
+          if (nodeInst && nodeInst.style) {
+            this.nodeInstPointerEvents = true;
+            nodeInst.style.pointerEvents = 'none';
+          }
+        }
+
+        this.emitter.emit('rgl.sleeping', false);
+        if (fromRglNode && fromRglNode.id === rglNode?.id) {
+          designer.clearLocation();
+          this.clearState();
+          this.emitter.emit('drag', locateEvent);
+          return;
+        }
+
+        this.canDrop.value = !!sensor?.locate(locateEvent);
+        if (this.canDrop.value) {
+          this.emitter.emit('rgl.add.placeholder', {
+            rglNode,
+            fromRglNode,
+            node: locateEvent.dragObject?.nodes?.[0],
+            event: e,
+          });
+          designer.clearLocation();
+          this.clearState();
+          this.emitter.emit('drag', locateEvent);
+          return;
+        }
+      } else {
+        this.canDrop.value = false;
+        this.emitter.emit('rgl.remove.placeholder');
+        this.emitter.emit('rgl.sleeping', true);
+      }
+
+      if (sensor) {
+        sensor.fixEvent(locateEvent);
+        sensor.locate(locateEvent);
+      } else {
+        designer.clearLocation();
+      }
+      this.emitter.emit('drag', locateEvent);
+    };
+
+    /**
+     * 拖拽开始
+     */
+    const dragstart = () => {
+      this.dragging.value = true;
+      setShaken(boostEvent);
+      const locateEvent = createLocateEvent(boostEvent);
+      if (newBie || forceCopyState) {
+        this.setCopyState(true);
+      } else {
+        chooseSensor(locateEvent);
+      }
+      this.setDraggingState(true);
+
+      // 注册 ESC 取消监听
+      if (!isBoostFromDragAPI) {
+        handleEvents((doc: Document) => {
+          doc.addEventListener('keydown', checkesc, false);
+        });
+      }
+
+      this.emitter.emit('dragstart', locateEvent);
+    };
+
+    /**
+     * 鼠标移动
+     */
+    const move = (e: MouseEvent | DragEvent) => {
+      if (isBoostFromDragAPI) {
+        e.preventDefault();
+      }
+
+      if (this.dragging.value) {
+        // 正在拖拽
+        drag(e);
+        return;
+      }
+
+      // 首次移动，检查是否抖动
+      if (isShaken(boostEvent, e)) {
+        dragstart();
+        drag(e);
+      }
+    };
+
+    let didDrop = true;
+
+    /**
+     * Drop 事件
+     */
+    const drop = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      didDrop = true;
+    };
+
+    /**
+     * 拖拽结束
+     */
+    const over = (e?: any) => {
+      // 恢复 pointer-events
+      if (this.nodeInstPointerEvents) {
+        const nodes = (dragObject as any).nodes;
+        if (nodes && nodes[0]) {
+          const nodeInst = nodes[0].getDOMNode?.();
+          if (nodeInst && nodeInst.style) {
+            nodeInst.style.pointerEvents = '';
+          }
+          this.nodeInstPointerEvents = false;
+        }
+      }
+
+      // RGL drop 事件
+      if (e) {
+        const { isRGL, rglNode } = getRGL(e);
+        if (isRGL && this.canDrop.value && this.dragging.value) {
+          const nodes = (dragObject as any).nodes;
+          if (nodes && nodes[0]) {
+            const tarNode = nodes[0];
+            if (rglNode?.id !== tarNode.id) {
+              this.emitter.emit('rgl.drop', {
+                rglNode,
+                node: tarNode,
+              });
+              const selection = designer.project.currentDocument?.selection;
+              selection?.select(tarNode.id);
+            }
+          }
+        }
+      }
+
+      // 移除 RGL 占位符
+      this.emitter.emit('rgl.remove.placeholder');
+
+      if (e && isDragEvent(e)) {
+        e.preventDefault();
+      }
+
+      if (lastSensor) {
+        lastSensor.deactiveSensor();
+      }
+
+      if (isBoostFromDragAPI) {
+        if (!didDrop) {
+          designer.clearLocation();
+        }
+      } else {
+        this.setNativeSelection(true);
+      }
+
+      this.clearState();
+
+      let exception;
+      if (this.dragging.value) {
+        this.dragging.value = false;
+        try {
+          this.emitter.emit('dragend', { dragObject, copy });
+        } catch (ex) {
+          exception = ex;
+        }
+      }
+      designer.clearLocation();
+
+      handleEvents((doc: Document) => {
+        if (isBoostFromDragAPI) {
+          doc.removeEventListener('dragover', move, true);
+          doc.removeEventListener('dragend', over, true);
+          doc.removeEventListener('drop', drop, true);
+        } else {
+          doc.removeEventListener('mousemove', move, true);
+          doc.removeEventListener('mouseup', over, true);
+        }
+        doc.removeEventListener('mousedown', over, true);
+        doc.removeEventListener('keydown', checkesc, false);
+        doc.removeEventListener('keydown', checkcopy, false);
+        doc.removeEventListener('keyup', checkcopy, false);
+      });
+
+      if (exception) {
+        throw exception;
+      }
+    };
+
+    /**
+     * 创建定位事件
+     */
+    const createLocateEvent = (e: MouseEvent | DragEvent): ILocateEvent => {
+      const evt: any = {
+        type: 'LocateEvent',
+        dragObject,
+        target: e.target,
+        originalEvent: e,
+      };
+
+      const sourceDocument = e.view?.document;
+
+      // 事件来自当前文档
+      if (!sourceDocument || sourceDocument === document) {
+        evt.globalX = e.clientX;
+        evt.globalY = e.clientY;
+      } else {
+        // 事件来自 simulator iframe
+        let srcSim: ISimulatorHost | undefined;
+        const lastSim = lastSensor && isSimulatorHost(lastSensor) ? lastSensor : null;
+
+        if (lastSim && lastSim.contentDocument === sourceDocument) {
+          srcSim = lastSim;
+        } else {
+          srcSim = masterSensors.find((sim) => sim.contentDocument === sourceDocument);
+          if (!srcSim && lastSim) {
+            srcSim = lastSim;
+          }
+        }
+
+        if (srcSim) {
+          // 通过 simulator 转换坐标
+          const g = srcSim.viewport.toGlobalPoint(e);
+          evt.globalX = g.clientX;
+          evt.globalY = g.clientY;
+          evt.canvasX = e.clientX;
+          evt.canvasY = e.clientY;
+          evt.sensor = srcSim;
+        } else {
+          // 理论上不会走到这里，确保 TS 类型检查通过
+          evt.globalX = e.clientX;
+          evt.globalY = e.clientY;
+        }
+      }
+
+      return evt;
+    };
+
+    /**
+     * 选择感应器
+     */
+    const sourceSensor = getSourceSensor(dragObject);
+    const chooseSensor = (e: ILocateEvent) => {
+      // 合并所有可用的感应器
+      const sensors: IPublicModelSensor[] = this.sensors.concat(
+        masterSensors as IPublicModelSensor[]
+      );
+
+      let sensor =
+        e.sensor && e.sensor.isEnter(e)
+          ? e.sensor
+          : sensors.find((s) => s.sensorAvailable && s.isEnter(e));
+
+      if (!sensor) {
+        if (lastSensor) {
+          sensor = lastSensor;
+        } else if (e.sensor) {
+          sensor = e.sensor;
+        } else if (sourceSensor) {
+          sensor = sourceSensor;
+        }
+      }
+
+      if (sensor !== lastSensor) {
+        if (lastSensor) {
+          lastSensor.deactiveSensor();
+        }
+        lastSensor = sensor;
+      }
+
+      if (sensor) {
+        e.sensor = sensor;
+        sensor.fixEvent(e);
+      }
+
+      this.activeSensor.value = sensor;
+      return sensor;
+    };
+
+    // 如果是原生拖拽 API
+    if (isDragEvent(boostEvent)) {
+      const { dataTransfer } = boostEvent;
+
+      if (dataTransfer) {
+        dataTransfer.effectAllowed = 'all';
+
+        try {
+          dataTransfer.setData('application/json', '{}');
+        } catch (ex) {
+          // 忽略
+        }
+      }
+
+      dragstart();
+    } else {
+      this.setNativeSelection(false);
+    }
+
+    // 注册事件监听
+    handleEvents((doc: Document) => {
+      if (isBoostFromDragAPI) {
+        doc.addEventListener('dragover', move, true);
+        didDrop = false;
+        doc.addEventListener('drop', drop, true);
+        doc.addEventListener('dragend', over, true);
+      } else {
+        doc.addEventListener('mousemove', move, true);
+        doc.addEventListener('mouseup', over, true);
+      }
+      doc.addEventListener('mousedown', over, true);
+    });
+
+    // 注册复制态快捷键
+    if (!newBie && !isBoostFromDragAPI) {
+      handleEvents((doc: Document) => {
+        doc.addEventListener('keydown', checkcopy, false);
+        doc.addEventListener('keyup', checkcopy, false);
       });
     }
   }
 
   /**
-   * 清除所有事件监听器
+   * 获取主感应器列表（来自 Simulator）
    */
-  clearListeners(): void {
-    this.eventListeners.clear();
+  private getMasterSensors(): ISimulatorHost[] {
+    return Array.from(
+      new Set(
+        this.designer.project.documents
+          .map((doc) => {
+            if (doc.active && doc.simulator?.sensorAvailable) {
+              return doc.simulator;
+            }
+            return null;
+          })
+          .filter(Boolean) as any
+      )
+    );
   }
 
   /**
-   * 计算拖拽位置
-   * 
-   * @param target - 目标节点
-   * @param position - 鼠标位置
-   * @returns 拖拽位置
+   * 获取所有 Simulator
    */
-  calculateDropPosition(target: any, position: { x: number; y: number }): DropTarget | null {
-    // 这里应该实现实际的拖拽位置计算逻辑
-    // 包括判断是在目标节点的前面、后面还是内部
-    
-    // 简化实现,返回默认值
-    return {
-      node: target,
-      position: 'inside',
-      index: 0,
+  private getSimulators() {
+    return new Set(this.designer.project.documents.map((doc) => doc.simulator));
+  }
+
+  // #region ======== 拖拽辅助方法 ============
+
+  /**
+   * 设置原生选择状态
+   */
+  private setNativeSelection(enableFlag: boolean) {
+    setNativeSelection(enableFlag);
+    this.getSimulators().forEach((sim) => {
+      sim?.setNativeSelection?.(enableFlag);
+    });
+  }
+
+  /**
+   * 设置拖拽态
+   */
+  private setDraggingState(state: boolean) {
+    cursor.setDragging(state);
+    this.getSimulators().forEach((sim) => {
+      sim?.setDraggingState?.(state);
+    });
+  }
+
+  /**
+   * 设置拷贝态
+   */
+  private setCopyState(state: boolean) {
+    cursor.setCopy(state);
+    this.getSimulators().forEach((sim) => {
+      sim?.setCopyState?.(state);
+    });
+  }
+
+  /**
+   * 清除所有状态
+   */
+  private clearState() {
+    cursor.release();
+    this.getSimulators().forEach((sim) => {
+      sim?.clearState?.();
+    });
+  }
+
+  // #endregion
+
+  /**
+   * 添加投放感应器
+   */
+  addSensor(sensor: any) {
+    this.sensors.push(sensor);
+  }
+
+  /**
+   * 移除投放感应器
+   */
+  removeSensor(sensor: any) {
+    const i = this.sensors.indexOf(sensor);
+    if (i > -1) {
+      this.sensors.splice(i, 1);
+    }
+  }
+
+  /**
+   * 监听拖拽开始事件
+   */
+  onDragstart(func: (e: ILocateEvent) => any): IPublicTypeDisposable {
+    this.emitter.on('dragstart', func);
+    return () => {
+      this.emitter.removeListener('dragstart', func);
     };
   }
 
   /**
-   * 验证是否可以放置
-   * 
-   * @param dragData - 拖拽数据
-   * @param dropTarget - 放置目标
-   * @returns 是否可以放置
+   * 监听拖拽进行事件
    */
-  canDrop(dragData: any, dropTarget: DropTarget): boolean {
-    // 这里应该实现实际的验证逻辑
-    // 包括检查目标节点是否可以接收拖拽的节点
-    
-    // 简化实现,返回 true
-    return true;
+  onDrag(func: (e: ILocateEvent) => any): IPublicTypeDisposable {
+    this.emitter.on('drag', func);
+    return () => {
+      this.emitter.removeListener('drag', func);
+    };
+  }
+
+  /**
+   * 监听拖拽结束事件
+   */
+  onDragend(func: (x: { dragObject: IPublicModelDragObject; copy: boolean }) => any): IPublicTypeDisposable {
+    this.emitter.on('dragend', func);
+    return () => {
+      this.emitter.removeListener('dragend', func);
+    };
   }
 }

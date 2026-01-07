@@ -1,116 +1,95 @@
 /**
  * Selection
  * 
- * 选区类,实现节点选择功能
+ * 选区类,管理选中的节点
  * 
  * @public
  */
-import { ref, reactive, computed } from 'vue';
-
-export interface SelectionEvent {
-  type: 'select' | 'deselect' | 'clear';
-  nodes: any[];
-}
+import { ref, computed } from 'vue';
+import type { Ref } from 'vue';
+import type { INode } from '@vue3-lowcode/types';
+import { useEventBus } from '@vue3-lowcode/utils';
 
 export class Selection {
-  private selectedNodes = reactive<Set<any>>(new Set());
-  private eventListeners: Map<string, Set<Function>> = new Map();
+  private selectedNodes: Map<string, INode>;
+  private selectedNodesRef: Ref<INode[]>;
+  private eventBus: ReturnType<typeof useEventBus>;
 
-  /**
-   * 选择节点
-   * 
-   * @param nodes - 要选择的节点
-   * @param append - 是否追加选择
-   */
-  select(nodes: any | any[], append: boolean = false): void {
-    const nodeArray = Array.isArray(nodes) ? nodes : [nodes];
-    
-    if (!append) {
-      this.clear();
-    }
-    
-    nodeArray.forEach(node => {
-      if (node) {
-        this.selectedNodes.add(node);
-      }
-    });
-    
-    const event: SelectionEvent = {
-      type: 'select',
-      nodes: this.getSelected(),
-    };
-    this.emit('select', event);
+  constructor() {
+    this.selectedNodes = new Map();
+    this.selectedNodesRef = computed(() => Array.from(this.selectedNodes.values())) as Ref<INode[]>;
+    this.eventBus = useEventBus();
   }
 
   /**
-   * 取消选择节点
+   * 选中节点
    * 
-   * @param nodes - 要取消选择的节点
+   * @param nodes - 节点或节点数组
    */
-  deselect(nodes: any | any[]): void {
-    const nodeArray = Array.isArray(nodes) ? nodes : [nodes];
-    
-    nodeArray.forEach(node => {
-      this.selectedNodes.delete(node);
+  select(nodes: INode | INode[]): void {
+    const nodeList = Array.isArray(nodes) ? nodes : [nodes];
+    nodeList.forEach(node => {
+      this.selectedNodes.set(node.id, node);
     });
-    
-    const event: SelectionEvent = {
-      type: 'deselect',
-      nodes: this.getSelected(),
-    };
-    this.emit('deselect', event);
+    this.selectedNodesRef.value = Array.from(this.selectedNodes.values());
+    this.eventBus.emit('selection:change', { selected: this.getSelected() });
   }
 
   /**
-   * 清除所有选择
+   * 取消选中
+   * 
+   * @param nodes - 节点或节点数组
+   */
+  deselect(nodes: INode | INode[]): void {
+    const nodeList = Array.isArray(nodes) ? nodes : [nodes];
+    nodeList.forEach(node => {
+      this.selectedNodes.delete(node.id);
+    });
+    this.selectedNodesRef.value = Array.from(this.selectedNodes.values());
+    this.eventBus.emit('selection:change', { selected: this.getSelected() });
+  }
+
+  /**
+   * 清空选区
    */
   clear(): void {
-    if (this.selectedNodes.size === 0) {
-      return;
-    }
-    
-    const nodes = Array.from(this.selectedNodes);
     this.selectedNodes.clear();
-    
-    const event: SelectionEvent = {
-      type: 'clear',
-      nodes,
-    };
-    this.emit('clear', event);
+    this.selectedNodesRef.value = [];
+    this.eventBus.emit('selection:clear', {});
   }
 
   /**
    * 获取选中的节点
    * 
-   * @returns 选中的节点数组
+   * @returns 选中的节点列表
    */
-  getSelected(): any[] {
-    return Array.from(this.selectedNodes);
+  getSelected(): INode[] {
+    return Array.from(this.selectedNodes.values());
   }
 
   /**
-   * 检查是否有选中的节点
+   * 是否有选中
    * 
-   * @returns 是否有选中的节点
+   * @returns 是否有选中
    */
   hasSelection(): boolean {
     return this.selectedNodes.size > 0;
   }
 
   /**
-   * 检查节点是否被选中
+   * 判断节点是否被选中
    * 
-   * @param node - 要检查的节点
+   * @param node - 节点
    * @returns 是否被选中
    */
-  isSelected(node: any): boolean {
-    return this.selectedNodes.has(node);
+  isSelected(node: INode): boolean {
+    return this.selectedNodes.has(node.id);
   }
 
   /**
-   * 获取选中的节点数量
+   * 获取选中数量
    * 
-   * @returns 选中的节点数量
+   * @returns 选中数量
    */
   size(): number {
     return this.selectedNodes.size;
@@ -121,9 +100,9 @@ export class Selection {
    * 
    * @returns 第一个选中的节点
    */
-  getFirst(): any | null {
-    const nodes = this.getSelected();
-    return nodes.length > 0 ? nodes[0] : null;
+  getFirst(): INode | undefined {
+    const firstKey = this.selectedNodes.keys().next().value;
+    return firstKey ? this.selectedNodes.get(firstKey) : undefined;
   }
 
   /**
@@ -131,104 +110,68 @@ export class Selection {
    * 
    * @returns 最后一个选中的节点
    */
-  getLast(): any | null {
-    const nodes = this.getSelected();
-    return nodes.length > 0 ? nodes[nodes.length - 1] : null;
+  getLast(): INode | undefined {
+    const keys = Array.from(this.selectedNodes.keys());
+    const lastKey = keys[keys.length - 1];
+    return lastKey ? this.selectedNodes.get(lastKey) : undefined;
   }
 
   /**
-   * 选择所有节点
+   * 全选
    * 
-   * @param nodes - 所有节点
+   * @param nodes - 节点列表
    */
-  selectAll(nodes: any[]): void {
+  selectAll(nodes: INode[]): void {
     this.clear();
     nodes.forEach(node => {
-      this.selectedNodes.add(node);
+      this.selectedNodes.set(node.id, node);
     });
-    
-    const event: SelectionEvent = {
-      type: 'select',
-      nodes: this.getSelected(),
-    };
-    this.emit('select', event);
+    this.selectedNodesRef.value = Array.from(this.selectedNodes.values());
+    this.eventBus.emit('selection:change', { selected: this.getSelected() });
   }
 
   /**
    * 反选
    * 
-   * @param nodes - 所有节点
+   * @param nodes - 节点列表
    */
-  invertSelection(nodes: any[]): void {
-    const currentSelected = new Set(this.selectedNodes);
-    this.clear();
-    
+  invertSelection(nodes: INode[]): void {
     nodes.forEach(node => {
-      if (!currentSelected.has(node)) {
-        this.selectedNodes.add(node);
+      if (this.selectedNodes.has(node.id)) {
+        this.selectedNodes.delete(node.id);
+      } else {
+        this.selectedNodes.set(node.id, node);
       }
     });
-    
-    const event: SelectionEvent = {
-      type: 'select',
-      nodes: this.getSelected(),
-    };
-    this.emit('select', event);
+    this.selectedNodesRef.value = Array.from(this.selectedNodes.values());
+    this.eventBus.emit('selection:change', { selected: this.getSelected() });
   }
 
   /**
    * 注册事件监听器
    * 
-   * @param event - 事件类型
+   * @param event - 事件名称
    * @param listener - 监听器函数
    */
-  on(event: string, listener: Function): void {
-    if (!this.eventListeners.has(event)) {
-      this.eventListeners.set(event, new Set());
-    }
-    this.eventListeners.get(event)!.add(listener);
+  on(event: string, listener: (...args: any[]) => void): void {
+    this.eventBus.on(event, listener);
   }
 
   /**
    * 移除事件监听器
    * 
-   * @param event - 事件类型
+   * @param event - 事件名称
    * @param listener - 监听器函数
    */
-  off(event: string, listener: Function): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.delete(listener);
-      if (listeners.size === 0) {
-        this.eventListeners.delete(event);
-      }
-    }
+  off(event: string, listener: (...args: any[]) => void): void {
+    this.eventBus.off(event, listener);
   }
 
   /**
-   * 触发事件
-   * 
-   * @param event - 事件类型
-   * @param data - 事件数据
-   */
-  private emit(event: string, data: any): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.forEach(listener => {
-        try {
-          listener(data);
-        } catch (error) {
-          console.error(`Error in selection event listener for "${event}":`, error);
-        }
-      });
-    }
-  }
-
-  /**
-   * 清除所有事件监听器
+   * 清除所有监听器
    */
   clearListeners(): void {
-    this.eventListeners.clear();
+    this.eventBus.clear();
   }
 
   /**
@@ -238,8 +181,7 @@ export class Selection {
    */
   export(): any {
     return {
-      selectedNodes: this.getSelected(),
-      size: this.size(),
+      selected: this.getSelected().map(node => node.id),
     };
   }
 
@@ -248,22 +190,8 @@ export class Selection {
    * 
    * @param state - 选区状态
    */
-  import(state: any): void {
+  async import(state: any): Promise<void> {
     this.clear();
-    if (state.selectedNodes && Array.isArray(state.selectedNodes)) {
-      state.selectedNodes.forEach((node: any) => {
-        if (node) {
-          this.selectedNodes.add(node);
-        }
-      });
-    }
-    
-    if (this.hasSelection()) {
-      const event: SelectionEvent = {
-        type: 'select',
-        nodes: this.getSelected(),
-      };
-      this.emit('select', event);
-    }
+    this.eventBus.emit('selection:import', { state });
   }
 }

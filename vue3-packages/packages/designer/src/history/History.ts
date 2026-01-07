@@ -1,107 +1,75 @@
 /**
  * History
  * 
- * 历史记录类,实现撤销/重做功能
+ * 历史记录类,管理撤销/重做功能
  * 
  * @public
  */
 import { ref, computed } from 'vue';
+import type { Ref } from 'vue';
+import { useEventBus } from '@vue3-lowcode/utils';
 
 export interface HistoryRecord {
+  type: string;
   data: any;
   timestamp: number;
 }
 
-export interface HistoryEvent {
-  type: 'push' | 'undo' | 'redo' | 'clear';
-  record?: HistoryRecord;
-  index?: number;
-}
-
 export class History {
-  private history: HistoryRecord[] = [];
-  private currentIndex = ref(-1);
-  private maxSize = 50; // 最大历史记录数量
-  private eventListeners: Map<string, Set<Function>> = new Map();
+  private records: HistoryRecord[];
+  private currentIndex: number;
+  private recordsRef: Ref<HistoryRecord[]>;
+  private eventBus: ReturnType<typeof useEventBus>;
+
+  constructor() {
+    this.records = [];
+    this.currentIndex = -1;
+    this.recordsRef = ref<HistoryRecord[]>(this.records);
+    this.eventBus = useEventBus();
+  }
 
   /**
-   * 推入历史记录
+   * 添加历史记录
    * 
-   * @param data - 历史数据
+   * @param record - 历史记录
    */
-  push(data: any): void {
-    // 如果当前不在历史记录的末尾,删除当前位置之后的所有记录
-    if (this.currentIndex.value < this.history.length - 1) {
-      this.history = this.history.slice(0, this.currentIndex.value + 1);
-    }
+  push(record: HistoryRecord): void {
+    // 删除当前位置之后的所有记录
+    this.records = this.records.slice(0, this.currentIndex + 1);
     
     // 添加新记录
-    const record: HistoryRecord = {
-      data,
+    this.records.push({
+      ...record,
       timestamp: Date.now(),
-    };
+    });
     
-    this.history.push(record);
-    
-    // 限制历史记录数量
-    if (this.history.length > this.maxSize) {
-      this.history.shift();
-    } else {
-      this.currentIndex.value++;
-    }
-    
-    const event: HistoryEvent = {
-      type: 'push',
-      record,
-      index: this.currentIndex.value,
-    };
-    this.emit('push', event);
+    this.currentIndex = this.records.length - 1;
+    this.recordsRef.value = [...this.records];
+    this.eventBus.emit('history:push', { record });
   }
 
   /**
    * 撤销
-   * 
-   * @returns 撤销的数据
    */
-  undo(): any | null {
-    if (!this.canUndo()) {
-      return null;
+  undo(): void {
+    if (this.canUndo()) {
+      this.currentIndex--;
+      const record = this.records[this.currentIndex];
+      this.recordsRef.value = [...this.records];
+      this.eventBus.emit('history:undo', { record });
     }
-    
-    const record = this.history[this.currentIndex.value];
-    this.currentIndex.value--;
-    
-    const event: HistoryEvent = {
-      type: 'undo',
-      record,
-      index: this.currentIndex.value,
-    };
-    this.emit('undo', event);
-    
-    return record.data;
   }
 
   /**
    * 重做
-   * 
-   * @returns 重做的数据
    */
-  redo(): any | null {
-    if (!this.canRedo()) {
-      return null;
+  redo(): void {
+    if (this.canRedo()) {
+      this.currentIndex++;
+      const record = this.records[this.currentIndex];
+      this.recordsRef.value = [...this.records];
+      this.eventBus.emit('history:redo', { record });
     }
-    
-    this.currentIndex.value++;
-    const record = this.history[this.currentIndex.value];
-    
-    const event: HistoryEvent = {
-      type: 'redo',
-      record,
-      index: this.currentIndex.value,
-    };
-    this.emit('redo', event);
-    
-    return record.data;
   }
 
   /**
@@ -110,7 +78,7 @@ export class History {
    * @returns 是否可以撤销
    */
   canUndo(): boolean {
-    return this.currentIndex.value > 0;
+    return this.currentIndex > 0;
   }
 
   /**
@@ -119,20 +87,17 @@ export class History {
    * @returns 是否可以重做
    */
   canRedo(): boolean {
-    return this.currentIndex.value < this.history.length - 1;
+    return this.currentIndex < this.records.length - 1;
   }
 
   /**
-   * 清除历史记录
+   * 清空历史记录
    */
   clear(): void {
-    this.history = [];
-    this.currentIndex.value = -1;
-    
-    const event: HistoryEvent = {
-      type: 'clear',
-    };
-    this.emit('clear', event);
+    this.records = [];
+    this.currentIndex = -1;
+    this.recordsRef.value = [];
+    this.eventBus.emit('history:clear', {});
   }
 
   /**
@@ -141,7 +106,7 @@ export class History {
    * @returns 当前索引
    */
   getIndex(): number {
-    return this.currentIndex.value;
+    return this.currentIndex;
   }
 
   /**
@@ -150,7 +115,7 @@ export class History {
    * @returns 历史记录数量
    */
   size(): number {
-    return this.history.length;
+    return this.records.length;
   }
 
   /**
@@ -159,7 +124,7 @@ export class History {
    * @returns 所有历史记录
    */
   getAll(): HistoryRecord[] {
-    return [...this.history];
+    return [...this.records];
   }
 
   /**
@@ -167,140 +132,85 @@ export class History {
    * 
    * @returns 当前记录
    */
-  getCurrent(): HistoryRecord | null {
-    if (this.currentIndex.value >= 0 && this.currentIndex.value < this.history.length) {
-      return this.history[this.currentIndex.value];
+  getCurrent(): HistoryRecord | undefined {
+    if (this.currentIndex >= 0 && this.currentIndex < this.records.length) {
+      return this.records[this.currentIndex];
     }
-    return null;
+    return undefined;
   }
 
   /**
-   * 获取上一个记录
+   * 获取上一条记录
    * 
-   * @returns 上一个记录
+   * @returns 上一条记录
    */
-  getPrevious(): HistoryRecord | null {
-    if (this.canUndo()) {
-      return this.history[this.currentIndex.value - 1];
+  getPrevious(): HistoryRecord | undefined {
+    if (this.currentIndex > 0) {
+      return this.records[this.currentIndex - 1];
     }
-    return null;
+    return undefined;
   }
 
   /**
-   * 获取下一个记录
+   * 获取下一条记录
    * 
-   * @returns 下一个记录
+   * @returns 下一条记录
    */
-  getNext(): HistoryRecord | null {
-    if (this.canRedo()) {
-      return this.history[this.currentIndex.value + 1];
+  getNext(): HistoryRecord | undefined {
+    if (this.currentIndex < this.records.length - 1) {
+      return this.records[this.currentIndex + 1];
     }
-    return null;
-  }
-
-  /**
-   * 设置最大历史记录数量
-   * 
-   * @param size - 最大数量
-   */
-  setMaxSize(size: number): void {
-    this.maxSize = Math.max(1, size);
-    
-    // 如果当前历史记录超过新的最大数量,裁剪历史记录
-    if (this.history.length > this.maxSize) {
-      const excess = this.history.length - this.maxSize;
-      this.history = this.history.slice(excess);
-      this.currentIndex.value = Math.max(-1, this.currentIndex.value - excess);
-    }
-  }
-
-  /**
-   * 获取最大历史记录数量
-   * 
-   * @returns 最大数量
-   */
-  getMaxSize(): number {
-    return this.maxSize;
+    return undefined;
   }
 
   /**
    * 注册事件监听器
    * 
-   * @param event - 事件类型
+   * @param event - 事件名称
    * @param listener - 监听器函数
    */
-  on(event: string, listener: Function): void {
-    if (!this.eventListeners.has(event)) {
-      this.eventListeners.set(event, new Set());
-    }
-    this.eventListeners.get(event)!.add(listener);
+  on(event: string, listener: (...args: any[]) => void): void {
+    this.eventBus.on(event, listener);
   }
 
   /**
    * 移除事件监听器
    * 
-   * @param event - 事件类型
+   * @param event - 事件名称
    * @param listener - 监听器函数
    */
-  off(event: string, listener: Function): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.delete(listener);
-      if (listeners.size === 0) {
-        this.eventListeners.delete(event);
-      }
-    }
+  off(event: string, listener: (...args: any[]) => void): void {
+    this.eventBus.off(event, listener);
   }
 
   /**
-   * 触发事件
-   * 
-   * @param event - 事件类型
-   * @param data - 事件数据
-   */
-  private emit(event: string, data: any): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.forEach(listener => {
-        try {
-          listener(data);
-        } catch (error) {
-          console.error(`Error in history event listener for "${event}":`, error);
-        }
-      });
-    }
-  }
-
-  /**
-   * 清除所有事件监听器
+   * 清除所有监听器
    */
   clearListeners(): void {
-    this.eventListeners.clear();
+    this.eventBus.clear();
   }
 
   /**
    * 导出历史记录
    * 
-   * @returns 历史记录数据
+   * @returns 历史记录
    */
   export(): any {
     return {
-      history: this.history,
-      currentIndex: this.currentIndex.value,
-      maxSize: this.maxSize,
+      records: this.records,
+      currentIndex: this.currentIndex,
     };
   }
 
   /**
    * 导入历史记录
    * 
-   * @param data - 历史记录数据
+   * @param state - 历史记录状态
    */
-  import(data: any): void {
-    if (data.history && Array.isArray(data.history)) {
-      this.history = data.history;
-      this.currentIndex.value = data.currentIndex || -1;
-      this.maxSize = data.maxSize || 50;
-    }
+  async import(state: any): Promise<void> {
+    this.records = state.records || [];
+    this.currentIndex = state.currentIndex || -1;
+    this.recordsRef.value = [...this.records];
+    this.eventBus.emit('history:import', { state });
   }
 }

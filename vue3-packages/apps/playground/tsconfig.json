@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path mapping */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@vue3-lowcode/types": ["../packages/types/src"],
+      "@vue3-lowcode/utils": ["../packages/utils/src"],
+      "@vue3-lowcode/editor-core": ["../packages/editor-core/src"],
+      "@vue3-lowcode/designer": ["../packages/designer/src"],
+      "@vue3-lowcode/renderer-core": ["../packages/renderer-core/src"],
+      "@vue3-lowcode/vue-renderer": ["../packages/vue-renderer/src"],
+      "@vue3-lowcode/vue-simulator-renderer": ["../packages/vue-simulator-renderer/src"],
+      "@vue3-lowcode/editor-skeleton": ["../packages/editor-skeleton/src"],
+      "@vue3-lowcode/workspace": ["../packages/workspace/src"],
+      "@vue3-lowcode/shell": ["../packages/shell/src"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "references": [
+    { "path": "../../packages/types" },
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/editor-core" },
+    { "path": "../../packages/designer" },
+    { "path": "../../packages/renderer-core" },
+    { "path": "../../packages/vue-renderer" },
+    { "path": "../../packages/vue-simulator-renderer" },
+    { "path": "../../packages/editor-skeleton" },
+    { "path": "../../packages/workspace" },
+    { "path": "../../packages/shell" }
+  ]
+}

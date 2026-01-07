@@ -1,136 +1,101 @@
 /**
  * BuiltinSimulatorHost
  * 
- * 模拟器宿主类,实现模拟器宿主功能
+ * 内置模拟器宿主类,管理模拟器的生命周期、配置和渲染
  * 
  * @public
  */
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
+import type { Ref } from 'vue';
+import type { IDocumentModel } from '@vue3-lowcode/types';
+import { useEventBus } from '@vue3-lowcode/utils';
 
-export interface SimulatorHostConfig {
+export interface SimulatorConfig {
   container?: HTMLElement;
-  document?: any;
-  [key: string]: any;
-}
-
-export interface SimulatorEvent {
-  type: 'init' | 'start' | 'stop' | 'dispose' | 'render' | 'error';
-  data?: any;
+  device?: 'mobile' | 'desktop' | 'tablet';
+  width?: number;
+  height?: number;
+  scale?: number;
+  locale?: string;
 }
 
 export class BuiltinSimulatorHost {
-  private isInitialized = ref(false);
-  private isStarted = ref(false);
-  private config: SimulatorHostConfig = {};
-  private container: HTMLElement | null = null;
-  private eventListeners: Map<string, Set<Function>> = new Map();
+  private documentModel: IDocumentModel | null;
+  private config: SimulatorConfig;
+  private isReadyRef: Ref<boolean>;
+  private configRef: Ref<SimulatorConfig>;
+  private eventBus: ReturnType<typeof useEventBus>;
 
-  constructor(config: SimulatorHostConfig = {}) {
-    this.config = config;
-  }
-
-  /**
-   * 初始化
-   * 
-   * @returns Promise<void>
-   */
-  async init(): Promise<void> {
-    if (this.isInitialized.value) {
-      return;
-    }
-    
-    // 初始化容器
-    if (this.config.container) {
-      this.container = this.config.container;
-    }
-    
-    // 初始化模拟器
-    await this.initSimulator();
-    
-    this.isInitialized.value = true;
-    
-    const event: SimulatorEvent = {
-      type: 'init',
-      data: { config: this.config },
+  constructor(config: SimulatorConfig = {}) {
+    this.documentModel = null;
+    this.config = {
+      device: 'desktop',
+      width: 1200,
+      height: 800,
+      scale: 1,
+      locale: 'zh-CN',
+      ...config,
     };
-    this.emit('init', event);
+    this.isReadyRef = ref(false);
+    this.configRef = ref({ ...this.config });
+    this.eventBus = useEventBus();
   }
 
   /**
-   * 启动
+   * 初始化模拟器
    * 
-   * @returns Promise<void>
+   * @param documentModel - 文档模型
+   */
+  async init(documentModel: IDocumentModel): Promise<void> {
+    this.documentModel = documentModel;
+    this.isReadyRef.value = false;
+    
+    // 监听文档变化
+    documentModel.on('document:change', this.handleDocumentChange.bind(this));
+    
+    this.isReadyRef.value = true;
+    this.eventBus.emit('simulator:ready', { config: this.config });
+  }
+
+  /**
+   * 启动模拟器
    */
   async start(): Promise<void> {
-    if (!this.isInitialized.value) {
-      await this.init();
+    if (!this.isReadyRef.value) {
+      throw new Error('Simulator not initialized');
     }
     
-    if (this.isStarted.value) {
-      return;
-    }
-    
-    // 启动模拟器
-    await this.startSimulator();
-    
-    this.isStarted.value = true;
-    
-    const event: SimulatorEvent = {
-      type: 'start',
-      data: { config: this.config },
-    };
-    this.emit('start', event);
+    this.eventBus.emit('simulator:start', { config: this.config });
   }
 
   /**
-   * 停止
-   * 
-   * @returns Promise<void>
+   * 停止模拟器
    */
   async stop(): Promise<void> {
-    if (!this.isStarted.value) {
-      return;
-    }
-    
-    // 停止模拟器
-    await this.stopSimulator();
-    
-    this.isStarted.value = false;
-    
-    const event: SimulatorEvent = {
-      type: 'stop',
-    };
-    this.emit('stop', event);
+    this.isReadyRef.value = false;
+    this.eventBus.emit('simulator:stop', {});
   }
 
   /**
-   * 销毁
-   * 
-   * @returns Promise<void>
+   * 重新渲染模拟器
    */
-  async dispose(): Promise<void> {
-    // 先停止
-    if (this.isStarted.value) {
-      await this.stop();
+  async render(): Promise<void> {
+    if (!this.isReadyRef.value) {
+      throw new Error('Simulator not initialized');
     }
     
-    // 销毁模拟器
-    await this.disposeSimulator();
-    
-    // 清除容器
-    if (this.container) {
-      this.container = null;
-    }
-    
-    // 清除事件监听器
-    this.clearListeners();
-    
-    this.isInitialized.value = false;
-    
-    const event: SimulatorEvent = {
-      type: 'dispose',
-    };
-    this.emit('dispose', event);
+    this.eventBus.emit('simulator:render', { document: this.documentModel?.getCurrentDocument() });
+  }
+
+  /**
+   * 更新配置
+   * 
+   * @param config - 配置
+   */
+  updateConfig(config: Partial<SimulatorConfig>): void {
+    this.config = { ...this.config, ...config };
+    this.configRef.value = { ...this.config };
+    this.eventBus.emit('simulator:config-change', { config: this.config });
   }
 
   /**
@@ -138,231 +103,176 @@ export class BuiltinSimulatorHost {
    * 
    * @returns 配置
    */
-  getConfig(): SimulatorHostConfig {
+  getConfig(): SimulatorConfig {
     return { ...this.config };
   }
 
   /**
-   * 设置配置
+   * 获取配置的响应式引用
    * 
-   * @param config - 配置
+   * @returns 配置的响应式引用
    */
-  setConfig(config: Partial<SimulatorHostConfig>): void {
-    this.config = { ...this.config, ...config };
+  getConfigRef(): Ref<SimulatorConfig> {
+    return this.configRef;
   }
 
   /**
-   * 获取容器
+   * 是否已准备就绪
    * 
-   * @returns 容器
-   */
-  getContainer(): HTMLElement | null {
-    return this.container;
-  }
-
-  /**
-   * 设置容器
-   * 
-   * @param container - 容器
-   */
-  setContainer(container: HTMLElement): void {
-    this.container = container;
-    this.config.container = container;
-  }
-
-  /**
-   * 是否已初始化
-   * 
-   * @returns 是否已初始化
+   * @returns 是否已准备就绪
    */
   isReady(): boolean {
-    return this.isInitialized.value;
+    return this.isReadyRef.value;
   }
 
   /**
-   * 是否已启动
+   * 获取准备就绪状态的响应式引用
    * 
-   * @returns 是否已启动
+   * @returns 准备就绪状态的响应式引用
    */
-  isActive(): boolean {
-    return this.isStarted.value;
+  getReadyRef(): Ref<boolean> {
+    return this.isReadyRef;
+  }
+
+  /**
+   * 获取文档模型
+   * 
+   * @returns 文档模型
+   */
+  getDocumentModel(): IDocumentModel | null {
+    return this.documentModel;
+  }
+
+  /**
+   * 设置设备类型
+   * 
+   * @param device - 设备类型
+   */
+  setDevice(device: 'mobile' | 'desktop' | 'tablet'): void {
+    this.config.device = device;
+    
+    // 根据设备类型设置默认尺寸
+    switch (device) {
+      case 'mobile':
+        this.config.width = 375;
+        this.config.height = 667;
+        break;
+      case 'tablet':
+        this.config.width = 768;
+        this.config.height = 1024;
+        break;
+      case 'desktop':
+      default:
+        this.config.width = 1200;
+        this.config.height = 800;
+        break;
+    }
+    
+    this.configRef.value = { ...this.config };
+    this.eventBus.emit('simulator:device-change', { device, config: this.config });
+  }
+
+  /**
+   * 设置尺寸
+   * 
+   * @param width - 宽度
+   * @param height - 高度
+   */
+  setSize(width: number, height: number): void {
+    this.config.width = width;
+    this.config.height = height;
+    this.configRef.value = { ...this.config };
+    this.eventBus.emit('simulator:size-change', { width, height });
+  }
+
+  /**
+   * 设置缩放比例
+   * 
+   * @param scale - 缩放比例
+   */
+  setScale(scale: number): void {
+    this.config.scale = scale;
+    this.configRef.value = { ...this.config };
+    this.eventBus.emit('simulator:scale-change', { scale });
+  }
+
+  /**
+   * 设置语言
+   * 
+   * @param locale - 语言
+   */
+  setLocale(locale: string): void {
+    this.config.locale = locale;
+    this.configRef.value = { ...this.config };
+    this.eventBus.emit('simulator:locale-change', { locale });
+  }
+
+  /**
+   * 处理文档变化
+   * 
+   * @param event - 事件
+   */
+  private handleDocumentChange(event: any): void {
+    this.eventBus.emit('simulator:document-change', event);
   }
 
   /**
    * 注册事件监听器
    * 
-   * @param event - 事件类型
+   * @param event - 事件名称
    * @param listener - 监听器函数
    */
-  on(event: string, listener: Function): void {
-    if (!this.eventListeners.has(event)) {
-      this.eventListeners.set(event, new Set());
-    }
-    this.eventListeners.get(event)!.add(listener);
+  on(event: string, listener: (...args: any[]) => void): void {
+    this.eventBus.on(event, listener);
   }
 
   /**
    * 移除事件监听器
    * 
-   * @param event - 事件类型
+   * @param event - 事件名称
    * @param listener - 监听器函数
    */
-  off(event: string, listener: Function): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.delete(listener);
-      if (listeners.size === 0) {
-        this.eventListeners.delete(event);
-      }
-    }
+  off(event: string, listener: (...args: any[]) => void): void {
+    this.eventBus.off(event, listener);
   }
 
   /**
-   * 触发事件
-   * 
-   * @param event - 事件类型
-   * @param data - 事件数据
-   */
-  private emit(event: string, data: any): void {
-    const listeners = this.eventListeners.get(event);
-    if (listeners) {
-      listeners.forEach(listener => {
-        try {
-          listener(data);
-        } catch (error) {
-          console.error(`Error in simulator host event listener for "${event}":`, error);
-        }
-      });
-    }
-  }
-
-  /**
-   * 清除所有事件监听器
+   * 清除所有监听器
    */
   clearListeners(): void {
-    this.eventListeners.clear();
-  }
-
-  /**
-   * 初始化模拟器
-   * 
-   * @returns Promise<void>
-   */
-  private async initSimulator(): Promise<void> {
-    // 这里应该实现实际的模拟器初始化逻辑
-    // 包括创建模拟器环境、加载组件等
-    
-    // 简化实现,只做占位
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 100);
-    });
-  }
-
-  /**
-   * 启动模拟器
-   * 
-   * @returns Promise<void>
-   */
-  private async startSimulator(): Promise<void> {
-    // 这里应该实现实际的模拟器启动逻辑
-    // 包括渲染组件、建立通信等
-    
-    // 简化实现,只做占位
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 100);
-    });
-  }
-
-  /**
-   * 停止模拟器
-   * 
-   * @returns Promise<void>
-   */
-  private async stopSimulator(): Promise<void> {
-    // 这里应该实现实际的模拟器停止逻辑
-    // 包括停止渲染、断开通信等
-    
-    // 简化实现,只做占位
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 100);
-    });
+    this.eventBus.clear();
   }
 
   /**
    * 销毁模拟器
-   * 
-   * @returns Promise<void>
    */
-  private async disposeSimulator(): Promise<void> {
-    // 这里应该实现实际的模拟器销毁逻辑
-    // 包括清理资源、释放内存等
-    
-    // 简化实现,只做占位
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 100);
-    });
+  async dispose(): Promise<void> {
+    await this.stop();
+    this.clearListeners();
+    this.eventBus.emit('simulator:dispose', {});
   }
 
   /**
-   * 渲染组件
-   * 
-   * @param schema - 组件 schema
-   * @returns Promise<void>
-   */
-  async render(schema: any): Promise<void> {
-    if (!this.isStarted.value) {
-      await this.start();
-    }
-    
-    // 这里应该实现实际的渲染逻辑
-    // 包括解析 schema、创建组件、渲染到容器等
-    
-    const event: SimulatorEvent = {
-      type: 'render',
-      data: { schema },
-    };
-    this.emit('render', event);
-  }
-
-  /**
-   * 更新组件
-   * 
-   * @param schema - 组件 schema
-   * @returns Promise<void>
-   */
-  async update(schema: any): Promise<void> {
-    if (!this.isStarted.value) {
-      return;
-    }
-    
-    // 这里应该实现实际的更新逻辑
-    // 包括解析 schema、更新组件等
-    
-    const event: SimulatorEvent = {
-      type: 'render',
-      data: { schema },
-    };
-    this.emit('render', event);
-  }
-
-  /**
-   * 获取模拟器状态
+   * 导出模拟器状态
    * 
    * @returns 模拟器状态
    */
-  getState(): any {
+  export(): any {
     return {
-      initialized: this.isInitialized.value,
-      started: this.isStarted.value,
       config: this.config,
+      isReady: this.isReadyRef.value,
     };
+  }
+
+  /**
+   * 导入模拟器状态
+   * 
+   * @param state - 模拟器状态
+   */
+  async import(state: any): Promise<void> {
+    this.config = { ...this.config, ...state.config };
+    this.configRef.value = { ...this.config };
+    this.isReadyRef.value = state.isReady || false;
+    this.eventBus.emit('simulator:import', { state });
   }
 }
