@@ -254,10 +254,10 @@ export class BuiltinSimulatorHost {
 
   /**
    * 导出模拟器状态
-   * 
+   *
    * @returns 模拟器状态
    */
-  export(): any {
+  exportState(): any {
     return {
       config: this.config,
       isReady: this.isReadyRef.value,
@@ -266,10 +266,10 @@ export class BuiltinSimulatorHost {
 
   /**
    * 导入模拟器状态
-   * 
+   *
    * @param state - 模拟器状态
    */
-  async import(state: any): Promise<void> {
+  async importState(state: any): Promise<void> {
     this.config = { ...this.config, ...state.config };
     this.configRef.value = { ...this.config };
     this.isReadyRef.value = state.isReady || false;

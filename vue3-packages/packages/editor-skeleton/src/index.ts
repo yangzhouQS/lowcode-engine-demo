@@ -1,18 +1,24 @@
-// 类型定义
-export * from './types';
+// Types
+export type {
+  SkeletonConfig,
+  AreaConfig,
+  WidgetConfig,
+  PanelConfig,
+  SettingsPaneConfig,
+  AreaState,
+  WidgetState,
+  PanelState,
+  SettingsPaneState,
+  AreaEvents,
+  WidgetEvents,
+  PanelEvents,
+  SettingsPaneEvents,
+  SkeletonEvents,
+} from './types';
 
-// Widget 相关
-export * from './widget/WidgetContainer';
-export * from './widget/Widget';
-export * from './widget/Panel';
-export * from './widget/Dock';
-export * from './widget/PanelDock';
-
-// Area
-export * from './Area';
-
-// Stage
-export * from './Stage';
-
-// Skeleton
-export * from './Skeleton';
+// Classes
+export { Skeleton } from './skeleton/Skeleton';
+export { Area } from './area/Area';
+export { Widget } from './widget/Widget';
+export { Panel } from './panel/Panel';
+export { SettingsPane } from './settings/SettingsPane';

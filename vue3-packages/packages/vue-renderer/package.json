@@ -1,40 +1,75 @@
 {
   "name": "@vue3-lowcode/vue-renderer",
   "version": "1.0.0",
-  "description": "Vue3 renderer for Vue3 LowCode Framework",
-  "license": "MIT",
+  "description": "Vue3 LowCode Engine Vue Renderer - Vue3 渲染器实现",
+  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "README.md"
   ],
   "scripts": {
     "build": "vite build",
+    "dev": "vite build --watch",
     "test": "vitest",
-    "test:coverage": "vitest --coverage"
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.vue",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@vue3-lowcode/types": "workspace:*",
     "@vue3-lowcode/utils": "workspace:*",
-    "@vue3-lowcode/renderer-core": "workspace:*",
-    "vue": "^3.4.0"
+    "@vue3-lowcode/renderer-core": "workspace:*"
   },
   "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vitest/ui": "^1.0.0",
     "@vue/test-utils": "^2.4.0",
-    "typescript": "^5.0.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.19.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0",
     "vite": "^5.0.0",
-    "vite-plugin-dts": "^3.0.0",
-    "vitest": "^1.0.0"
+    "vite-plugin-dts": "^3.7.0",
+    "vitest": "^1.0.0",
+    "vue": "^3.4.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
+  "keywords": [
+    "vue3",
+    "lowcode",
+    "renderer",
+    "engine"
+  ],
+  "author": "Vue3 LowCode Engine Team",
+  "license": "MIT",
   "repository": {
-    "type": "http",
-    "url": "https://github.com/vue3-lowcode/vue3-lowcode-engine/tree/main/packages/vue-renderer"
+    "type": "git",
+    "url": "https://github.com/vue3-lowcode/engine.git",
+    "directory": "packages/vue-renderer"
   },
-  "bugs": "https://github.com/vue3-lowcode/vue3-lowcode-engine/issues",
-  "homepage": "https://github.com/vue3-lowcode/vue3-lowcode-engine/#readme"
+  "bugs": {
+    "url": "https://github.com/vue3-lowcode/engine/issues"
+  },
+  "homepage": "https://github.com/vue3-lowcode/engine#readme"
 }

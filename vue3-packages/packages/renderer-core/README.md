@@ -1,16 +1,14 @@
 # @vue3-lowcode/renderer-core
 
-## 简介
+Vue3 低代码引擎渲染器核心包，提供渲染器基础接口和抽象类。
 
-`@vue3-lowcode/renderer-core` 是 Vue3 LowCode 框架的渲染器核心包，提供了渲染器的基础接口和抽象类。
+## 概述
 
-## 功能特性
+`@vue3-lowcode/renderer-core` 是 Vue3 低代码引擎的渲染器核心包，提供了：
 
-- 提供运行时接口 `IRuntime`
-- 提供渲染器接口 `IRenderer`
-- 提供渲染器实例接口 `IBaseRendererInstance`
-- 提供渲染器属性接口 `IRendererProps`
-- 提供渲染器抽象基类 `BaseRenderer`
+- **IRuntime 接口**: 定义了运行时的核心接口
+- **BaseRenderer 类**: 提供了渲染器的基类实现
+- **类型定义**: 完整的 TypeScript 类型支持
 
 ## 安装
 
@@ -22,220 +20,213 @@ pnpm add @vue3-lowcode/renderer-core
 
 ### IRuntime 接口
 
-运行时接口，用于管理渲染器的生命周期和状态。
+`IRuntime` 接口定义了运行时的核心功能：
 
 ```typescript
 import type { IRuntime } from '@vue3-lowcode/renderer-core';
 
-const runtime: IRuntime = {
-  init(): void { /* 初始化逻辑 */ },
-  start(): void { /* 启动逻辑 */ },
-  stop(): void { /* 停止逻辑 */ },
-  dispose(): void { /* 销毁逻辑 */ },
-  getRenderer(): IRenderer | null { /* 获取渲染器 */ },
-  setRenderer(renderer: IRenderer): void { /* 设置渲染器 */ },
+class MyRuntime implements IRuntime {
+  renderComponent(component, container, context) {
+    // 实现组件渲染
+  }
+  
+  unmountComponent(container) {
+    // 实现组件卸载
+  }
+  
   // ... 其他方法
-};
+}
 ```
 
-### BaseRenderer 抽象类
+### BaseRenderer 类
 
-渲染器抽象基类，提供了渲染器的基本实现。
+`BaseRenderer` 是渲染器的基类，提供了核心功能：
 
 ```typescript
 import { BaseRenderer } from '@vue3-lowcode/renderer-core';
 
 class MyRenderer extends BaseRenderer {
-  render(props: IRendererProps): void {
-    // 实现渲染逻辑
+  constructor() {
+    super(myRuntime);
+  }
+  
+  // 继承所有 IRuntime 方法
+  renderComponent(component, container, context) {
+    return super.renderComponent(component, container, context);
   }
 }
-
-const renderer = new MyRenderer();
-renderer.init();
-renderer.start();
 ```
 
-### IRenderer 接口
+## API
 
-渲染器接口，定义了渲染器的基本行为。
-
-```typescript
-import type { IRenderer } from '@vue3-lowcode/renderer-core';
-
-const renderer: IRenderer = {
-  init(): void { /* 初始化逻辑 */ },
-  start(): void { /* 启动逻辑 */ },
-  stop(): void { /* 停止逻辑 */ },
-  dispose(): void { /* 销毁逻辑 */ },
-  render(props: IRendererProps): void { /* 渲染逻辑 */ },
-  // ... 其他方法
-};
-```
-
-### IBaseRendererInstance 接口
-
-渲染器实例接口，表示单个组件的渲染实例。
-
-```typescript
-import type { IBaseRendererInstance } from '@vue3-lowcode/renderer-core';
-
-const instance: IBaseRendererInstance = {
-  getId(): string { /* 获取实例 ID */ },
-  getNode(): INode | null { /* 获取节点 */ },
-  setNode(node: INode): void { /* 设置节点 */ },
-  getComponent(): any { /* 获取组件 */ },
-  setComponent(component: any): void { /* 设置组件 */ },
-  // ... 其他方法
-};
-```
-
-### IRendererProps 接口
-
-渲染器属性接口，定义了渲染器的属性。
-
-```typescript
-import type { IRendererProps } from '@vue3-lowcode/renderer-core';
-
-const props: IRendererProps = {
-  node: node,
-  schema: schema,
-  // ... 其他属性
-};
-```
-
-## API 文档
-
-### IRuntime
+### IRuntime 接口
 
 | 方法 | 描述 |
 |------|------|
-| `init()` | 初始化运行时 |
-| `start()` | 启动运行时 |
-| `stop()` | 停止运行时 |
-| `dispose()` | 销毁运行时 |
-| `getRenderer()` | 获取渲染器 |
-| `setRenderer(renderer)` | 设置渲染器 |
-| `getRendererInstance(id)` | 获取渲染器实例 |
-| `registerRendererInstance(instance)` | 注册渲染器实例 |
-| `unregisterRendererInstance(id)` | 注销渲染器实例 |
-| `getRendererInstances()` | 获取所有渲染器实例 |
-| `isReady()` | 检查是否准备就绪 |
-| `isActive()` | 检查是否活动 |
-| `getConfig()` | 获取配置 |
-| `setConfig(config)` | 设置配置 |
-| `on(event, listener)` | 监听事件 |
-| `off(event, listener)` | 取消监听事件 |
-| `emit(event, ...args)` | 触发事件 |
+| `renderComponent(component, container, context?)` | 渲染组件到指定容器 |
+| `unmountComponent(container)` | 卸载容器中的组件 |
+| `createContext(data?)` | 创建渲染上下文 |
+| `useContext(context)` | 使用渲染上下文 |
+| `createComponentInstance(componentMeta, schema)` | 创建组件实例 |
+| `destroyComponentInstance(instance)` | 销毁组件实例 |
+| `getRuntimeConfig()` | 获取运行时配置 |
+| `setRuntimeConfig(config)` | 设置运行时配置 |
+| `registerComponent(name, component)` | 注册全局组件 |
+| `unregisterComponent(name)` | 注销全局组件 |
+| `getComponent(name)` | 获取全局组件 |
+| `registerDirective(name, directive)` | 注册全局指令 |
+| `unregisterDirective(name)` | 注销全局指令 |
+| `getDirective(name)` | 获取全局指令 |
+| `registerPlugin(plugin, options?)` | 注册全局插件 |
+| `unregisterPlugin(plugin)` | 注销全局插件 |
+| `getApp()` | 获取应用实例 |
+| `destroy()` | 销毁运行时 |
 
-### IRenderer
+### BaseRenderer 类
+
+`BaseRenderer` 继承自 `IRuntime`，提供了额外的保护方法：
 
 | 方法 | 描述 |
 |------|------|
 | `init()` | 初始化渲染器 |
-| `start()` | 启动渲染器 |
-| `stop()` | 停止渲染器 |
-| `dispose()` | 销毁渲染器 |
-| `render(props)` | 渲染组件 |
-| `getRuntime()` | 获取运行时 |
-| `setRuntime(runtime)` | 设置运行时 |
-| `isReady()` | 检查是否准备就绪 |
-| `isActive()` | 检查是否活动 |
-| `getConfig()` | 获取配置 |
-| `setConfig(config)` | 设置配置 |
-| `on(event, listener)` | 监听事件 |
-| `off(event, listener)` | 取消监听事件 |
-| `emit(event, ...args)` | 触发事件 |
+| `log(message, ...data)` | 记录日志 |
+| `generateId(prefix)` | 生成唯一 ID |
+| `createReactive(initial)` | 创建响应式状态 |
+| `createRef(initial)` | 创建响应式引用 |
+| `createComputed(getter)` | 创建计算属性 |
 
-### IBaseRendererInstance
+## 类型
 
-| 方法 | 描述 |
-|------|------|
-| `getId()` | 获取实例 ID |
-| `getNode()` | 获取节点 |
-| `setNode(node)` | 设置节点 |
-| `getComponent()` | 获取组件 |
-| `setComponent(component)` | 设置组件 |
-| `getProps()` | 获取属性 |
-| `setProps(props)` | 设置属性 |
-| `getProp(key)` | 获取属性值 |
-| `setProp(key, value)` | 设置属性值 |
-| `isMounted()` | 检查是否已挂载 |
-| `mount()` | 挂载组件 |
-| `unmount()` | 卸载组件 |
-| `update()` | 更新组件 |
-| `destroy()` | 销毁组件 |
-| `on(event, listener)` | 监听事件 |
-| `off(event, listener)` | 取消监听事件 |
-| `emit(event, ...args)` | 触发事件 |
+### RenderContext
 
-### IRendererProps
+渲染上下文接口：
 
-| 属性 | 描述 |
-|------|------|
-| `node` | 节点 |
-| `schema` | Schema |
-| `runtime` | 运行时 |
-| `renderer` | 渲染器 |
+```typescript
+interface RenderContext {
+  id: string;
+  data: Record<string, any>;
+  parent?: RenderContext;
+  children?: RenderContext[];
+}
+```
 
-### BaseRenderer
+### ComponentInstance
 
-`BaseRenderer` 实现了 `IRenderer` 接口，提供了以下功能：
+组件实例接口：
 
-- 生命周期管理（init, start, stop, dispose）
-- 渲染功能（render）
-- 运行时管理（getRuntime, setRuntime）
-- 配置管理（getConfig, setConfig）
-- 事件系统（on, off, emit）
-- 状态管理（isReady, isActive）
+```typescript
+interface ComponentInstance {
+  instance: any;
+  componentMeta: IComponentMeta;
+  schema: ISchema;
+  state: Record<string, any>;
+  props: Record<string, any>;
+  updateState(state: Record<string, any>): void;
+  updateProps(props: Record<string, any>): void;
+  destroy(): void;
+}
+```
 
-## 事件
+### RuntimeConfig
 
-### Runtime 事件
+运行时配置接口：
 
-| 事件名 | 描述 |
-|--------|------|
-| `init` | 初始化完成 |
-| `start` | 启动完成 |
-| `stop` | 停止完成 |
-| `dispose` | 销毁完成 |
-| `change` | 状态变化 |
+```typescript
+interface RuntimeConfig {
+  debug?: boolean;
+  performance?: boolean;
+  errorBoundary?: boolean;
+  errorHandler?: (error: Error) => void;
+  warningHandler?: (warning: string) => void;
+  components?: Record<string, Component>;
+  directives?: Record<string, any>;
+  plugins?: Array<{ plugin: any; options?: any }>;
+  context?: Record<string, any>;
+}
+```
 
-### Renderer 事件
+## 示例
 
-| 事件名 | 描述 |
-|--------|------|
-| `init` | 初始化完成 |
-| `start` | 启动完成 |
-| `stop` | 停止完成 |
-| `dispose` | 销毁完成 |
-| `render` | 渲染完成 |
-| `change` | 状态变化 |
+### 基本使用
 
-### RendererInstance 事件
+```typescript
+import { BaseRenderer } from '@vue3-lowcode/renderer-core';
 
-| 事件名 | 描述 |
-|--------|------|
-| `mounted` | 挂载完成 |
-| `unmounted` | 卸载完成 |
-| `updated` | 更新完成 |
-| `destroyed` | 销毁完成 |
-| `change` | 状态变化 |
+// 创建自定义运行时
+class MyRuntime implements IRuntime {
+  renderComponent(component, container, context) {
+    // 实现渲染逻辑
+  }
+  
+  // ... 实现其他方法
+}
 
-## 开发
+// 创建渲染器
+const renderer = new BaseRenderer(new MyRuntime(), {
+  debug: true,
+});
 
-```bash
-# 安装依赖
-pnpm install
+// 初始化渲染器
+renderer.init();
 
-# 构建
-pnpm build
+// 渲染组件
+const vnode = renderer.renderComponent(MyComponent, container);
 
-# 测试
-pnpm test
+// 销毁渲染器
+renderer.destroy();
+```
 
-# 测试覆盖率
-pnpm test:coverage
+### 使用上下文
+
+```typescript
+// 创建上下文
+const context = renderer.createContext({
+  userId: '123',
+  theme: 'dark',
+});
+
+// 使用上下文
+const data = renderer.useContext(context);
+
+// 渲染组件时传入上下文
+renderer.renderComponent(MyComponent, container, context);
+```
+
+### 组件实例管理
+
+```typescript
+// 创建组件实例
+const instance = renderer.createComponentInstance(componentMeta, schema);
+
+// 更新状态
+instance.updateState({ count: 10 });
+
+// 更新属性
+instance.updateProps({ title: 'Hello' });
+
+// 销毁实例
+instance.destroy();
+```
+
+## 最佳实践
+
+1. **初始化**: 在使用渲染器前，先调用 `init()` 方法
+2. **错误处理**: 设置 `errorBoundary` 和 `errorHandler` 来处理错误
+3. **调试**: 开启 `debug` 模式来查看日志
+4. **性能监控**: 开启 `performance` 模式来监控性能
+5. **资源清理**: 使用完毕后调用 `destroy()` 方法清理资源
+
+## TypeScript 支持
+
+本包完全支持 TypeScript，提供完整的类型定义：
+
+```typescript
+import type {
+  IRuntime,
+  RenderContext,
+  ComponentInstance,
+  RuntimeConfig,
+} from '@vue3-lowcode/renderer-core';
 ```
 
 ## 许可证

@@ -33,7 +33,7 @@ export class Designer {
   constructor(config: DesignerConfig = {}) {
     this.maxHistorySize = config.maxHistorySize || 50;
     this.documentModel = new DocumentModel();
-    this.dragon = new Dragon();
+    this.dragon = new Dragon(this);
     this.selection = new Selection();
     this.history = new History();
     this.simulator = new BuiltinSimulatorHost(config.simulator);
@@ -297,31 +297,31 @@ export class Designer {
 
   /**
    * 导出设计器状态
-   * 
+   *
    * @returns 设计器状态
    */
-  export(): any {
+  exportState(): any {
     return {
-      documentModel: this.documentModel.export(),
-      dragon: this.dragon.export(),
-      selection: this.selection.export(),
-      history: this.history.export(),
-      simulator: this.simulator.export(),
+      documentModel: this.documentModel.exportState(),
+      dragon: this.dragon.exportState(),
+      selection: this.selection.exportState(),
+      history: this.history.exportState(),
+      simulator: this.simulator.exportState(),
       isReady: this.isReadyRef.value,
     };
   }
 
   /**
    * 导入设计器状态
-   * 
+   *
    * @param state - 设计器状态
    */
-  async import(state: any): Promise<void> {
-    await this.documentModel.import(state.documentModel);
-    await this.dragon.import(state.dragon);
-    await this.selection.import(state.selection);
-    await this.history.import(state.history);
-    await this.simulator.import(state.simulator);
+  async importState(state: any): Promise<void> {
+    await this.documentModel.importState(state.documentModel);
+    await this.dragon.importState(state.dragon);
+    await this.selection.importState(state.selection);
+    await this.history.importState(state.history);
+    await this.simulator.importState(state.simulator);
     this.isReadyRef.value = state.isReady || false;
     this.eventBus.emit('designer:import', { state });
   }

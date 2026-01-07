@@ -1,194 +1,399 @@
-import { ref, reactive } from 'vue';
-import type { IRenderer } from './IRenderer';
-import type { IRuntime } from '../runtime/IRuntime';
-import type { IRendererProps } from './IRendererProps';
-import { merge } from '@vue3-lowcode/utils';
+import { ref, reactive, computed, type Component, type VNode } from 'vue';
+import type { IComponentMeta, ISchema } from '@vue3-lowcode/types';
+import type {
+  IRuntime,
+  RenderContext,
+  ComponentInstance,
+  RuntimeConfig,
+} from '../runtime/IRuntime';
 
 /**
- * Base renderer class
- * 基础渲染器类
+ * 渲染器基类
+ * 
+ * 提供了渲染器的核心功能实现，包括组件渲染、挂载、卸载等操作。
+ * 子类可以继承此类并实现特定框架的渲染逻辑。
+ * 
+ * @example
+ * ```typescript
+ * class VueRenderer extends BaseRenderer {
+ *   constructor() {
+ *     super(new VueRuntime());
+ *   }
+ *   
+ *   renderComponent(component, container, context) {
+ *     // Vue 特定的渲染逻辑
+ *   }
+ * }
+ * ```
  */
-export class BaseRenderer implements IRenderer {
-  protected _runtime: IRuntime | undefined;
-  protected _config: Record<string, any>;
-  protected _ready: boolean;
-  protected _active: boolean;
-  protected _eventListeners: Map<string, Set<(...args: any[]) => void>>;
-  protected _props: IRendererProps;
+export abstract class BaseRenderer implements IRuntime {
+  /**
+   * 运行时实例
+   */
+  protected runtime: IRuntime;
 
-  constructor(config: Record<string, any> = {}) {
-    this._config = reactive(config);
-    this._ready = false;
-    this._active = false;
-    this._eventListeners = new Map();
-    this._props = reactive<IRendererProps>({});
+  /**
+   * 运行时配置
+   */
+  protected config: RuntimeConfig;
+
+  /**
+   * 组件实例映射
+   */
+  protected componentInstances: Map<string, ComponentInstance>;
+
+  /**
+   * 渲染上下文映射
+   */
+  protected contexts: Map<string, RenderContext>;
+
+  /**
+   * 是否已初始化
+   */
+  protected initialized: boolean;
+
+  /**
+   * 是否已销毁
+   */
+  protected destroyed: boolean;
+
+  /**
+   * 构造函数
+   * 
+   * @param runtime - 运行时实例
+   * @param config - 运行时配置
+   */
+  constructor(runtime: IRuntime, config?: Partial<RuntimeConfig>) {
+    this.runtime = runtime;
+    this.config = {
+      debug: false,
+      performance: false,
+      errorBoundary: true,
+      ...config,
+    };
+    this.componentInstances = new Map();
+    this.contexts = new Map();
+    this.initialized = false;
+    this.destroyed = false;
+
+    this.setupErrorHandling();
   }
 
   /**
-   * Initialize the renderer
    * 初始化渲染器
    */
   init(): void {
-    if (this._ready) {
+    if (this.initialized) {
+      console.warn('[BaseRenderer] Renderer already initialized');
       return;
     }
-    this._ready = true;
-    this.emit('init');
+
+    this.initialized = true;
+    this.log('[BaseRenderer] Renderer initialized');
   }
 
   /**
-   * Start the renderer
-   * 启动渲染器
+   * 渲染组件到指定容器
+   * 
+   * @param component - 要渲染的组件
+   * @param container - 容器元素
+   * @param context - 渲染上下文
+   * @returns 渲染的 VNode
    */
-  start(): void {
-    if (!this._ready) {
+  renderComponent(
+    component: Component,
+    container: Element,
+    context?: RenderContext
+  ): VNode {
+    if (this.destroyed) {
+      throw new Error('[BaseRenderer] Renderer has been destroyed');
+    }
+
+    if (!this.initialized) {
       this.init();
     }
-    if (this._active) {
-      return;
+
+    return this.runtime.renderComponent(component, container, context);
+  }
+
+  /**
+   * 卸载容器中的组件
+   * 
+   * @param container - 容器元素
+   */
+  unmountComponent(container: Element): void {
+    if (this.destroyed) {
+      throw new Error('[BaseRenderer] Renderer has been destroyed');
     }
-    this._active = true;
-    this.emit('start');
+
+    this.runtime.unmountComponent(container);
   }
 
   /**
-   * Stop the renderer
-   * 停止渲染器
+   * 创建渲染上下文
+   * 
+   * @param data - 上下文数据
+   * @returns 渲染上下文
    */
-  stop(): void {
-    if (!this._active) {
-      return;
-    }
-    this._active = false;
-    this.emit('stop');
+  createContext(data?: Record<string, any>): RenderContext {
+    const contextId = this.generateId('context');
+    const context: RenderContext = {
+      id: contextId,
+      data: data || {},
+    };
+
+    this.contexts.set(contextId, context);
+    this.log('[BaseRenderer] Context created:', contextId);
+
+    return context;
   }
 
   /**
-   * Dispose the renderer
-   * 销毁渲染器
+   * 使用渲染上下文
+   * 
+   * @param context - 渲染上下文
+   * @returns 上下文数据
    */
-  dispose(): void {
-    this.stop();
-    this._eventListeners.clear();
-    this._ready = false;
-    this.emit('dispose');
+  useContext(context: RenderContext): Record<string, any> {
+    return this.runtime.useContext(context);
   }
 
   /**
-   * Render a component
-   * 渲染组件
-   * @param props - The renderer props
+   * 创建组件实例
+   * 
+   * @param componentMeta - 组件元数据
+   * @param schema - 组件 Schema
+   * @returns 组件实例
    */
-  render(props: IRendererProps): void {
-    this._props = reactive(merge({}, this._props, props));
-    this.emit('render', this._props);
+  createComponentInstance(
+    componentMeta: IComponentMeta,
+    schema: ISchema
+  ): ComponentInstance {
+    const instanceId = this.generateId('instance');
+    const instance = this.runtime.createComponentInstance(componentMeta, schema);
+
+    this.componentInstances.set(instanceId, instance);
+    this.log('[BaseRenderer] Component instance created:', instanceId);
+
+    return instance;
   }
 
   /**
-   * Get the runtime
-   * 获取运行时
+   * 销毁组件实例
+   * 
+   * @param instance - 组件实例
    */
-  getRuntime(): IRuntime | undefined {
-    return this._runtime;
-  }
+  destroyComponentInstance(instance: ComponentInstance): void {
+    this.runtime.destroyComponentInstance(instance);
 
-  /**
-   * Set the runtime
-   * 设置运行时
-   * @param runtime - The runtime instance
-   */
-  setRuntime(runtime: IRuntime): void {
-    this._runtime = runtime;
-    this.emit('runtimeChanged', runtime);
-  }
-
-  /**
-   * Check if the renderer is ready
-   * 检查渲染器是否已就绪
-   */
-  isReady(): boolean {
-    return this._ready;
-  }
-
-  /**
-   * Check if the renderer is active
-   * 检查渲染器是否处于活动状态
-   */
-  isActive(): boolean {
-    return this._active;
-  }
-
-  /**
-   * Get the renderer config
-   * 获取渲染器配置
-   */
-  getConfig(): Record<string, any> {
-    return { ...this._config };
-  }
-
-  /**
-   * Set the renderer config
-   * 设置渲染器配置
-   * @param config - The renderer config
-   */
-  setConfig(config: Record<string, any>): void {
-    merge(this._config, config);
-    this.emit('configChanged', this._config);
-  }
-
-  /**
-   * Add event listener
-   * 添加事件监听器
-   * @param event - The event name
-   * @param handler - The event handler
-   */
-  on(event: string, handler: (...args: any[]) => void): void {
-    if (!this._eventListeners.has(event)) {
-      this._eventListeners.set(event, new Set());
-    }
-    this._eventListeners.get(event)!.add(handler);
-  }
-
-  /**
-   * Remove event listener
-   * 移除事件监听器
-   * @param event - The event name
-   * @param handler - The event handler
-   */
-  off(event: string, handler: (...args: any[]) => void): void {
-    const listeners = this._eventListeners.get(event);
-    if (listeners) {
-      listeners.delete(handler);
-      if (listeners.size === 0) {
-        this._eventListeners.delete(event);
+    // 从映射中移除
+    for (const [id, inst] of this.componentInstances.entries()) {
+      if (inst === instance) {
+        this.componentInstances.delete(id);
+        this.log('[BaseRenderer] Component instance destroyed:', id);
+        break;
       }
     }
   }
 
   /**
-   * Emit an event
-   * 触发事件
-   * @param event - The event name
-   * @param args - The event arguments
+   * 获取运行时配置
+   * 
+   * @returns 运行时配置
    */
-  emit(event: string, ...args: any[]): void {
-    const listeners = this._eventListeners.get(event);
-    if (listeners) {
-      listeners.forEach(handler => {
-        try {
-          handler(...args);
-        } catch (error) {
-          console.error(`Error in event handler for "${event}":`, error);
-        }
-      });
+  getRuntimeConfig(): RuntimeConfig {
+    return { ...this.config };
+  }
+
+  /**
+   * 设置运行时配置
+   * 
+   * @param config - 运行时配置
+   */
+  setRuntimeConfig(config: Partial<RuntimeConfig>): void {
+    this.config = {
+      ...this.config,
+      ...config,
+    };
+    this.log('[BaseRenderer] Runtime config updated:', config);
+  }
+
+  /**
+   * 注册全局组件
+   * 
+   * @param name - 组件名称
+   * @param component - 组件
+   */
+  registerComponent(name: string, component: Component): void {
+    this.runtime.registerComponent(name, component);
+    this.log('[BaseRenderer] Component registered:', name);
+  }
+
+  /**
+   * 注销全局组件
+   * 
+   * @param name - 组件名称
+   */
+  unregisterComponent(name: string): void {
+    this.runtime.unregisterComponent(name);
+    this.log('[BaseRenderer] Component unregistered:', name);
+  }
+
+  /**
+   * 获取全局组件
+   * 
+   * @param name - 组件名称
+   * @returns 组件
+   */
+  getComponent(name: string): Component | undefined {
+    return this.runtime.getComponent(name);
+  }
+
+  /**
+   * 注册全局指令
+   * 
+   * @param name - 指令名称
+   * @param directive - 指令
+   */
+  registerDirective(name: string, directive: any): void {
+    this.runtime.registerDirective(name, directive);
+    this.log('[BaseRenderer] Directive registered:', name);
+  }
+
+  /**
+   * 注销全局指令
+   * 
+   * @param name - 指令名称
+   */
+  unregisterDirective(name: string): void {
+    this.runtime.unregisterDirective(name);
+    this.log('[BaseRenderer] Directive unregistered:', name);
+  }
+
+  /**
+   * 获取全局指令
+   * 
+   * @param name - 指令名称
+   * @returns 指令
+   */
+  getDirective(name: string): any | undefined {
+    return this.runtime.getDirective(name);
+  }
+
+  /**
+   * 注册全局插件
+   * 
+   * @param plugin - 插件
+   * @param options - 插件选项
+   */
+  registerPlugin(plugin: any, options?: any): void {
+    this.runtime.registerPlugin(plugin, options);
+    this.log('[BaseRenderer] Plugin registered');
+  }
+
+  /**
+   * 注销全局插件
+   * 
+   * @param plugin - 插件
+   */
+  unregisterPlugin(plugin: any): void {
+    this.runtime.unregisterPlugin(plugin);
+    this.log('[BaseRenderer] Plugin unregistered');
+  }
+
+  /**
+   * 获取应用实例
+   * 
+   * @returns 应用实例
+   */
+  getApp(): any {
+    return this.runtime.getApp();
+  }
+
+  /**
+   * 销毁渲染器
+   */
+  destroy(): void {
+    if (this.destroyed) {
+      console.warn('[BaseRenderer] Renderer already destroyed');
+      return;
+    }
+
+    // 销毁所有组件实例
+    for (const instance of this.componentInstances.values()) {
+      this.destroyComponentInstance(instance);
+    }
+
+    // 清空映射
+    this.componentInstances.clear();
+    this.contexts.clear();
+
+    // 销毁运行时
+    this.runtime.destroy();
+
+    this.destroyed = true;
+    this.log('[BaseRenderer] Renderer destroyed');
+  }
+
+  /**
+   * 设置错误处理
+   */
+  protected setupErrorHandling(): void {
+    if (this.config.errorBoundary && this.config.errorHandler) {
+      // 设置全局错误处理器
+      this.log('[BaseRenderer] Error handling setup');
     }
   }
 
   /**
-   * Get the current props
-   * 获取当前属性
+   * 记录日志
+   * 
+   * @param message - 日志消息
+   * @param data - 附加数据
    */
-  getProps(): IRendererProps {
-    return { ...this._props };
+  protected log(message: string, ...data: any[]): void {
+    if (this.config.debug) {
+      console.log(message, ...data);
+    }
+  }
+
+  /**
+   * 生成唯一 ID
+   * 
+   * @param prefix - ID 前缀
+   * @returns 唯一 ID
+   */
+  protected generateId(prefix: string): string {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * 创建响应式状态
+   * 
+   * @param initial - 初始状态
+   * @returns 响应式状态
+   */
+  protected createReactive<T extends Record<string, any>>(initial: T): T {
+    return reactive(initial);
+  }
+
+  /**
+   * 创建响应式引用
+   * 
+   * @param initial - 初始值
+   * @returns 响应式引用
+   */
+  protected createRef<T>(initial: T): ReturnType<typeof ref<T>> {
+    return ref(initial);
+  }
+
+  /**
+   * 创建计算属性
+   * 
+   * @param getter - getter 函数
+   * @returns 计算属性
+   */
+  protected createComputed<T>(getter: () => T): ReturnType<typeof computed<T>> {
+    return computed(getter);
   }
 }

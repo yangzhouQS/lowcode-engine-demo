@@ -192,10 +192,10 @@ export class History {
 
   /**
    * 导出历史记录
-   * 
+   *
    * @returns 历史记录
    */
-  export(): any {
+  exportState(): any {
     return {
       records: this.records,
       currentIndex: this.currentIndex,
@@ -204,10 +204,10 @@ export class History {
 
   /**
    * 导入历史记录
-   * 
+   *
    * @param state - 历史记录状态
    */
-  async import(state: any): Promise<void> {
+  async importState(state: any): Promise<void> {
     this.records = state.records || [];
     this.currentIndex = state.currentIndex || -1;
     this.recordsRef.value = [...this.records];

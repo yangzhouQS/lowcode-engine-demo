@@ -176,10 +176,10 @@ export class Selection {
 
   /**
    * 导出选区状态
-   * 
+   *
    * @returns 选区状态
    */
-  export(): any {
+  exportState(): any {
     return {
       selected: this.getSelected().map(node => node.id),
     };
@@ -187,11 +187,29 @@ export class Selection {
 
   /**
    * 导入选区状态
-   * 
+   *
+   * @param state - 选区状态
+   */
+  async importState(state: any): Promise<void> {
+    this.clear();
+    this.eventBus.emit('selection:import', { state });
+  }
+
+  /**
+   * 导出选区状态 (别名)
+   *
+   * @returns 选区状态
+   */
+  export(): any {
+    return this.exportState();
+  }
+
+  /**
+   * 导入选区状态 (别名)
+   *
    * @param state - 选区状态
    */
   async import(state: any): Promise<void> {
-    this.clear();
-    this.eventBus.emit('selection:import', { state });
+    return this.importState(state);
   }
 }

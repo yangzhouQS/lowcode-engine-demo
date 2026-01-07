@@ -1,213 +1,661 @@
-import type { VNode } from 'vue';
-import type { IEditor } from '@vue3-lowcode/types';
+import type { Designer } from '@vue3-lowcode/designer';
 
 /**
- * Widget 配置基础接口
+ * 编辑器骨架配置接口
+ */
+export interface SkeletonConfig {
+  /**
+   * 编辑器容器
+   */
+  container: HTMLElement | string;
+  
+  /**
+   * 设计器实例
+   */
+  designer: Designer;
+  
+  /**
+   * 编辑器主题
+   */
+  theme?: 'light' | 'dark' | 'auto';
+  
+  /**
+   * 编辑器宽度
+   */
+  width?: string | number;
+  
+  /**
+   * 编辑器高度
+   */
+  height?: string | number;
+  
+  /**
+   * 是否启用动画
+   */
+  animated?: boolean;
+  
+  /**
+   * 自定义样式类名
+   */
+  className?: string;
+  
+  /**
+   * 自定义样式
+   */
+  style?: Record<string, any>;
+}
+
+/**
+ * 区域配置接口
+ */
+export interface AreaConfig {
+  /**
+   * 区域名称
+   */
+  name: string;
+  
+  /**
+   * 区域类型
+   */
+  type: 'top' | 'left' | 'right' | 'bottom' | 'main';
+  
+  /**
+   * 区域标题
+   */
+  title?: string;
+  
+  /**
+   * 区域图标
+   */
+  icon?: string;
+  
+  /**
+   * 区域宽度
+   */
+  width?: string | number;
+  
+  /**
+   * 区域高度
+   */
+  height?: string | number;
+  
+  /**
+   * 最小宽度
+   */
+  minWidth?: string | number;
+  
+  /**
+   * 最大宽度
+   */
+  maxWidth?: string | number;
+  
+  /**
+   * 最小高度
+   */
+  minHeight?: string | number;
+  
+  /**
+   * 最大高度
+   */
+  maxHeight?: string | number;
+  
+  /**
+   * 是否可调整大小
+   */
+  resizable?: boolean;
+  
+  /**
+   * 是否可折叠
+   */
+  collapsible?: boolean;
+  
+  /**
+   * 默认是否折叠
+   */
+  collapsed?: boolean;
+  
+  /**
+   * 是否可拖拽
+   */
+  draggable?: boolean;
+  
+  /**
+   * 是否可关闭
+   */
+  closable?: boolean;
+  
+  /**
+   * 自定义样式类名
+   */
+  className?: string;
+  
+  /**
+   * 自定义样式
+   */
+  style?: Record<string, any>;
+}
+
+/**
+ * Widget 配置接口
  */
 export interface WidgetConfig {
+  /**
+   * Widget 名称
+   */
   name: string;
-  type?: string;
+  
+  /**
+   * Widget 标题
+   */
+  title: string;
+  
+  /**
+   * Widget 图标
+   */
+  icon?: string;
+  
+  /**
+   * Widget 组件
+   */
+  component: any;
+  
+  /**
+   * Widget 属性
+   */
   props?: Record<string, any>;
-  content?: any;
-  contentProps?: Record<string, any>;
-  align?: string;
+  
+  /**
+   * Widget 区域
+   */
   area?: string;
-  pluginKey?: string;
-  parsed?: boolean;
+  
+  /**
+   * Widget 索引
+   */
+  index?: number;
+  
+  /**
+   * 是否可拖拽
+   */
+  draggable?: boolean;
+  
+  /**
+   * 是否可调整大小
+   */
+  resizable?: boolean;
+  
+  /**
+   * 是否可关闭
+   */
+  closable?: boolean;
+  
+  /**
+   * 是否可折叠
+   */
+  collapsible?: boolean;
+  
+  /**
+   * 默认是否折叠
+   */
+  collapsed?: boolean;
+  
+  /**
+   * 自定义样式类名
+   */
+  className?: string;
+  
+  /**
+   * 自定义样式
+   */
+  style?: Record<string, any>;
 }
 
 /**
- * Panel 配置接口
+ * 面板配置接口
  */
-export interface PanelConfig extends WidgetConfig {
-  type?: 'Panel';
-  title?: any;
-  icon?: any;
-  description?: string;
-  hideTitleBar?: boolean;
-  help?: HelpTipConfig;
-  condition?: (panel: any) => boolean;
+export interface PanelConfig {
+  /**
+   * 面板名称
+   */
+  name: string;
+  
+  /**
+   * 面板标题
+   */
+  title: string;
+  
+  /**
+   * 面板图标
+   */
+  icon?: string;
+  
+  /**
+   * 面板组件
+   */
+  component: any;
+  
+  /**
+   * 面板属性
+   */
+  props?: Record<string, any>;
+  
+  /**
+   * 面板区域
+   */
+  area?: string;
+  
+  /**
+   * 面板索引
+   */
+  index?: number;
+  
+  /**
+   * 是否可拖拽
+   */
+  draggable?: boolean;
+  
+  /**
+   * 是否可调整大小
+   */
+  resizable?: boolean;
+  
+  /**
+   * 是否可关闭
+   */
+  closable?: boolean;
+  
+  /**
+   * 是否可折叠
+   */
+  collapsible?: boolean;
+  
+  /**
+   * 默认是否折叠
+   */
+  collapsed?: boolean;
+  
+  /**
+   * 自定义样式类名
+   */
+  className?: string;
+  
+  /**
+   * 自定义样式
+   */
+  style?: Record<string, any>;
 }
 
 /**
- * Dock 配置接口
+ * 设置面板配置接口
  */
-export interface DockConfig extends WidgetConfig {
-  type?: 'Dock';
-  dockProps?: Record<string, any>;
+export interface SettingsPaneConfig {
+  /**
+   * 设置面板名称
+   */
+  name: string;
+  
+  /**
+   * 设置面板标题
+   */
+  title: string;
+  
+  /**
+   * 设置面板图标
+   */
+  icon?: string;
+  
+  /**
+   * 设置面板组件
+   */
+  component: any;
+  
+  /**
+   * 设置面板属性
+   */
+  props?: Record<string, any>;
+  
+  /**
+   * 设置面板区域
+   */
+  area?: string;
+  
+  /**
+   * 设置面板索引
+   */
+  index?: number;
+  
+  /**
+   * 是否可拖拽
+   */
+  draggable?: boolean;
+  
+  /**
+   * 是否可调整大小
+   */
+  resizable?: boolean;
+  
+  /**
+   * 是否可关闭
+   */
+  closable?: boolean;
+  
+  /**
+   * 是否可折叠
+   */
+  collapsible?: boolean;
+  
+  /**
+   * 默认是否折叠
+   */
+  collapsed?: boolean;
+  
+  /**
+   * 自定义样式类名
+   */
+  className?: string;
+  
+  /**
+   * 自定义样式
+   */
+  style?: Record<string, any>;
 }
 
 /**
- * PanelDock 配置接口
+ * 区域状态接口
  */
-export interface PanelDockConfig extends DockConfig {
-  type?: 'PanelDock';
-  panelName?: string;
-  panelProps?: Record<string, any>;
+export interface AreaState {
+  /**
+   * 区域名称
+   */
+  name: string;
+  
+  /**
+   * 是否折叠
+   */
+  collapsed: boolean;
+  
+  /**
+   * 宽度
+   */
+  width?: string | number;
+  
+  /**
+   * 高度
+   */
+  height?: string | number;
 }
 
 /**
- * DialogDock 配置接口
+ * Widget 状态接口
  */
-export interface DialogDockConfig extends DockConfig {
-  type?: 'DialogDock';
-  dialogProps?: Record<string, any>;
+export interface WidgetState {
+  /**
+   * Widget 名称
+   */
+  name: string;
+  
+  /**
+   * 是否折叠
+   */
+  collapsed: boolean;
+  
+  /**
+   * 宽度
+   */
+  width?: string | number;
+  
+  /**
+   * 高度
+   */
+  height?: string | number;
+  
+  /**
+   * 索引
+   */
+  index?: number;
 }
 
 /**
- * Divider 配置接口
+ * 面板状态接口
  */
-export interface DividerConfig extends WidgetConfig {
-  type?: 'Divider';
+export interface PanelState {
+  /**
+   * 面板名称
+   */
+  name: string;
+  
+  /**
+   * 是否折叠
+   */
+  collapsed: boolean;
+  
+  /**
+   * 宽度
+   */
+  width?: string | number;
+  
+  /**
+   * 高度
+   */
+  height?: string | number;
+  
+  /**
+   * 索引
+   */
+  index?: number;
 }
 
 /**
- * Stage 配置接口
+ * 设置面板状态接口
  */
-export interface StageConfig extends WidgetConfig {
-  type?: 'Stage';
-  stageProps?: Record<string, any>;
+export interface SettingsPaneState {
+  /**
+   * 设置面板名称
+   */
+  name: string;
+  
+  /**
+   * 是否折叠
+   */
+  collapsed: boolean;
+  
+  /**
+   * 宽度
+   */
+  width?: string | number;
+  
+  /**
+   * 高度
+   */
+  height?: string | number;
+  
+  /**
+   * 索引
+   */
+  index?: number;
 }
 
 /**
- * 帮助提示配置接口
+ * 区域事件接口
  */
-export interface HelpTipConfig {
-  content?: string;
-  link?: string;
-  placement?: string;
+export interface AreaEvents {
+  /**
+   * 区域折叠事件
+   */
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  
+  /**
+   * 区域调整大小事件
+   */
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  
+  /**
+   * 区域拖拽事件
+   */
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  
+  /**
+   * 区域关闭事件
+   */
+  onClose?: (name: string) => void;
 }
 
 /**
- * Widget 基础接口
+ * Widget 事件接口
  */
-export interface IWidget {
-  readonly name: string;
-  readonly content: VNode;
-  readonly align?: string;
-  readonly isWidget: true;
-  readonly visible: boolean;
-  readonly disabled?: boolean;
-  readonly body: VNode;
-  readonly skeleton: ISkeleton;
-  readonly config: WidgetConfig;
-
-  getName(): string;
-  getContent(): VNode;
-  show(): void;
-  hide(): void;
-  toggle(): void;
-  enable?(): void;
-  disable?(): void;
+export interface WidgetEvents {
+  /**
+   * Widget 折叠事件
+   */
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  
+  /**
+   * Widget 调整大小事件
+   */
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  
+  /**
+   * Widget 拖拽事件
+   */
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  
+  /**
+   * Widget 关闭事件
+   */
+  onClose?: (name: string) => void;
+  
+  /**
+   * Widget 点击事件
+   */
+  onClick?: (name: string) => void;
+  
+  /**
+   * Widget 双击事件
+   */
+  onDoubleClick?: (name: string) => void;
 }
 
 /**
- * Skeleton 接口
+ * 面板事件接口
  */
-export interface ISkeleton {
-  editor: IEditor;
-  readonly leftArea: IArea<DockConfig | PanelDockConfig | DialogDockConfig, any>;
-  readonly topArea: IArea<DockConfig | DividerConfig | PanelDockConfig | DialogDockConfig, any>;
-  readonly subTopArea: IArea<DockConfig | DividerConfig | PanelDockConfig | DialogDockConfig, any>;
-  readonly toolbar: IArea<DockConfig | DividerConfig | PanelDockConfig | DialogDockConfig, any>;
-  readonly leftFixedArea: IArea<PanelConfig, IPanel>;
-  readonly leftFloatArea: IArea<PanelConfig, IPanel>;
-  readonly rightArea: IArea<PanelConfig, IPanel>;
-  readonly mainArea: IArea<WidgetConfig | PanelConfig, IWidget | IPanel>;
-  readonly bottomArea: IArea<PanelConfig, IPanel>;
-  readonly stages: IArea<StageConfig, IStage>;
-  readonly widgets: IWidget[];
-
-  getPanel(name: string): IPanel | undefined;
-  getWidget(name: string): IWidget | undefined;
-  createStage(config: any): string | undefined;
-  getStage(name: string): IStage | null;
-  createPanel(config: PanelConfig): IPanel;
-  add(config: WidgetConfig, extraConfig?: Record<string, any>): IWidget | IPanel | IStage | IDock | IPanelDock | undefined;
+export interface PanelEvents {
+  /**
+   * 面板折叠事件
+   */
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  
+  /**
+   * 面板调整大小事件
+   */
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  
+  /**
+   * 面板拖拽事件
+   */
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  
+  /**
+   * 面板关闭事件
+   */
+  onClose?: (name: string) => void;
+  
+  /**
+   * 面板点击事件
+   */
+  onClick?: (name: string) => void;
+  
+  /**
+   * 面板双击事件
+   */
+  onDoubleClick?: (name: string) => void;
 }
 
 /**
- * Area 接口
+ * 设置面板事件接口
  */
-export interface IArea<C, T> {
-  isEmpty(): boolean;
-  add(config: T | C): T;
-  remove(config: T | string): number;
-  setVisible(flag: boolean): void;
-  hide(): void;
-  show(): void;
+export interface SettingsPaneEvents {
+  /**
+   * 设置面板折叠事件
+   */
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  
+  /**
+   * 设置面板调整大小事件
+   */
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  
+  /**
+   * 设置面板拖拽事件
+   */
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  
+  /**
+   * 设置面板关闭事件
+   */
+  onClose?: (name: string) => void;
+  
+  /**
+   * 设置面板点击事件
+   */
+  onClick?: (name: string) => void;
+  
+  /**
+   * 设置面板双击事件
+   */
+  onDoubleClick?: (name: string) => void;
 }
 
 /**
- * Panel 接口
+ * 骨架事件接口
  */
-export interface IPanel extends IWidget {
-  readonly isPanel: true;
-  readonly title: any;
-  readonly help?: HelpTipConfig;
-  active(item?: IPanel | string | null): void;
-  setActive(flag: boolean): void;
-  toggle(): void;
-  isChildOfFloatArea(): boolean;
-  isChildOfFixedArea(): boolean;
-}
-
-/**
- * Stage 接口
- */
-export interface IStage extends IWidget {
-  readonly isStage: true;
-  getName(): string;
-}
-
-/**
- * Dock 接口
- */
-export interface IDock extends IWidget {
-  readonly isDock: true;
-}
-
-/**
- * PanelDock 接口
- */
-export interface IPanelDock extends IDock {
-  readonly isPanelDock: true;
-  readonly panelName?: string;
-}
-
-// 类型守卫
-export function isWidget(obj: any): obj is IWidget {
-  return obj && obj.isWidget === true;
-}
-
-export function isDockConfig(config: any): config is DockConfig {
-  return config && (config.type === 'Dock' || config.type === 'PanelDock' || config.type === 'DialogDock');
-}
-
-export function isPanelDockConfig(config: any): config is PanelDockConfig {
-  return config && config.type === 'PanelDock';
-}
-
-export function isPanelConfig(config: any): config is PanelConfig {
-  return config && config.type === 'Panel';
-}
-
-export function isDividerConfig(config: any): config is DividerConfig {
-  return config && config.type === 'Divider';
-}
-
-export function isPanel(obj: any): obj is IPanel {
-  return obj && obj.isPanel === true;
-}
-
-export function isStage(obj: any): obj is IStage {
-  return obj && obj.isStage === true;
-}
-
-export function isDock(obj: any): obj is IDock {
-  return obj && obj.isDock === true;
-}
-
-export function isPanelDock(obj: any): obj is IPanelDock {
-  return obj && obj.isPanelDock === true;
+export interface SkeletonEvents {
+  /**
+   * 初始化事件
+   */
+  onInit?: () => void;
+  
+  /**
+   * 销毁事件
+   */
+  onDestroy?: () => void;
+  
+  /**
+   * 区域添加事件
+   */
+  onAreaAdd?: (area: AreaConfig) => void;
+  
+  /**
+   * 区域移除事件
+   */
+  onAreaRemove?: (name: string) => void;
+  
+  /**
+   * Widget 添加事件
+   */
+  onWidgetAdd?: (widget: WidgetConfig) => void;
+  
+  /**
+   * Widget 移除事件
+   */
+  onWidgetRemove?: (name: string) => void;
+  
+  /**
+   * 面板添加事件
+   */
+  onPanelAdd?: (panel: PanelConfig) => void;
+  
+  /**
+   * 面板移除事件
+   */
+  onPanelRemove?: (name: string) => void;
+  
+  /**
+   * 设置面板添加事件
+   */
+  onSettingsPaneAdd?: (settingsPane: SettingsPaneConfig) => void;
+  
+  /**
+   * 设置面板移除事件
+   */
+  onSettingsPaneRemove?: (name: string) => void;
 }

@@ -22,6 +22,7 @@ export interface NodeConfig {
 export class Node implements INode {
   public id: string;
   public componentName: string;
+  public type: string;
   
   private props: IProps;
   private children: INode[];
@@ -32,6 +33,7 @@ export class Node implements INode {
   constructor(config: NodeConfig) {
     this.id = config.id;
     this.componentName = config.componentName;
+    this.type = config.componentName;
     this.children = [];
     this.eventBus = useEventBus();
     
@@ -163,7 +165,7 @@ export class Node implements INode {
 
   /**
    * 导出节点
-   * 
+   *
    * @returns 节点配置
    */
   export(): NodeConfig {
@@ -173,6 +175,15 @@ export class Node implements INode {
       props: this.props.getProps(),
       children: this.children.map(child => child.export()),
     };
+  }
+
+  /**
+   * 导出节点 (别名)
+   *
+   * @returns 节点配置
+   */
+  exportNode(): NodeConfig {
+    return this.export();
   }
 
   /**

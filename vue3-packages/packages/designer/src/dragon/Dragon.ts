@@ -12,9 +12,9 @@ import {
   IPublicTypeDisposable,
 } from '@vue3-lowcode/types';
 import { setNativeSelection, cursor } from '@vue3-lowcode/utils';
-import { INode, Node } from '../../document/src/node';
-import { ISimulatorHost, isSimulatorHost } from '../../simulator/src/simulator';
-import { IDesigner } from '../designer';
+import { INode } from '@vue3-lowcode/types';
+import type { IPublicModelNode } from '@vue3-lowcode/types';
+import type { ISimulatorHost } from '@vue3-lowcode/types';
 import { makeEventsHandler } from './utils';
 
 /**
@@ -108,7 +108,7 @@ function getSourceSensor(dragObject: IPublicModelDragObject): ISimulatorHost | n
   if (!isDragNodeObject(dragObject)) {
     return null;
   }
-  return dragObject.nodes[0]?.document?.simulator || null;
+  return (dragObject.nodes[0] as any)?.document?.simulator || null;
 }
 
 /**
@@ -203,9 +203,8 @@ export class Dragon implements IDragon {
    */
   viewName: string | undefined;
 
-  constructor(readonly designer: IDesigner) {
+  constructor(readonly designer: any) {
     // 使用 @vue3-lowcode/utils 的事件总线
-    const { useEventBus } = require('@vue3-lowcode/utils');
     this.emitter = useEventBus('Dragon');
     this.viewName = designer.viewName;
   }
@@ -294,7 +293,7 @@ export class Dragon implements IDragon {
     const forceCopyState =
       isDragNodeObject(dragObject) &&
       dragObject.nodes.some(
-        (node: Node | IPublicModelNode) =>
+        (node: any) =>
           (typeof node.isSlot === 'function' ? node.isSlot() : node.isSlot)
       );
     const isBoostFromDragAPI = isDragEvent(boostEvent);
@@ -381,7 +380,7 @@ export class Dragon implements IDragon {
         // RGL 特殊处理
         const nodes = (dragObject as any).nodes;
         if (nodes && nodes[0]) {
-          const nodeInst = nodes[0].getDOMNode?.();
+          const nodeInst = (nodes[0] as any).getDOMNode?.();
           if (nodeInst && nodeInst.style) {
             this.nodeInstPointerEvents = true;
             nodeInst.style.pointerEvents = 'none';
@@ -488,7 +487,7 @@ export class Dragon implements IDragon {
       if (this.nodeInstPointerEvents) {
         const nodes = (dragObject as any).nodes;
         if (nodes && nodes[0]) {
-          const nodeInst = nodes[0].getDOMNode?.();
+          const nodeInst = (nodes[0] as any).getDOMNode?.();
           if (nodeInst && nodeInst.style) {
             nodeInst.style.pointerEvents = '';
           }
@@ -502,7 +501,7 @@ export class Dragon implements IDragon {
         if (isRGL && this.canDrop.value && this.dragging.value) {
           const nodes = (dragObject as any).nodes;
           if (nodes && nodes[0]) {
-            const tarNode = nodes[0];
+            const tarNode = nodes[0] as any;
             if (rglNode?.id !== tarNode.id) {
               this.emitter.emit('rgl.drop', {
                 rglNode,
@@ -587,7 +586,7 @@ export class Dragon implements IDragon {
       } else {
         // 事件来自 simulator iframe
         let srcSim: ISimulatorHost | undefined;
-        const lastSim = lastSensor && isSimulatorHost(lastSensor) ? lastSensor : null;
+        const lastSim = lastSensor ? lastSensor : null;
 
         if (lastSim && lastSim.contentDocument === sourceDocument) {
           srcSim = lastSim;
@@ -706,7 +705,7 @@ export class Dragon implements IDragon {
     return Array.from(
       new Set(
         this.designer.project.documents
-          .map((doc) => {
+          .map((doc: any) => {
             if (doc.active && doc.simulator?.sensorAvailable) {
               return doc.simulator;
             }
@@ -813,5 +812,31 @@ export class Dragon implements IDragon {
     return () => {
       this.emitter.removeListener('dragend', func);
     };
+  }
+
+  /**
+   * 导出 Dragon 状态
+   *
+   * @returns Dragon 状态
+   */
+  exportState(): any {
+    return {
+      dragging: this.dragging.value,
+      dragObject: this.dragObject.value,
+      activeSensor: this.activeSensor.value,
+      canDrop: this.canDrop.value,
+    };
+  }
+
+  /**
+   * 导入 Dragon 状态
+   *
+   * @param state - Dragon 状态
+   */
+  async importState(state: any): Promise<void> {
+    this.dragging.value = state.dragging || false;
+    this.dragObject.value = state.dragObject || null;
+    this.activeSensor.value = state.activeSensor;
+    this.canDrop.value = state.canDrop || false;
   }
 }

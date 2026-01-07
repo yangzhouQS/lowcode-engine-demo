@@ -4,33 +4,28 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
+    "resolveJsonModule": true,
+    "allowJs": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": true,
-    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
+    "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@vue3-lowcode/types": ["../types/src"],
+      "@vue3-lowcode/utils": ["../utils/src"],
+      "@vue3-lowcode/designer": ["../designer/src"]
     }
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.vue"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

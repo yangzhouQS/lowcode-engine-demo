@@ -1,44 +1,49 @@
 import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [
-    vue(),
     dts({
-      insertTypesEntry: true,
       tsconfigPath: './tsconfig.json',
+      outDir: './dist',
+      insertTypesEntry: true,
+      copyDtsFiles: true,
+      rollupTypes: true,
     }),
   ],
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'Vue3LowcodeEditorSkeleton',
-      fileName: (format) => `index.${format === 'es' ? 'js' : 'umd.cjs'}`,
-      formats: ['es', 'umd'],
+      formats: ['es'],
+      fileName: 'index',
     },
     rollupOptions: {
-      external: ['vue', 'element-plus', '@vue3-lowcode/types', '@vue3-lowcode/utils'],
+      external: [
+        'vue',
+        'element-plus',
+        '@vue3-lowcode/types',
+        '@vue3-lowcode/utils',
+        '@vue3-lowcode/designer',
+      ],
       output: {
         globals: {
           vue: 'Vue',
           'element-plus': 'ElementPlus',
           '@vue3-lowcode/types': 'Vue3LowcodeTypes',
           '@vue3-lowcode/utils': 'Vue3LowcodeUtils',
+          '@vue3-lowcode/designer': 'Vue3LowcodeDesigner',
         },
       },
     },
+    target: 'es2020',
+    minify: false,
     sourcemap: true,
-    minify: 'esbuild',
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: [],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
     },
   },
 });

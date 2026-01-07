@@ -104,10 +104,10 @@ export class Document implements IDocument {
 
   /**
    * 导出 schema
-   * 
+   *
    * @returns schema
    */
-  export(): any {
+  exportSchema(): any {
     const rootNode = this.getRootNode();
     if (!rootNode) {
       return {};
@@ -123,11 +123,11 @@ export class Document implements IDocument {
 
   /**
    * 导入 schema
-   * 
+   *
    * @param schema - schema
    * @returns Promise<void>
    */
-  async import(schema: any): Promise<void> {
+  async importSchema(schema: any): Promise<void> {
     this.nodes.clear();
     this.name = schema.name || 'Untitled';
     this.schemaRef.value = schema;
@@ -146,13 +146,32 @@ export class Document implements IDocument {
 
   /**
    * 设置 schema
-   * 
+   *
    * @param schema - schema
    * @returns Promise<void>
    */
   async setSchema(schema: any): Promise<void> {
     this.schemaRef.value = schema;
     this.eventBus.emit('document:schema-change', { schema });
+  }
+
+  /**
+   * 导出 schema (别名)
+   *
+   * @returns schema
+   */
+  export(): any {
+    return this.exportSchema();
+  }
+
+  /**
+   * 导入 schema (别名)
+   *
+   * @param schema - schema
+   * @returns Promise<void>
+   */
+  async import(schema: any): Promise<void> {
+    return this.importSchema(schema);
   }
 
   /**

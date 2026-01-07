@@ -160,7 +160,7 @@ export class Props implements IProps {
 
   /**
    * 导出属性
-   * 
+   *
    * @returns 属性对象
    */
   export(): Record<string, any> {
@@ -169,7 +169,7 @@ export class Props implements IProps {
 
   /**
    * 导入属性
-   * 
+   *
    * @param props - 属性对象
    * @returns Promise<void>
    */
@@ -179,8 +179,27 @@ export class Props implements IProps {
   }
 
   /**
+   * 导出属性 (别名)
+   *
+   * @returns 属性对象
+   */
+  exportProps(): Record<string, any> {
+    return this.export();
+  }
+
+  /**
+   * 导入属性 (别名)
+   *
+   * @param props - 属性对象
+   * @returns Promise<void>
+   */
+  async importProps(props: Record<string, any>): Promise<void> {
+    return this.import(props);
+  }
+
+  /**
    * 注册事件监听器
-   * 
+   *
    * @param event - 事件名称
    * @param listener - 监听器函数
    */
@@ -190,7 +209,7 @@ export class Props implements IProps {
 
   /**
    * 移除事件监听器
-   * 
+   *
    * @param event - 事件名称
    * @param listener - 监听器函数
    */

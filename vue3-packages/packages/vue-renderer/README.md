@@ -1,18 +1,14 @@
 # @vue3-lowcode/vue-renderer
 
-## 简介
+Vue3 低代码引擎 Vue 渲染器实现，基于 Vue3 框架提供渲染功能。
 
-`@vue3-lowcode/vue-renderer` 是 Vue3 LowCode 框架的 Vue3 渲染器实现，基于 `@vue3-lowcode/renderer-core` 提供了 Vue3 组件的渲染能力。
+## 概述
 
-## 功能特性
+`@vue3-lowcode/vue-renderer` 是 Vue3 低代码引擎的 Vue 渲染器实现，提供了：
 
-- 提供 Vue3 运行时实现 `VueRuntime`
-- 提供 Vue3 渲染器实现 `VueRenderer`
-- 提供 Vue3 渲染器实例实现 `VueRendererInstance`
-- 支持 Vue3 Composition API
-- 支持组件注册和管理
-- 支持渲染实例生命周期管理
-- 完整的类型支持
+- **VueRuntime 类**: Vue3 特定的运行时实现
+- **VueRenderer 类**: Vue3 特定的渲染器实现
+- **完整的 TypeScript 支持**: 提供完整的类型定义
 
 ## 安装
 
@@ -22,260 +18,230 @@ pnpm add @vue3-lowcode/vue-renderer
 
 ## 使用
 
-### VueRuntime
+### VueRuntime 类
 
-Vue3 运行时实现，用于管理渲染器的生命周期和状态。
+`VueRuntime` 实现了 `IRuntime` 接口，提供 Vue3 特定的运行时功能：
 
 ```typescript
 import { VueRuntime } from '@vue3-lowcode/vue-renderer';
 
-const runtime = new VueRuntime();
-runtime.init();
-runtime.start();
+const runtime = new VueRuntime({
+  debug: true,
+  performance: true,
+});
+
+// 获取应用实例
+const app = runtime.getApp();
+
+// 挂载应用
+app.mount('#app');
 ```
 
-### VueRenderer
+### VueRenderer 类
 
-Vue3 渲染器实现，用于渲染 Vue3 组件。
+`VueRenderer` 继承自 `BaseRenderer`，提供 Vue3 特定的渲染功能：
 
 ```typescript
 import { VueRenderer } from '@vue3-lowcode/vue-renderer';
 
-const renderer = new VueRenderer();
-renderer.init();
-renderer.start();
+const renderer = new VueRenderer({
+  debug: true,
+  performance: true,
+});
 
-// 设置容器
-renderer.setContainer(document.getElementById('app'));
+// 初始化渲染器
+renderer.init();
 
 // 渲染组件
-renderer.render({
-  node: node,
-  schema: schema,
-});
+const vnode = renderer.renderComponent(MyComponent, container);
+
+// 创建上下文
+const context = renderer.createContext({ userId: '123' });
+
+// 销毁渲染器
+renderer.destroy();
 ```
 
-### VueRendererInstance
+## API
 
-Vue3 渲染器实例实现，表示单个组件的渲染实例。
-
-```typescript
-import { VueRendererInstance } from '@vue3-lowcode/vue-renderer';
-
-const instance = new VueRendererInstance('instance-id');
-instance.setNode(node);
-instance.mount();
-```
-
-## API 文档
-
-### VueRuntime
-
-`VueRuntime` 实现了 `IRuntime` 接口，提供了以下方法：
+### VueRuntime 类
 
 | 方法 | 描述 |
 |------|------|
-| `init()` | 初始化运行时 |
-| `start()` | 启动运行时 |
-| `stop()` | 停止运行时 |
-| `dispose()` | 销毁运行时 |
-| `getRenderer()` | 获取渲染器 |
-| `setRenderer(renderer)` | 设置渲染器 |
-| `getRendererInstance(id)` | 获取渲染器实例 |
-| `registerRendererInstance(instance)` | 注册渲染器实例 |
-| `unregisterRendererInstance(id)` | 注销渲染器实例 |
-| `getRendererInstances()` | 获取所有渲染器实例 |
-| `isReady()` | 检查是否准备就绪 |
-| `isActive()` | 检查是否活动 |
-| `getConfig()` | 获取配置 |
-| `setConfig(config)` | 设置配置 |
-| `on(event, listener)` | 监听事件 |
-| `off(event, listener)` | 取消监听事件 |
-| `emit(event, ...args)` | 触发事件 |
+| `renderComponent(component, container, context?)` | 渲染组件到指定容器 |
+| `unmountComponent(container)` | 卸载容器中的组件 |
+| `createContext(data?)` | 创建渲染上下文 |
+| `useContext(context)` | 使用渲染上下文 |
+| `createComponentInstance(componentMeta, schema)` | 创建组件实例 |
+| `destroyComponentInstance(instance)` | 销毁组件实例 |
+| `getRuntimeConfig()` | 获取运行时配置 |
+| `setRuntimeConfig(config)` | 设置运行时配置 |
+| `registerComponent(name, component)` | 注册全局组件 |
+| `unregisterComponent(name)` | 注销全局组件 |
+| `getComponent(name)` | 获取全局组件 |
+| `registerDirective(name, directive)` | 注册全局指令 |
+| `unregisterDirective(name)` | 注销全局指令 |
+| `getDirective(name)` | 获取全局指令 |
+| `registerPlugin(plugin, options?)` | 注册全局插件 |
+| `unregisterPlugin(plugin)` | 注销全局插件 |
+| `getApp()` | 获取应用实例 |
+| `destroy()` | 销毁运行时 |
 
-### VueRenderer
+### VueRenderer 类
 
-`VueRenderer` 继承自 `BaseRenderer`，提供了以下方法：
-
-| 方法 | 描述 |
-|------|------|
-| `init()` | 初始化渲染器 |
-| `start()` | 启动渲染器 |
-| `stop()` | 停止渲染器 |
-| `dispose()` | 销毁渲染器 |
-| `render(props)` | 渲染组件 |
-| `setContainer(container)` | 设置容器 |
-| `getContainer()` | 获取容器 |
-| `registerComponent(name, component)` | 注册组件 |
-| `unregisterComponent(name)` | 注销组件 |
-| `getComponent(name)` | 获取组件 |
-| `getComponents()` | 获取所有组件 |
-| `getRendererInstance(id)` | 获取渲染器实例 |
-| `registerRendererInstance(instance)` | 注册渲染器实例 |
-| `unregisterRendererInstance(id)` | 注销渲染器实例 |
-| `dispose()` | 销毁渲染器 |
-
-### VueRendererInstance
-
-`VueRendererInstance` 实现了 `IBaseRendererInstance` 接口，提供了以下方法：
+`VueRenderer` 继承自 `BaseRenderer`，提供了额外的便捷方法：
 
 | 方法 | 描述 |
 |------|------|
-| `getId()` | 获取实例 ID |
-| `getNode()` | 获取节点 |
-| `setNode(node)` | 设置节点 |
-| `getComponent()` | 获取组件 |
-| `setComponent(component)` | 设置组件 |
-| `getProps()` | 获取属性 |
-| `setProps(props)` | 设置属性 |
-| `getProp(key)` | 获取属性值 |
-| `setProp(key, value)` | 设置属性值 |
-| `isMounted()` | 检查是否已挂载 |
-| `mount()` | 挂载组件 |
-| `unmount()` | 卸载组件 |
-| `update()` | 更新组件 |
-| `destroy()` | 销毁组件 |
-| `on(event, listener)` | 监听事件 |
-| `off(event, listener)` | 取消监听事件 |
-| `emit(event, ...args)` | 触发事件 |
+| `getVueRuntime()` | 获取 Vue 运行时实例 |
+| `registerComponents(components)` | 批量注册组件 |
+| `registerDirectives(directives)` | 批量注册指令 |
+| `registerPlugins(plugins)` | 批量注册插件 |
+| `getAllComponents()` | 获取所有已注册的组件 |
+| `getAllDirectives()` | 获取所有已注册的指令 |
+| `getAllPlugins()` | 获取所有已注册的插件 |
+| `clearComponents()` | 清空所有已注册的组件 |
+| `clearDirectives()` | 清空所有已注册的指令 |
+| `clearPlugins()` | 清空所有已注册的插件 |
+| `hasComponent(name)` | 检查组件是否已注册 |
+| `hasDirective(name)` | 检查指令是否已注册 |
+| `hasPlugin(plugin)` | 检查插件是否已注册 |
+| `getComponentInstanceCount()` | 获取组件实例数量 |
+| `getContextCount()` | 获取渲染上下文数量 |
+| `getAllComponentInstances()` | 获取所有组件实例 |
+| `getAllContexts()` | 获取所有渲染上下文 |
+| `getComponentInstanceById(instanceId)` | 根据组件实例 ID 获取组件实例 |
+| `getContextById(contextId)` | 根据上下文 ID 获取渲染上下文 |
+| `createComponentInstances(items)` | 批量创建组件实例 |
+| `destroyComponentInstances(instances)` | 批量销毁组件实例 |
+| `createContexts(dataList?)` | 批量创建渲染上下文 |
+| `renderComponents(items)` | 批量渲染组件 |
+| `unmountComponents(containers)` | 批量卸载组件 |
 
-## 使用示例
+## 示例
 
 ### 基本使用
 
 ```typescript
-import { VueRuntime, VueRenderer } from '@vue3-lowcode/vue-renderer';
-
-// 创建运行时
-const runtime = new VueRuntime();
-runtime.init();
-runtime.start();
+import { VueRenderer } from '@vue3-lowcode/vue-renderer';
 
 // 创建渲染器
-const renderer = new VueRenderer();
-renderer.init();
-renderer.start();
+const renderer = new VueRenderer({
+  debug: true,
+});
 
-// 设置容器
-const container = document.getElementById('app');
-renderer.setContainer(container);
+// 初始化渲染器
+renderer.init();
 
 // 渲染组件
-renderer.render({
-  node: node,
-  schema: schema,
+const container = document.getElementById('app');
+const vnode = renderer.renderComponent(MyComponent, container);
+
+// 销毁渲染器
+renderer.destroy();
+```
+
+### 使用上下文
+
+```typescript
+// 创建上下文
+const context = renderer.createContext({
+  userId: '123',
+  theme: 'dark',
 });
+
+// 使用上下文
+const data = renderer.useContext(context);
+
+// 渲染组件时传入上下文
+renderer.renderComponent(MyComponent, container, context);
 ```
 
-### 组件注册
+### 批量操作
 
 ```typescript
-import { VueRenderer } from '@vue3-lowcode/vue-renderer';
-import MyComponent from './MyComponent.vue';
+// 批量注册组件
+renderer.registerComponents({
+  Button: MyButton,
+  Input: MyInput,
+  Select: MySelect,
+});
 
-const renderer = new VueRenderer();
-renderer.init();
+// 批量注册指令
+renderer.registerDirectives({
+  focus: MyFocusDirective,
+  blur: MyBlurDirective,
+});
 
-// 注册组件
-renderer.registerComponent('MyComponent', MyComponent);
+// 批量创建组件实例
+const instances = renderer.createComponentInstances([
+  { componentMeta, schema },
+  { componentMeta2, schema2 },
+]);
 
-// 获取组件
-const component = renderer.getComponent('MyComponent');
+// 批量渲染组件
+const vnodes = renderer.renderComponents([
+  { component: MyComponent, container: container1 },
+  { component: MyComponent2, container: container2 },
+]);
 ```
 
-### 渲染实例管理
+### 组件实例管理
 
 ```typescript
-import { VueRendererInstance } from '@vue3-lowcode/vue-renderer';
+// 创建组件实例
+const instance = renderer.createComponentInstance(componentMeta, schema);
 
-// 创建渲染实例
-const instance = new VueRendererInstance('instance-id');
+// 更新状态
+instance.updateState({ count: 10 });
 
-// 设置节点
-instance.setNode(node);
+// 更新属性
+instance.updateProps({ title: 'Hello' });
 
-// 挂载组件
-instance.mount();
-
-// 更新组件
-instance.update();
-
-// 卸载组件
-instance.unmount();
-
-// 销毁组件
+// 销毁实例
 instance.destroy();
+
+// 获取所有组件实例
+const allInstances = renderer.getAllComponentInstances();
+
+// 根据实例 ID 获取实例
+const instance = renderer.getComponentInstanceById('instance_id');
 ```
 
-### 事件监听
+## 最佳实践
+
+1. **初始化**: 在使用渲染器前，先调用 `init()` 方法
+2. **错误处理**: 设置 `errorBoundary` 和 `errorHandler` 来处理错误
+3. **调试**: 启用 `debug` 模式来查看日志
+4. **性能监控**: 启用 `performance` 模式来监控性能
+5. **资源清理**: 使用完毕后调用 `destroy()` 方法清理资源
+6. **批量操作**: 使用批量方法来提高性能
+7. **上下文管理**: 合理使用上下文来管理组件状态
+
+## TypeScript 支持
+
+本包完全支持 TypeScript，提供完整的类型定义：
 
 ```typescript
-import { VueRenderer } from '@vue3-lowcode/vue-renderer';
+import {
+  VueRuntime,
+  VueRenderer,
+} from '@vue3-lowcode/vue-renderer';
 
-const renderer = new VueRenderer();
-renderer.init();
-
-// 监听事件
-renderer.on('render', (props) => {
-  console.log('Rendered:', props);
-});
-
-renderer.on('change', (state) => {
-  console.log('Changed:', state);
-});
-
-// 取消监听
-renderer.off('render', handler);
+import type {
+  IRuntime,
+  RenderContext,
+  ComponentInstance,
+  RuntimeConfig,
+} from '@vue3-lowcode/renderer-core';
 ```
 
-## 事件
+## 依赖
 
-### VueRuntime 事件
-
-| 事件名 | 描述 |
-|--------|------|
-| `init` | 初始化完成 |
-| `start` | 启动完成 |
-| `stop` | 停止完成 |
-| `dispose` | 销毁完成 |
-| `change` | 状态变化 |
-
-### VueRenderer 事件
-
-| 事件名 | 描述 |
-|--------|------|
-| `init` | 初始化完成 |
-| `start` | 启动完成 |
-| `stop` | 停止完成 |
-| `dispose` | 销毁完成 |
-| `render` | 渲染完成 |
-| `change` | 状态变化 |
-
-### VueRendererInstance 事件
-
-| 事件名 | 描述 |
-|--------|------|
-| `mounted` | 挂载完成 |
-| `unmounted` | 卸载完成 |
-| `updated` | 更新完成 |
-| `destroyed` | 销毁完成 |
-| `change` | 状态变化 |
-
-## 开发
-
-```bash
-# 安装依赖
-pnpm install
-
-# 构建
-pnpm build
-
-# 测试
-pnpm test
-
-# 测试覆盖率
-pnpm test:coverage
-```
+- `@vue3-lowcode/types`: 类型定义
+- `@vue3-lowcode/utils`: 工具库
+- `@vue3-lowcode/renderer-core`: 渲染器核心
+- `vue`: Vue3 框架
 
 ## 许可证
 

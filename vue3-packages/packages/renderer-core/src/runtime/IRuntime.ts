@@ -1,122 +1,289 @@
-import type { IRenderer } from '../renderer/IRenderer';
-import type { IBaseRendererInstance } from '../renderer/IBaseRendererInstance';
+import type { Component, App, VNode } from 'vue';
+import type { IComponentMeta, ISchema } from '@vue3-lowcode/types';
 
 /**
- * Runtime interface for renderer runtime management
- * 运行时接口，用于管理渲染器运行时
+ * 运行时接口
+ * 
+ * 定义了低代码引擎运行时的核心接口，用于管理组件的渲染、挂载、卸载等操作。
+ * 
+ * @example
+ * ```typescript
+ * class VueRuntime implements IRuntime {
+ *   renderComponent(component, container) {
+ *     // 实现组件渲染
+ *   }
+ *   
+ *   unmountComponent(container) {
+ *     // 实现组件卸载
+ *   }
+ * }
+ * ```
  */
 export interface IRuntime {
   /**
-   * Initialize the runtime
-   * 初始化运行时
+   * 渲染组件到指定容器
+   * 
+   * @param component - 要渲染的组件
+   * @param container - 容器元素
+   * @param context - 渲染上下文
+   * @returns 渲染的 VNode
    */
-  init(): void;
+  renderComponent(
+    component: Component,
+    container: Element,
+    context?: RenderContext
+  ): VNode;
 
   /**
-   * Start the runtime
-   * 启动运行时
+   * 卸载容器中的组件
+   * 
+   * @param container - 容器元素
    */
-  start(): void;
+  unmountComponent(container: Element): void;
 
   /**
-   * Stop the runtime
-   * 停止运行时
+   * 创建渲染上下文
+   * 
+   * @param data - 上下文数据
+   * @returns 渲染上下文
    */
-  stop(): void;
+  createContext(data?: Record<string, any>): RenderContext;
 
   /**
-   * Dispose the runtime
+   * 使用渲染上下文
+   * 
+   * @param context - 渲染上下文
+   * @returns 上下文数据
+   */
+  useContext(context: RenderContext): Record<string, any>;
+
+  /**
+   * 创建组件实例
+   * 
+   * @param componentMeta - 组件元数据
+   * @param schema - 组件 Schema
+   * @returns 组件实例
+   */
+  createComponentInstance(
+    componentMeta: IComponentMeta,
+    schema: ISchema
+  ): ComponentInstance;
+
+  /**
+   * 销毁组件实例
+   * 
+   * @param instance - 组件实例
+   */
+  destroyComponentInstance(instance: ComponentInstance): void;
+
+  /**
+   * 获取运行时配置
+   * 
+   * @returns 运行时配置
+   */
+  getRuntimeConfig(): RuntimeConfig;
+
+  /**
+   * 设置运行时配置
+   * 
+   * @param config - 运行时配置
+   */
+  setRuntimeConfig(config: Partial<RuntimeConfig>): void;
+
+  /**
+   * 注册全局组件
+   * 
+   * @param name - 组件名称
+   * @param component - 组件
+   */
+  registerComponent(name: string, component: Component): void;
+
+  /**
+   * 注销全局组件
+   * 
+   * @param name - 组件名称
+   */
+  unregisterComponent(name: string): void;
+
+  /**
+   * 获取全局组件
+   * 
+   * @param name - 组件名称
+   * @returns 组件
+   */
+  getComponent(name: string): Component | undefined;
+
+  /**
+   * 注册全局指令
+   * 
+   * @param name - 指令名称
+   * @param directive - 指令
+   */
+  registerDirective(name: string, directive: any): void;
+
+  /**
+   * 注销全局指令
+   * 
+   * @param name - 指令名称
+   */
+  unregisterDirective(name: string): void;
+
+  /**
+   * 获取全局指令
+   * 
+   * @param name - 指令名称
+   * @returns 指令
+   */
+  getDirective(name: string): any | undefined;
+
+  /**
+   * 注册全局插件
+   * 
+   * @param plugin - 插件
+   * @param options - 插件选项
+   */
+  registerPlugin(plugin: any, options?: any): void;
+
+  /**
+   * 注销全局插件
+   * 
+   * @param plugin - 插件
+   */
+  unregisterPlugin(plugin: any): void;
+
+  /**
+   * 获取应用实例
+   * 
+   * @returns 应用实例
+   */
+  getApp(): App;
+
+  /**
    * 销毁运行时
    */
-  dispose(): void;
+  destroy(): void;
+}
+
+/**
+ * 渲染上下文
+ */
+export interface RenderContext {
+  /**
+   * 上下文数据
+   */
+  data: Record<string, any>;
 
   /**
-   * Get the renderer
-   * 获取渲染器
+   * 上下文 ID
    */
-  getRenderer(): IRenderer | undefined;
+  id: string;
 
   /**
-   * Set the renderer
-   * 设置渲染器
-   * @param renderer - The renderer instance
+   * 父上下文
    */
-  setRenderer(renderer: IRenderer): void;
+  parent?: RenderContext;
 
   /**
-   * Get a renderer instance by id
-   * 根据ID获取渲染器实例
-   * @param id - The renderer instance id
+   * 子上下文
    */
-  getRendererInstance(id: string): IBaseRendererInstance | undefined;
+  children?: RenderContext[];
+}
+
+/**
+ * 组件实例
+ */
+export interface ComponentInstance {
+  /**
+   * 组件实例
+   */
+  instance: any;
 
   /**
-   * Register a renderer instance
-   * 注册渲染器实例
-   * @param id - The renderer instance id
-   * @param instance - The renderer instance
+   * 组件元数据
    */
-  registerRendererInstance(id: string, instance: IBaseRendererInstance): void;
+  componentMeta: IComponentMeta;
 
   /**
-   * Unregister a renderer instance
-   * 注销渲染器实例
-   * @param id - The renderer instance id
+   * 组件 Schema
    */
-  unregisterRendererInstance(id: string): void;
+  schema: ISchema;
 
   /**
-   * Get all renderer instances
-   * 获取所有渲染器实例
+   * 组件状态
    */
-  getRendererInstances(): Map<string, IBaseRendererInstance>;
+  state: Record<string, any>;
 
   /**
-   * Check if the runtime is ready
-   * 检查运行时是否已就绪
+   * 组件属性
    */
-  isReady(): boolean;
+  props: Record<string, any>;
 
   /**
-   * Check if the runtime is active
-   * 检查运行时是否处于活动状态
+   * 更新组件状态
+   * 
+   * @param state - 新状态
    */
-  isActive(): boolean;
+  updateState(state: Record<string, any>): void;
 
   /**
-   * Get the runtime config
-   * 获取运行时配置
+   * 更新组件属性
+   * 
+   * @param props - 新属性
    */
-  getConfig(): Record<string, any>;
+  updateProps(props: Record<string, any>): void;
 
   /**
-   * Set the runtime config
-   * 设置运行时配置
-   * @param config - The runtime config
+   * 销毁组件实例
    */
-  setConfig(config: Record<string, any>): void;
+  destroy(): void;
+}
+
+/**
+ * 运行时配置
+ */
+export interface RuntimeConfig {
+  /**
+   * 是否启用调试模式
+   */
+  debug?: boolean;
 
   /**
-   * Add event listener
-   * 添加事件监听器
-   * @param event - The event name
-   * @param handler - The event handler
+   * 是否启用性能监控
    */
-  on(event: string, handler: (...args: any[]) => void): void;
+  performance?: boolean;
 
   /**
-   * Remove event listener
-   * 移除事件监听器
-   * @param event - The event name
-   * @param handler - The event handler
+   * 是否启用错误边界
    */
-  off(event: string, handler: (...args: any[]) => void): void;
+  errorBoundary?: boolean;
 
   /**
-   * Emit an event
-   * 触发事件
-   * @param event - The event name
-   * @param args - The event arguments
+   * 错误处理器
    */
-  emit(event: string, ...args: any[]): void;
+  errorHandler?: (error: Error) => void;
+
+  /**
+   * 警告处理器
+   */
+  warningHandler?: (warning: string) => void;
+
+  /**
+   * 全局组件
+   */
+  components?: Record<string, Component>;
+
+  /**
+   * 全局指令
+   */
+  directives?: Record<string, any>;
+
+  /**
+   * 全局插件
+   */
+  plugins?: Array<{ plugin: any; options?: any }>;
+
+  /**
+   * 自定义上下文数据
+   */
+  context?: Record<string, any>;
 }

@@ -1,417 +1,929 @@
 # @vue3-lowcode/editor-skeleton
 
-编辑器骨架包，用于管理编辑器的 UI 布局和组件。
+Vue3 LowCode Engine Editor Skeleton - 编辑器骨架包，提供编辑器布局和面板管理。
 
 ## 简介
 
-`@vue3-lowcode/editor-skeleton` 是 Vue3 低代码框架的编辑器骨架包，负责管理编辑器的 UI 布局、组件和区域。它提供了灵活的编辑器布局系统，支持自定义面板、工具栏、舞台等组件。
+`@vue3-lowcode/editor-skeleton` 是 Vue3 LowCode Engine 的编辑器骨架包，负责管理编辑器的布局、区域、Widget、面板和设置面板。它提供了灵活的布局管理和组件管理能力，支持动态添加、移除和配置编辑器的各个部分。
 
-## 功能特性
+## 特性
 
-- **灵活的布局系统**：支持多个编辑器区域（顶部、底部、左侧、右侧、主区域）
-- **Widget 系统**：支持自定义 Widget 组件
-- **Panel 系统**：支持面板管理，支持嵌套面板
-- **Dock 系统**：支持 Dock 组件，用于快速切换面板
-- **Stage 系统**：支持舞台管理，用于管理编辑器中的舞台
-- **响应式设计**：基于 Vue3 响应式系统，实时更新 UI
-- **类型安全**：完整的 TypeScript 类型定义
+- 🏗️ **灵活的布局管理**: 支持多种布局区域（顶部、左侧、右侧、底部、主区域）
+- 🧩 **组件管理**: 统一管理 Widget、Panel 和 SettingsPane
+- 🎨 **样式定制**: 支持自定义样式和主题
+- 📱 **响应式设计**: 支持动态调整大小和折叠
+- 🔌 **事件系统**: 完整的事件监听和处理机制
+- 🎯 **TypeScript 支持**: 完整的类型定义
+- ⚡ **高性能**: 基于 Vue3 的响应式系统
 
 ## 安装
 
 ```bash
+npm install @vue3-lowcode/editor-skeleton
+# 或
 pnpm add @vue3-lowcode/editor-skeleton
+# 或
+yarn add @vue3-lowcode/editor-skeleton
 ```
 
-## 核心概念
+## 快速开始
 
-### Skeleton（骨架）
-
-Skeleton 是编辑器骨架的核心类，负责管理所有的编辑器区域和组件。
+### 基础使用
 
 ```typescript
 import { Skeleton } from '@vue3-lowcode/editor-skeleton';
+import { Designer } from '@vue3-lowcode/designer';
 
-const skeleton = new Skeleton();
+// 创建设计器实例
+const designer = new Designer({
+  // 设计器配置
+});
+
+// 创建骨架实例
+const skeleton = new Skeleton({
+  container: '#editor-container',
+  designer,
+  theme: 'light',
+  width: '100%',
+  height: '100vh',
+  animated: true,
+});
+
+// 初始化骨架
+await skeleton.init();
 ```
 
-### Area（区域）
-
-Area 表示编辑器中的一个区域，如顶部区域、左侧区域等。
+### 添加区域
 
 ```typescript
-const leftArea = skeleton.leftArea;
-leftArea.add(widget);
-```
+// 添加左侧区域
+const leftArea = skeleton.addArea({
+  name: 'left',
+  type: 'left',
+  title: '组件面板',
+  icon: 'el-icon-menu',
+  width: 280,
+  resizable: true,
+  collapsible: true,
+});
 
-### Widget（组件）
-
-Widget 是编辑器中的基础组件，可以是按钮、工具栏等。
-
-```typescript
-import { Widget } from '@vue3-lowcode/editor-skeleton';
-
-const widget = new Widget(skeleton, {
-  name: 'my-widget',
-  title: 'My Widget',
-  content: () => h('div', 'Hello World'),
+// 添加右侧区域
+const rightArea = skeleton.addArea({
+  name: 'right',
+  type: 'right',
+  title: '属性面板',
+  icon: 'el-icon-setting',
+  width: 320,
+  resizable: true,
+  collapsible: true,
 });
 ```
 
-### Panel（面板）
-
-Panel 是一种特殊的 Widget，用于显示面板内容。
+### 添加 Widget
 
 ```typescript
-import { Panel } from '@vue3-lowcode/editor-skeleton';
-
-const panel = new Panel(skeleton, {
-  name: 'my-panel',
-  title: 'My Panel',
-  content: () => h('div', 'Panel Content'),
-});
-```
-
-### Dock（停靠）
-
-Dock 是一种特殊的 Widget，用于快速切换面板。
-
-```typescript
-import { Dock } from '@vue3-lowcode/editor-skeleton';
-
-const dock = new Dock(skeleton, {
-  name: 'my-dock',
-  title: 'My Dock',
-});
-```
-
-### Stage（舞台）
-
-Stage 是编辑器中的舞台，用于显示编辑器内容。
-
-```typescript
-import { Stage } from '@vue3-lowcode/editor-skeleton';
-
-const stage = new Stage(skeleton, {
-  name: 'my-stage',
-  title: 'My Stage',
-  content: () => h('div', 'Stage Content'),
-});
-```
-
-## 使用示例
-
-### 创建面板
-
-```typescript
-import { Skeleton } from '@vue3-lowcode/editor-skeleton';
-
-const skeleton = new Skeleton();
-
-// 创建面板
-const panel = skeleton.createPanel({
-  name: 'settings-panel',
-  title: '设置',
-  content: () => h('div', '设置面板内容'),
-  area: 'rightArea',
-});
-
-// 激活面板
-panel.active();
-```
-
-### 创建 Widget
-
-```typescript
-// 创建 Widget
-const widget = skeleton.createWidget({
-  name: 'my-widget',
-  title: '我的组件',
-  content: () => h('button', '点击我'),
-  area: 'topArea',
-});
-
-// 添加到区域
-skeleton.topArea.add(widget);
-```
-
-### 创建 Stage
-
-```typescript
-// 创建 Stage
-const stage = skeleton.createStage({
-  name: 'main-stage',
-  title: '主舞台',
-  content: () => h('div', '舞台内容'),
-  area: 'mainArea',
-});
-
-// 激活舞台
-stage.active();
-```
-
-### 配置解析
-
-```typescript
-const config = [
-  {
-    name: 'left-area',
-    type: 'Area',
-    area: 'leftArea',
-    items: [
-      {
-        name: 'component-panel',
-        type: 'Panel',
-        title: '组件',
-        content: () => h('div', '组件面板'),
-      },
-    ],
+// 添加组件树 Widget
+const componentTreeWidget = skeleton.addWidget({
+  name: 'component-tree',
+  title: '组件树',
+  icon: 'el-icon-s-grid',
+  component: ComponentTreeComponent,
+  area: 'left',
+  index: 0,
+  collapsible: true,
+  draggable: true,
+  props: {
+    // 组件属性
   },
-];
+});
 
-skeleton.parseConfig(config);
+// 添加大纲 Widget
+const outlineWidget = skeleton.addWidget({
+  name: 'outline',
+  title: '大纲',
+  icon: 'el-icon-document',
+  component: OutlineComponent,
+  area: 'left',
+  index: 1,
+  collapsible: true,
+});
+```
+
+### 添加面板
+
+```typescript
+// 添加设置面板
+const settingsPanel = skeleton.addPanel({
+  name: 'settings',
+  title: '设置',
+  icon: 'el-icon-setting',
+  component: SettingsComponent,
+  area: 'right',
+  index: 0,
+  collapsible: true,
+  draggable: true,
+});
+```
+
+### 添加设置面板
+
+```typescript
+// 添加属性设置面板
+const propsSettingsPane = skeleton.addSettingsPane({
+  name: 'props',
+  title: '属性',
+  icon: 'el-icon-edit',
+  component: PropsSettingsComponent,
+  area: 'right',
+  index: 0,
+  collapsible: true,
+});
+
+// 添加样式设置面板
+const styleSettingsPane = skeleton.addSettingsPane({
+  name: 'style',
+  title: '样式',
+  icon: 'el-icon-brush',
+  component: StyleSettingsComponent,
+  area: 'right',
+  index: 1,
+  collapsible: true,
+});
 ```
 
 ## API 文档
 
 ### Skeleton
 
-#### 属性
+编辑器骨架主类，负责管理整个编辑器的布局和组件。
 
-- `panels: WidgetContainer<Panel>` - 面板容器
-- `containers: Map<string, WidgetContainer>` - 容器映射
-- `leftArea: Area` - 左侧区域
-- `topArea: Area` - 顶部区域
-- `subTopArea: Area` - 子顶部区域
-- `toolbar: Area` - 工具栏区域
-- `leftFixedArea: Area` - 左侧固定区域
-- `leftFloatArea: Area` - 左侧浮动区域
-- `rightArea: Area` - 右侧区域
-- `mainArea: Area` - 主区域
-- `bottomArea: Area` - 底部区域
-- `stages: Map<string, Stage>` - 舞台映射
-- `widgets: Map<string, Widget>` - 组件映射
+#### 构造函数
 
-#### 方法
+```typescript
+constructor(config: SkeletonConfig, events?: SkeletonEvents)
+```
 
-- `getPanel(name: string): Panel | undefined` - 获取面板
-- `getWidget(name: string): Widget | undefined` - 获取组件
-- `createStage(config: StageConfig): Stage` - 创建舞台
-- `getStage(name: string): Stage | undefined` - 获取舞台
-- `createPanel(config: PanelConfig): Panel` - 创建面板
-- `createWidget(config: WidgetConfig): Widget` - 创建组件
-- `add(config: WidgetConfig | PanelConfig | DockConfig): Widget | Panel | Dock` - 添加组件
-- `createContainer(name: string): WidgetContainer` - 创建容器
-- `parseConfig(config: any[]): void` - 解析配置
-
-### Widget
-
-#### 属性
-
-- `isWidget: boolean` - 是否为 Widget
-- `id: string` - 组件 ID
-- `name: string` - 组件名称
-- `align: string` - 对齐方式
-- `visible: boolean` - 是否可见
-- `disabled: boolean` - 是否禁用
-- `body: any` - 组件内容
-- `content: VNode` - 组件 VNode
-- `title: string` - 组件标题
+**参数:**
+- `config`: 骨架配置
+  - `container`: 容器元素或选择器
+  - `designer`: 设计器实例
+  - `theme`: 主题（'light' | 'dark' | 'auto'）
+  - `width`: 宽度
+  - `height`: 高度
+  - `animated`: 是否启用动画
+  - `className`: 自定义类名
+  - `style`: 自定义样式
+- `events`: 骨架事件（可选）
 
 #### 方法
 
-- `getId(): string` - 获取组件 ID
-- `getName(): string` - 获取组件名称
-- `getContent(): VNode` - 获取组件内容
-- `hide(): void` - 隐藏组件
-- `show(): void` - 显示组件
-- `setVisible(visible: boolean): void` - 设置可见性
-- `toggle(): void` - 切换可见性
-- `disable(): void` - 禁用组件
-- `enable(): void` - 启用组件
+##### init()
 
-### Panel
+初始化骨架。
 
-#### 属性
+```typescript
+async init(): Promise<void>
+```
 
-- `isPanel: boolean` - 是否为 Panel
-- `actived: boolean` - 是否激活
-- `container: WidgetContainer | null` - 容器
-- `parent: Panel | null` - 父面板
+##### destroy()
 
-#### 方法
+销毁骨架。
 
-- `setParent(parent: Panel | null): void` - 设置父面板
-- `add(panel: Panel): void` - 添加子面板
-- `getPane(name: string): Panel | undefined` - 获取子面板
-- `remove(panel: Panel): void` - 移除子面板
-- `active(): void` - 激活面板
-- `setActive(actived: boolean): void` - 设置激活状态
-- `toggle(): void` - 切换激活状态
-- `hide(): void` - 隐藏面板
-- `disable(): void` - 禁用面板
-- `enable(): void` - 启用面板
-- `show(): void` - 显示面板
-- `isChildOfFloatArea(): boolean` - 是否为浮动区域子面板
-- `isChildOfFixedArea(): boolean` - 是否为固定区域子面板
+```typescript
+destroy(): void
+```
+
+##### getConfig()
+
+获取骨架配置。
+
+```typescript
+getConfig(): SkeletonConfig
+```
+
+##### setConfig()
+
+设置骨架配置。
+
+```typescript
+setConfig(config: Partial<SkeletonConfig>): void
+```
+
+##### getDesigner()
+
+获取设计器实例。
+
+```typescript
+getDesigner(): Designer
+```
+
+##### getContainer()
+
+获取容器元素。
+
+```typescript
+getContainer(): HTMLElement | null
+```
+
+##### addArea()
+
+添加区域。
+
+```typescript
+addArea(config: AreaConfig): Area
+```
+
+##### removeArea()
+
+移除区域。
+
+```typescript
+removeArea(name: string): void
+```
+
+##### getArea()
+
+获取区域。
+
+```typescript
+getArea(name: string): Area | undefined
+```
+
+##### getAreas()
+
+获取所有区域。
+
+```typescript
+getAreas(): Map<string, Area>
+```
+
+##### addWidget()
+
+添加 Widget。
+
+```typescript
+addWidget(config: WidgetConfig): Widget
+```
+
+##### removeWidget()
+
+移除 Widget。
+
+```typescript
+removeWidget(name: string): void
+```
+
+##### getWidget()
+
+获取 Widget。
+
+```typescript
+getWidget(name: string): Widget | undefined
+```
+
+##### getWidgets()
+
+获取所有 Widget。
+
+```typescript
+getWidgets(): Map<string, Widget>
+```
+
+##### addPanel()
+
+添加面板。
+
+```typescript
+addPanel(config: PanelConfig): Panel
+```
+
+##### removePanel()
+
+移除面板。
+
+```typescript
+removePanel(name: string): void
+```
+
+##### getPanel()
+
+获取面板。
+
+```typescript
+getPanel(name: string): Panel | undefined
+```
+
+##### getPanels()
+
+获取所有面板。
+
+```typescript
+getPanels(): Map<string, Panel>
+```
+
+##### addSettingsPane()
+
+添加设置面板。
+
+```typescript
+addSettingsPane(config: SettingsPaneConfig): SettingsPane
+```
+
+##### removeSettingsPane()
+
+移除设置面板。
+
+```typescript
+removeSettingsPane(name: string): void
+```
+
+##### getSettingsPane()
+
+获取设置面板。
+
+```typescript
+getSettingsPane(name: string): SettingsPane | undefined
+```
+
+##### getSettingsPanes()
+
+获取所有设置面板。
+
+```typescript
+getSettingsPanes(): Map<string, SettingsPane>
+```
+
+##### isInitialized()
+
+检查骨架是否已初始化。
+
+```typescript
+isInitialized(): boolean
+```
+
+##### isDestroyed()
+
+检查骨架是否已销毁。
+
+```typescript
+isDestroyed(): boolean
+```
+
+##### reset()
+
+重置骨架。
+
+```typescript
+reset(): void
+```
 
 ### Area
 
-#### 属性
-
-- `visible: boolean` - 是否可见
-- `current: any` - 当前激活项
-- `container: WidgetContainer` - 容器
+区域类，负责管理编辑器的各个区域。
 
 #### 方法
 
-- `isEmpty(): boolean` - 是否为空
-- `add(item: any): void` - 添加项
-- `remove(item: any): void` - 移除项
-- `setVisible(visible: boolean): void` - 设置可见性
-- `hide(): void` - 隐藏区域
-- `show(): void` - 显示区域
+##### init()
 
-### Stage
-
-#### 属性
-
-- `isStage: boolean` - 是否为 Stage
-- `name: string` - 舞台名称
-- `title: string` - 舞台标题
-- `content: any` - 舞台内容
-- `props: Record<string, any>` - 舞台属性
-- `area: string` - 所属区域
-- `actived: boolean` - 是否激活
-
-#### 方法
-
-- `active(): void` - 激活舞台
-- `unactive(): void` - 取消激活舞台
-- `toggle(): void` - 切换激活状态
-- `getContent(): any` - 获取舞台内容
-- `getProps(): Record<string, any>` - 获取舞台属性
-- `getName(): string` - 获取舞台名称
-- `getTitle(): string` - 获取舞台标题
-
-### Dock
-
-#### 属性
-
-- `isDock: boolean` - 是否为 Dock
-
-#### 方法
-
-- `toggle(): void` - 切换状态
-
-### PanelDock
-
-#### 属性
-
-- `isPanelDock: boolean` - 是否为 PanelDock
-- `panelName: string | undefined` - 关联的面板名称
-
-#### 方法
-
-- `togglePanel(): void` - 切换关联的面板
-
-## 类型定义
-
-### WidgetConfig
+初始化区域。
 
 ```typescript
-interface WidgetConfig {
-  name: string;
-  title?: string;
-  align?: string;
-  visible?: boolean;
-  disabled?: boolean;
-  content?: any;
-  props?: Record<string, any>;
-  area?: string;
-}
+init(container: HTMLElement): void
 ```
 
-### PanelConfig
+##### destroy()
+
+销毁区域。
 
 ```typescript
-interface PanelConfig extends WidgetConfig {
-  help?: any;
-  plain?: boolean;
-  condition?: any;
+destroy(): void
+```
+
+##### getConfig()
+
+获取区域配置。
+
+```typescript
+getConfig(): AreaConfig
+```
+
+##### getState()
+
+获取区域状态。
+
+```typescript
+getState(): AreaState
+```
+
+##### setConfig()
+
+设置区域配置。
+
+```typescript
+setConfig(config: Partial<AreaConfig>): void
+```
+
+##### setState()
+
+设置区域状态。
+
+```typescript
+setState(state: Partial<AreaState>): void
+```
+
+##### getName()
+
+获取区域名称。
+
+```typescript
+getName(): string
+```
+
+##### getType()
+
+获取区域类型。
+
+```typescript
+getType(): string
+```
+
+##### getTitle()
+
+获取区域标题。
+
+```typescript
+getTitle(): string | undefined
+```
+
+##### getIcon()
+
+获取区域图标。
+
+```typescript
+getIcon(): string | undefined
+```
+
+##### getWidth()
+
+获取区域宽度。
+
+```typescript
+getWidth(): string | number | undefined
+```
+
+##### setWidth()
+
+设置区域宽度。
+
+```typescript
+setWidth(width: string | number): void
+```
+
+##### getHeight()
+
+获取区域高度。
+
+```typescript
+getHeight(): string | number | undefined
+```
+
+##### setHeight()
+
+设置区域高度。
+
+```typescript
+setHeight(height: string | number): void
+```
+
+##### getSize()
+
+获取区域尺寸。
+
+```typescript
+getSize(): { width?: string | number; height?: string | number }
+```
+
+##### setSize()
+
+设置区域尺寸。
+
+```typescript
+setSize(size: { width?: string | number; height?: string | number }): void
+```
+
+##### isCollapsed()
+
+检查区域是否折叠。
+
+```typescript
+isCollapsed(): boolean
+```
+
+##### setCollapsed()
+
+设置区域折叠状态。
+
+```typescript
+setCollapsed(collapsed: boolean): void
+```
+
+##### toggleCollapsed()
+
+切换区域折叠状态。
+
+```typescript
+toggleCollapsed(): void
+```
+
+##### isResizable()
+
+检查区域是否可调整大小。
+
+```typescript
+isResizable(): boolean
+```
+
+##### isCollapsible()
+
+检查区域是否可折叠。
+
+```typescript
+isCollapsible(): boolean
+```
+
+##### isDraggable()
+
+检查区域是否可拖拽。
+
+```typescript
+isDraggable(): boolean
+```
+
+##### isClosable()
+
+检查区域是否可关闭。
+
+```typescript
+isClosable(): boolean
+```
+
+### Widget
+
+Widget 类，负责管理编辑器的小部件。
+
+#### 方法
+
+Widget 类提供了与 Area 类类似的方法，包括：
+- 初始化和销毁
+- 配置和状态管理
+- 尺寸和折叠控制
+- 事件处理
+
+### Panel
+
+面板类，负责管理编辑器的面板。
+
+#### 方法
+
+Panel 类提供了与 Area 类类似的方法，包括：
+- 初始化和销毁
+- 配置和状态管理
+- 尺寸和折叠控制
+- 事件处理
+
+### SettingsPane
+
+设置面板类，负责管理编辑器的设置面板。
+
+#### 方法
+
+SettingsPane 类提供了与 Area 类类似的方法，包括：
+- 初始化和销毁
+- 配置和状态管理
+- 尺寸和折叠控制
+- 事件处理
+
+## 事件系统
+
+### Skeleton 事件
+
+```typescript
+interface SkeletonEvents {
   onInit?: () => void;
   onDestroy?: () => void;
+  onAreaAdd?: (area: AreaConfig) => void;
+  onAreaRemove?: (name: string) => void;
+  onWidgetAdd?: (widget: WidgetConfig) => void;
+  onWidgetRemove?: (name: string) => void;
+  onPanelAdd?: (panel: PanelConfig) => void;
+  onPanelRemove?: (name: string) => void;
+  onSettingsPaneAdd?: (settingsPane: SettingsPaneConfig) => void;
+  onSettingsPaneRemove?: (name: string) => void;
 }
 ```
 
-### DockConfig
+### Area 事件
 
 ```typescript
-interface DockConfig extends WidgetConfig {
-  icon?: any;
+interface AreaEvents {
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  onClose?: (name: string) => void;
 }
 ```
 
-### PanelDockConfig
+### Widget 事件
 
 ```typescript
-interface PanelDockConfig extends DockConfig {
-  panelName?: string;
+interface WidgetEvents {
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  onClose?: (name: string) => void;
+  onClick?: (name: string) => void;
+  onDoubleClick?: (name: string) => void;
 }
 ```
 
-### StageConfig
+### Panel 事件
 
 ```typescript
-interface StageConfig {
-  name: string;
-  title?: string;
-  content: any;
-  props?: Record<string, any>;
-  area?: string;
+interface PanelEvents {
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  onClose?: (name: string) => void;
+  onClick?: (name: string) => void;
+  onDoubleClick?: (name: string) => void;
 }
 ```
 
-## 开发指南
-
-### 添加新的 Widget
+### SettingsPane 事件
 
 ```typescript
-import { Widget } from '@vue3-lowcode/editor-skeleton';
-
-class CustomWidget extends Widget {
-  constructor(skeleton: ISkeleton, config: WidgetConfig) {
-    super(skeleton, config);
-  }
-
-  get content() {
-    return h('div', { class: 'custom-widget' }, this.title);
-  }
+interface SettingsPaneEvents {
+  onCollapse?: (name: string, collapsed: boolean) => void;
+  onResize?: (name: string, size: { width?: string | number; height?: string | number }) => void;
+  onDrag?: (name: string, position: { x: number; y: number }) => void;
+  onClose?: (name: string) => void;
+  onClick?: (name: string) => void;
+  onDoubleClick?: (name: string) => void;
 }
 ```
 
-### 添加新的 Panel
+## 使用示例
+
+### 完整示例
 
 ```typescript
-import { Panel } from '@vue3-lowcode/editor-skeleton';
+import { Skeleton } from '@vue3-lowcode/editor-skeleton';
+import { Designer } from '@vue3-lowcode/designer';
+import ComponentTree from './components/ComponentTree.vue';
+import Outline from './components/Outline.vue';
+import Settings from './components/Settings.vue';
+import PropsSettings from './components/PropsSettings.vue';
+import StyleSettings from './components/StyleSettings.vue';
 
-class CustomPanel extends Panel {
-  constructor(skeleton: ISkeleton, config: PanelConfig) {
-    super(skeleton, config);
-  }
+// 创建设计器
+const designer = new Designer({
+  // 设计器配置
+});
 
-  get content() {
-    return h('div', { class: 'custom-panel' }, this.title);
-  }
+// 创建骨架
+const skeleton = new Skeleton({
+  container: '#editor-container',
+  designer,
+  theme: 'light',
+  width: '100%',
+  height: '100vh',
+  animated: true,
+}, {
+  onInit: () => {
+    console.log('骨架已初始化');
+  },
+  onWidgetAdd: (widget) => {
+    console.log('Widget 已添加:', widget.name);
+  },
+});
+
+// 添加区域
+const leftArea = skeleton.addArea({
+  name: 'left',
+  type: 'left',
+  title: '组件面板',
+  icon: 'el-icon-menu',
+  width: 280,
+  resizable: true,
+  collapsible: true,
+});
+
+const rightArea = skeleton.addArea({
+  name: 'right',
+  type: 'right',
+  title: '属性面板',
+  icon: 'el-icon-setting',
+  width: 320,
+  resizable: true,
+  collapsible: true,
+});
+
+// 添加 Widget
+skeleton.addWidget({
+  name: 'component-tree',
+  title: '组件树',
+  icon: 'el-icon-s-grid',
+  component: ComponentTree,
+  area: 'left',
+  index: 0,
+  collapsible: true,
+  draggable: true,
+});
+
+skeleton.addWidget({
+  name: 'outline',
+  title: '大纲',
+  icon: 'el-icon-document',
+  component: Outline,
+  area: 'left',
+  index: 1,
+  collapsible: true,
+});
+
+// 添加面板
+skeleton.addPanel({
+  name: 'settings',
+  title: '设置',
+  icon: 'el-icon-setting',
+  component: Settings,
+  area: 'right',
+  index: 0,
+  collapsible: true,
+});
+
+// 添加设置面板
+skeleton.addSettingsPane({
+  name: 'props',
+  title: '属性',
+  icon: 'el-icon-edit',
+  component: PropsSettings,
+  area: 'right',
+  index: 0,
+  collapsible: true,
+});
+
+skeleton.addSettingsPane({
+  name: 'style',
+  title: '样式',
+  icon: 'el-icon-brush',
+  component: StyleSettings,
+  area: 'right',
+  index: 1,
+  collapsible: true,
+});
+
+// 初始化骨架
+await skeleton.init();
+
+// 销毁骨架
+// skeleton.destroy();
+```
+
+## 最佳实践
+
+### 1. 组件封装
+
+建议将 Widget、Panel 和 SettingsPane 的组件进行封装，提高复用性。
+
+```typescript
+// components/ComponentTreeWidget.ts
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'ComponentTreeWidget',
+  props: {
+    designer: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    // 组件逻辑
+    return {};
+  },
+});
+```
+
+### 2. 事件处理
+
+合理使用事件系统，实现组件间的通信。
+
+```typescript
+const skeleton = new Skeleton(config, {
+  onWidgetAdd: (widget) => {
+    console.log('Widget 已添加:', widget.name);
+    // 执行相关操作
+  },
+  onWidgetRemove: (name) => {
+    console.log('Widget 已移除:', name);
+    // 执行相关操作
+  },
+});
+```
+
+### 3. 状态管理
+
+使用状态管理工具（如 Pinia）管理编辑器的全局状态。
+
+```typescript
+// stores/editor.ts
+import { defineStore } from 'pinia';
+
+export const useEditorStore = defineStore('editor', {
+  state: () => ({
+    skeleton: null as Skeleton | null,
+  }),
+  actions: {
+    setSkeleton(skeleton: Skeleton) {
+      this.skeleton = skeleton;
+    },
+  },
+});
+```
+
+### 4. 样式定制
+
+使用 CSS 变量和类名进行样式定制。
+
+```css
+:root {
+  --lc-skeleton-bg-color: #f5f5f5;
+  --lc-area-bg-color: #ffffff;
+  --lc-widget-bg-color: #ffffff;
+  --lc-panel-bg-color: #ffffff;
+}
+
+.lc-skeleton {
+  background-color: var(--lc-skeleton-bg-color);
+}
+
+.lc-area {
+  background-color: var(--lc-area-bg-color);
+}
+
+.lc-widget {
+  background-color: var(--lc-widget-bg-color);
+}
+
+.lc-panel {
+  background-color: var(--lc-panel-bg-color);
 }
 ```
 
-## 依赖
+## TypeScript 支持
 
-- `@vue3-lowcode/types` - 类型定义
-- `@vue3-lowcode/utils` - 工具函数
-- `vue` - Vue3 框架
-- `element-plus` - Element Plus UI 组件库
+本包提供了完整的 TypeScript 类型定义，支持类型检查和智能提示。
+
+```typescript
+import type {
+  SkeletonConfig,
+  AreaConfig,
+  WidgetConfig,
+  PanelConfig,
+  SettingsPaneConfig,
+  SkeletonEvents,
+} from '@vue3-lowcode/editor-skeleton';
+
+// 类型安全的配置
+const config: SkeletonConfig = {
+  container: '#editor-container',
+  designer,
+  theme: 'light',
+  width: '100%',
+  height: '100vh',
+};
+```
+
+## 浏览器支持
+
+- Chrome >= 90
+- Firefox >= 88
+- Safari >= 14
+- Edge >= 90
 
 ## 许可证
 
 MIT
+
+## 贡献
+
+欢迎贡献！请查看 [贡献指南](../../CONTRIBUTING.md) 了解详情。
+
+## 相关包
+
+- [@vue3-lowcode/types](../types) - 类型定义包
+- [@vue3-lowcode/utils](../utils) - 工具库包
+- [@vue3-lowcode/designer](../designer) - 设计器包
+- [@vue3-lowcode/renderer-core](../renderer-core) - 渲染器核心包
+- [@vue3-lowcode/vue-renderer](../vue-renderer) - Vue3 渲染器包
+- [@vue3-lowcode/vue-simulator-renderer](../vue-simulator-renderer) - Vue3 模拟器渲染器包
