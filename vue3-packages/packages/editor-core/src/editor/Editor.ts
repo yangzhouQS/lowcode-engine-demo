@@ -291,6 +291,24 @@ export class Editor {
   }
 
   /**
+   * 获取插件管理器
+   * @returns 插件管理器（暂未实现）
+   */
+  getPluginManager(): any {
+    // TODO: 实现插件管理器
+    // 当插件系统完全集成后，这里应该返回实际的 PluginManager 实例
+    return null;
+  }
+
+  /**
+   * 获取容器（DI 容器）
+   * @returns DI 容器
+   */
+  getContainer(): DIContainer {
+    return this.di;
+  }
+
+  /**
    * 解析依赖
    * @param token 依赖标识
    * @returns 依赖实例

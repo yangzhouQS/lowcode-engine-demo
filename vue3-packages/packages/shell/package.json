@@ -1,67 +1,51 @@
 {
   "name": "@vue3-lowcode/shell",
-  "version": "0.1.0",
-  "description": "Vue3 LowCode Engine Shell API - External API layer for the lowcode editor",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "version": "1.0.0",
+  "description": "Vue3 LowCode Engine Shell API - Shell API 模块",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
     "build": "vite build",
+    "dev": "vite build --watch",
     "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "@vue3-lowcode/types": "workspace:*",
     "@vue3-lowcode/utils": "workspace:*",
-    "@vue3-lowcode/editor-core": "workspace:*",
-    "@vue3-lowcode/designer": "workspace:*",
+    "@vue3-lowcode/plugin": "workspace:*",
     "vue": "^3.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
-    "@vitejs/plugin-vue": "^5.0.0",
-    "@vue/test-utils": "^2.4.0",
-    "typescript": "^5.3.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint-plugin-vue": "^9.19.2",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3",
     "vite": "^5.0.0",
-    "vite-plugin-dts": "^3.7.0",
-    "vitest": "^1.0.0",
-    "@vitest/ui": "^1.0.0",
-    "@vitest/coverage-v8": "^1.0.0",
-    "eslint": "^8.56.0",
-    "prettier": "^3.1.0"
+    "vitest": "^1.1.0",
+    "@vue/test-utils": "^2.4.3"
   },
   "peerDependencies": {
     "vue": "^3.4.0"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "access": "public"
   },
   "keywords": [
     "vue3",
     "lowcode",
     "shell",
-    "api",
-    "editor",
-    "designer"
+    "shell-api"
   ],
   "author": "Vue3 LowCode Team",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vue3-lowcode/engine.git",
-    "directory": "packages/shell"
-  },
-  "bugs": {
-    "url": "https://github.com/vue3-lowcode/engine/issues"
-  },
-  "homepage": "https://github.com/vue3-lowcode/engine#readme"
+  "license": "MIT"
 }
