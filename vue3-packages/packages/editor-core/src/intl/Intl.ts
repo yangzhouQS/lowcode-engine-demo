@@ -14,6 +14,11 @@ export interface IntlOptions {
 }
 
 /**
+ * 国际化选项别名
+ */
+export type IntlLocale = string;
+
+/**
  * 国际化消息类型
  */
 export type IntlMessages = Record<string, string | Record<string, any>>;

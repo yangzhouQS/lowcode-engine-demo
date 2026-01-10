@@ -34,6 +34,36 @@ export interface SetterConfig {
 }
 
 /**
+ * Setter 信息类型
+ */
+export interface SetterInfo {
+  /**
+   * Setter 名称
+   */
+  name: string;
+
+  /**
+   * Setter 组件
+   */
+  component: any;
+
+  /**
+   * Setter 标题
+   */
+  title?: string;
+
+  /**
+   * Setter 描述
+   */
+  description?: string;
+
+  /**
+   * Setter 配置
+   */
+  config?: Record<string, any>;
+}
+
+/**
  * Setter 注册表配置选项
  */
 export interface SetterRegistryOptions {

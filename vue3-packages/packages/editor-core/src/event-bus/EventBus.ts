@@ -6,7 +6,7 @@
 /**
  * 事件处理器类型
  */
-export type EventHandler<T = (...args: T[]) => void;
+export type EventHandler<T = any> = (...args: T[]) => void;
 
 /**
  * EventBus 配置选项

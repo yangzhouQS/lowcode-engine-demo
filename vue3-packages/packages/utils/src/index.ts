@@ -71,3 +71,7 @@ export * from './vue/useWatchEffect'
 export * from './vue/useProvide'
 export * from './vue/useInject'
 export * from './vue/useEventBus'
+
+// Dragon Utilities
+export * from './dragon/setNativeSelection'
+export * from './dragon/cursor'

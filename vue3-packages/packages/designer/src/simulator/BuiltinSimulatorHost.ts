@@ -51,7 +51,7 @@ export class BuiltinSimulatorHost {
     this.isReadyRef.value = false;
     
     // 监听文档变化
-    documentModel.on('document:change', this.handleDocumentChange.bind(this));
+    (documentModel as any).on('document:change', this.handleDocumentChange.bind(this));
     
     this.isReadyRef.value = true;
     this.eventBus.emit('simulator:ready', { config: this.config });

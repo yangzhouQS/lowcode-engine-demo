@@ -26,7 +26,7 @@ export class Node implements INode {
   
   private props: IProps;
   private children: INode[];
-  private parent: INode | undefined;
+  public parent: INode | undefined;
   private childrenRef: Ref<INode[]>;
   private eventBus: ReturnType<typeof useEventBus>;
 
@@ -99,7 +99,7 @@ export class Node implements INode {
    * @returns Promise<void>
    */
   async addChild(node: INode): Promise<void> {
-    node.parent = this;
+    (node as any).parent = this;
     this.children.push(node);
     this.childrenRef.value = [...this.children];
     this.eventBus.emit('node:add-child', { node });
@@ -115,7 +115,7 @@ export class Node implements INode {
     const index = this.children.indexOf(node);
     if (index > -1) {
       this.children.splice(index, 1);
-      node.parent = undefined;
+      (node as any).parent = undefined;
       this.childrenRef.value = [...this.children];
       this.eventBus.emit('node:remove-child', { node });
     }

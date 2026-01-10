@@ -6,7 +6,7 @@
 /**
  * 命令处理器类型
  */
-export type CommandHandler<T = (...args: T[]) => any;
+export type CommandHandler<T = any> = (...args: any[]) => any;
 
 /**
  * Command 配置选项

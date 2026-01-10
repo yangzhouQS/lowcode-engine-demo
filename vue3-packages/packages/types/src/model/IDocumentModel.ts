@@ -18,6 +18,22 @@ export interface IDocumentModel {
   getDocument(id: string): IDocument | undefined;
 
   /**
+   * 注册事件监听器
+   *
+   * @param event - 事件名称
+   * @param listener - 监听器函数
+   */
+  on(event: string, listener: (...args: any[]) => void): void;
+
+  /**
+   * 移除事件监听器
+   *
+   * @param event - 事件名称
+   * @param listener - 监听器函数
+   */
+  off(event: string, listener: (...args: any[]) => void): void;
+
+  /**
    * 创建文档
    *
    * @param schema - 文档 schema

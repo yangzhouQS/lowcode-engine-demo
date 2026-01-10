@@ -4,4 +4,5 @@
  */
 
 export { Command } from './Command';
-export type { CommandHandler, CommandOptions } from './Command';
+export type { CommandHandler } from './Command';
+export type { CommandOptions } from './Command';

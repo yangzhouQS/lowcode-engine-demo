@@ -147,7 +147,7 @@ export class Editor {
     this.di.register('editor', this);
 
     // 初始化国际化
-    if (this.options.messages) {
+    if (this.options.messages && this.options.locale) {
       this.intl.init(this.options.locale, this.options.messages);
     }
 

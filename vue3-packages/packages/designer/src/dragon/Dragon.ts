@@ -5,16 +5,14 @@ import {
   IPublicEnumDragObjectType,
   IPublicTypeDragNodeDataObject,
   IPublicModelDragObject,
-  IPublicModelNode,
   IPublicModelDragon,
   IPublicModelLocateEvent,
   IPublicModelSensor,
   IPublicTypeDisposable,
+  INode,
+  ISimulatorHost,
 } from '@vue3-lowcode/types';
-import { setNativeSelection, cursor } from '@vue3-lowcode/utils';
-import { INode } from '@vue3-lowcode/types';
-import type { IPublicModelNode } from '@vue3-lowcode/types';
-import type { ISimulatorHost } from '@vue3-lowcode/types';
+import { setNativeSelection, cursor, useEventBus } from '@vue3-lowcode/utils';
 import { makeEventsHandler } from './utils';
 
 /**
@@ -205,7 +203,7 @@ export class Dragon implements IDragon {
 
   constructor(readonly designer: any) {
     // 使用 @vue3-lowcode/utils 的事件总线
-    this.emitter = useEventBus('Dragon');
+    this.emitter = useEventBus();
     this.viewName = designer.viewName;
   }
 
@@ -284,7 +282,7 @@ export class Dragon implements IDragon {
   boost(
     dragObject: IPublicModelDragObject,
     boostEvent: MouseEvent | DragEvent,
-    fromRglNode?: INode | IPublicModelNode
+    fromRglNode?: INode
   ) {
     const { designer } = this;
     const masterSensors = this.getMasterSensors();
@@ -306,11 +304,11 @@ export class Dragon implements IDragon {
      * 获取 RGL 信息
      */
     const getRGL = (e: MouseEvent | DragEvent) => {
-      const locateEvent = createLocateEvent(e);
-      const sensor = chooseSensor(locateEvent);
-      if (!sensor || !sensor.getNodeInstanceFromElement) return {};
-      const nodeInst = sensor.getNodeInstanceFromElement(e.target as Element);
-      return nodeInst?.node?.getRGL?.() || {};
+    const locateEvent = createLocateEvent(e);
+    const sensor = chooseSensor(locateEvent);
+    if (!sensor || !sensor.getNodeInstanceFromElement) return {};
+    const nodeInst = sensor.getNodeInstanceFromElement?.(e.target as Element);
+    return (nodeInst as any)?.node?.getRGL?.() || {};
     };
 
     /**
@@ -378,7 +376,7 @@ export class Dragon implements IDragon {
 
       if (isRGL) {
         // RGL 特殊处理
-        const nodes = (dragObject as any).nodes;
+        const nodes = (dragObject as IPublicTypeDragNodeObject)?.nodes;
         if (nodes && nodes[0]) {
           const nodeInst = (nodes[0] as any).getDOMNode?.();
           if (nodeInst && nodeInst.style) {
@@ -395,12 +393,13 @@ export class Dragon implements IDragon {
           return;
         }
 
-        this.canDrop.value = !!sensor?.locate(locateEvent);
+        this.canDrop.value = !!sensor?.locate?.(locateEvent);
         if (this.canDrop.value) {
+          const nodes = (dragObject as IPublicTypeDragNodeObject)?.nodes;
           this.emitter.emit('rgl.add.placeholder', {
             rglNode,
             fromRglNode,
-            node: locateEvent.dragObject?.nodes?.[0],
+            node: nodes?.[0],
             event: e,
           });
           designer.clearLocation();
@@ -415,8 +414,8 @@ export class Dragon implements IDragon {
       }
 
       if (sensor) {
-        sensor.fixEvent(locateEvent);
-        sensor.locate(locateEvent);
+        sensor.fixEvent?.(locateEvent);
+        sensor.locate?.(locateEvent);
       } else {
         designer.clearLocation();
       }
@@ -499,7 +498,7 @@ export class Dragon implements IDragon {
       if (e) {
         const { isRGL, rglNode } = getRGL(e);
         if (isRGL && this.canDrop.value && this.dragging.value) {
-          const nodes = (dragObject as any).nodes;
+          const nodes = (dragObject as IPublicTypeDragNodeObject)?.nodes;
           if (nodes && nodes[0]) {
             const tarNode = nodes[0] as any;
             if (rglNode?.id !== tarNode.id) {
@@ -522,7 +521,7 @@ export class Dragon implements IDragon {
       }
 
       if (lastSensor) {
-        lastSensor.deactiveSensor();
+        lastSensor.deactiveSensor?.();
       }
 
       if (isBoostFromDragAPI) {
@@ -599,12 +598,14 @@ export class Dragon implements IDragon {
 
         if (srcSim) {
           // 通过 simulator 转换坐标
-          const g = srcSim.viewport.toGlobalPoint(e);
-          evt.globalX = g.clientX;
-          evt.globalY = g.clientY;
-          evt.canvasX = e.clientX;
-          evt.canvasY = e.clientY;
-          evt.sensor = srcSim;
+          const g = srcSim.viewport?.toGlobalPoint?.(e);
+          if (g) {
+            evt.globalX = g.clientX;
+            evt.globalY = g.clientY;
+            evt.canvasX = e.clientX;
+            evt.canvasY = e.clientY;
+            evt.sensor = srcSim;
+          }
         } else {
           // 理论上不会走到这里，确保 TS 类型检查通过
           evt.globalX = e.clientX;
@@ -626,9 +627,9 @@ export class Dragon implements IDragon {
       );
 
       let sensor =
-        e.sensor && e.sensor.isEnter(e)
+        e.sensor && e.sensor.isEnter?.(e)
           ? e.sensor
-          : sensors.find((s) => s.sensorAvailable && s.isEnter(e));
+          : sensors.find((s) => s.sensorAvailable && s.isEnter?.(e));
 
       if (!sensor) {
         if (lastSensor) {
@@ -642,14 +643,14 @@ export class Dragon implements IDragon {
 
       if (sensor !== lastSensor) {
         if (lastSensor) {
-          lastSensor.deactiveSensor();
+          lastSensor.deactiveSensor?.();
         }
         lastSensor = sensor;
       }
 
       if (sensor) {
         e.sensor = sensor;
-        sensor.fixEvent(e);
+        sensor.fixEvent?.(e);
       }
 
       this.activeSensor.value = sensor;
@@ -719,8 +720,8 @@ export class Dragon implements IDragon {
   /**
    * 获取所有 Simulator
    */
-  private getSimulators() {
-    return new Set(this.designer.project.documents.map((doc) => doc.simulator));
+  private getSimulators(): Set<ISimulatorHost> {
+    return new Set(this.designer.project.documents.map((doc: any) => doc.simulator));
   }
 
   // #region ======== 拖拽辅助方法 ============
@@ -730,7 +731,7 @@ export class Dragon implements IDragon {
    */
   private setNativeSelection(enableFlag: boolean) {
     setNativeSelection(enableFlag);
-    this.getSimulators().forEach((sim) => {
+    this.getSimulators().forEach((sim: ISimulatorHost) => {
       sim?.setNativeSelection?.(enableFlag);
     });
   }
@@ -740,7 +741,7 @@ export class Dragon implements IDragon {
    */
   private setDraggingState(state: boolean) {
     cursor.setDragging(state);
-    this.getSimulators().forEach((sim) => {
+    this.getSimulators().forEach((sim: ISimulatorHost) => {
       sim?.setDraggingState?.(state);
     });
   }
@@ -750,7 +751,7 @@ export class Dragon implements IDragon {
    */
   private setCopyState(state: boolean) {
     cursor.setCopy(state);
-    this.getSimulators().forEach((sim) => {
+    this.getSimulators().forEach((sim: ISimulatorHost) => {
       sim?.setCopyState?.(state);
     });
   }
@@ -760,7 +761,7 @@ export class Dragon implements IDragon {
    */
   private clearState() {
     cursor.release();
-    this.getSimulators().forEach((sim) => {
+    this.getSimulators().forEach((sim: ISimulatorHost) => {
       sim?.clearState?.();
     });
   }
@@ -789,8 +790,10 @@ export class Dragon implements IDragon {
    */
   onDragstart(func: (e: ILocateEvent) => any): IPublicTypeDisposable {
     this.emitter.on('dragstart', func);
-    return () => {
-      this.emitter.removeListener('dragstart', func);
+    return {
+      dispose: () => {
+        this.emitter.removeListener('dragstart', func);
+      }
     };
   }
 
@@ -799,8 +802,10 @@ export class Dragon implements IDragon {
    */
   onDrag(func: (e: ILocateEvent) => any): IPublicTypeDisposable {
     this.emitter.on('drag', func);
-    return () => {
-      this.emitter.removeListener('drag', func);
+    return {
+      dispose: () => {
+        this.emitter.removeListener('drag', func);
+      }
     };
   }
 
@@ -809,8 +814,10 @@ export class Dragon implements IDragon {
    */
   onDragend(func: (x: { dragObject: IPublicModelDragObject; copy: boolean }) => any): IPublicTypeDisposable {
     this.emitter.on('dragend', func);
-    return () => {
-      this.emitter.removeListener('dragend', func);
+    return {
+      dispose: () => {
+        this.emitter.removeListener('dragend', func);
+      }
     };
   }
 

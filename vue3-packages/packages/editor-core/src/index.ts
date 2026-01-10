@@ -10,7 +10,7 @@ export { Editor, EditorState, type EditorOptions } from './editor/Editor';
 export { EventBus, type EventHandler, type EventBusOptions } from './event-bus/EventBus';
 
 // Command
-export { Command, type CommandHandler, type CommandOptions } from './command/Command';
+export { Command, type CommandHandler, type CommandOptions } from './command';
 
 // Config
 export { Config, type ConfigOptions } from './config/Config';
@@ -19,10 +19,10 @@ export { Config, type ConfigOptions } from './config/Config';
 export { Hotkey, type HotkeyHandler, type HotkeyOptions } from './hotkey/Hotkey';
 
 // DIContainer
-export { DIContainer, type Factory, type Instance, type DIOptions } from './di/DIContainer';
+export { DIContainer, type Factory, type Instance, type DIOptions, type DIContainerOptions, type DIHandler } from './di';
 
 // Intl
-export { Intl, type IntlMessages, type IntlOptions } from './intl/Intl';
+export { Intl, type IntlMessages, type IntlOptions, type IntlLocale } from './intl/index';
 
 // SetterRegistry
-export { SetterRegistry, type SetterConfig, type SetterRegistryOptions } from './setters/SetterRegistry';
+export { SetterRegistry, type SetterConfig, type SetterRegistryOptions, type SetterInfo } from './setters/index';

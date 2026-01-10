@@ -22,6 +22,11 @@ export interface INode {
   componentName: string;
 
   /**
+   * 父节点
+   */
+  parent?: INode;
+
+  /**
    * 获取属性
    * 
    * @param path - 属性路径

@@ -12,10 +12,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import type { Designer } from '../designer';
-import { isDragNodeObject, type ILocateEvent } from './Dragon';
-import { isSimulatorHost } from '../../simulator/src/simulator';
-import type { IPublicModelDragObject, IPublicTypeI18nData, IPublicTypeNodeSchema } from '@vue3-lowcode/types';
+import type { Designer } from '../designer/Designer';
+import { isDragNodeObject, isDragNodeDataObject, type ILocateEvent } from './Dragon';
+import type {
+  IPublicTypeDragNodeObject,
+  IPublicTypeDragNodeDataObject,
+  IPublicTypeI18nData,
+  ISchema,
+  IPublicModelDragObject
+} from '@vue3-lowcode/types';
 import './ghost.css';
 
 /**
@@ -50,7 +55,7 @@ const isAbsoluteLayoutContainer = ref(false);
 /**
  * Dragon 实例
  */
-const dragon = props.designer.dragon;
+const dragon = props.designer.getDragon();
 
 /**
  * 清理函数列表
@@ -92,13 +97,19 @@ function getTitles(dragObject: IPublicModelDragObject): (string | IPublicTypeI18
     return dragObject.nodes.map((node) => node.title);
   }
 
-  // 从节点数据获取标题
-  const dataList = Array.isArray(dragObject.data) ? dragObject.data : [dragObject.data];
+  if (isDragNodeDataObject(dragObject)) {
+    // 从节点数据获取标题
+    const dataList = Array.isArray(dragObject.data) ? dragObject.data : [dragObject.data];
 
-  return dataList.map((item: IPublicTypeNodeSchema) => {
-    const componentMeta = props.designer.getComponentMeta(item.componentName);
-    return componentMeta?.title || item.componentName;
-  });
+    return dataList.map((item: ISchema) => {
+      // 简化处理：直接使用组件名称作为标题
+      // TODO: 如果需要获取组件元数据，需要通过 documentModel 或 simulator 获取
+      return item.componentName;
+    });
+  }
+
+  // 对于其他类型的拖拽对象，返回空数组
+  return [];
 }
 
 /**
@@ -106,47 +117,44 @@ function getTitles(dragObject: IPublicModelDragObject): (string | IPublicTypeI18
  */
 onMounted(() => {
   // 监听拖拽开始
-  disposables.push(
-    dragon.onDragstart((e: ILocateEvent) => {
-      // 忽略原生拖拽 API
-      if (e.originalEvent.type.slice(0, 4) === 'drag') {
-        return;
-      }
+  const dragstartDisposable = dragon.onDragstart((e: ILocateEvent) => {
+    // 忽略原生拖拽 API
+    if (e.originalEvent.type.slice(0, 4) === 'drag') {
+      return;
+    }
 
-      titles.value = getTitles(e.dragObject);
-      x.value = e.globalX;
-      y.value = e.globalY;
-    })
-  );
+    titles.value = getTitles(e.dragObject);
+    x.value = e.globalX;
+    y.value = e.globalY;
+  });
+  disposables.push(() => dragstartDisposable.dispose());
 
   // 监听拖拽进行
-  disposables.push(
-    dragon.onDrag((e: ILocateEvent) => {
-      x.value = e.globalX;
-      y.value = e.globalY;
+  const dragDisposable = dragon.onDrag((e: ILocateEvent) => {
+    x.value = e.globalX;
+    y.value = e.globalY;
 
-      // 检查是否为绝对布局容器
-      if (isSimulatorHost(e.sensor)) {
-        const container = e.sensor.getDropContainer?.(e);
-        if (container?.container.componentMeta.advanced.isAbsoluteLayoutContainer) {
-          isAbsoluteLayoutContainer.value = true;
-          return;
-        }
+    // 检查是否为绝对布局容器
+    if (e.sensor) {
+      const container = e.sensor.getDropContainer?.(e);
+      if (container?.container.componentMeta?.advanced?.isAbsoluteLayoutContainer) {
+        isAbsoluteLayoutContainer.value = true;
+        return;
       }
+    }
 
-      isAbsoluteLayoutContainer.value = false;
-    })
-  );
+    isAbsoluteLayoutContainer.value = false;
+  });
+  disposables.push(() => dragDisposable.dispose());
 
   // 监听拖拽结束
-  disposables.push(
-    dragon.onDragend(() => {
-      titles.value = [];
-      x.value = 0;
-      y.value = 0;
-      isAbsoluteLayoutContainer.value = false;
-    })
-  );
+  const dragendDisposable = dragon.onDragend(() => {
+    titles.value = [];
+    x.value = 0;
+    y.value = 0;
+    isAbsoluteLayoutContainer.value = false;
+  });
+  disposables.push(() => dragendDisposable.dispose());
 });
 
 /**

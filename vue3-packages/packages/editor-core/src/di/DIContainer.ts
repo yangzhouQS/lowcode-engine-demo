@@ -14,6 +14,16 @@ export interface DIOptions {
 }
 
 /**
+ * 依赖注入配置选项别名
+ */
+export type DIContainerOptions = DIOptions;
+
+/**
+ * 依赖注入处理器类型
+ */
+export type DIHandler<T = any> = (...args: any[]) => T;
+
+/**
  * 依赖注入工厂函数类型
  */
 export type Factory<T> = () => T;

@@ -1,13 +1,12 @@
 /**
  * Designer
- * 
+ *
  * 设计器核心类,整合所有设计器模块
- * 
+ *
  * @public
  */
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import type { Ref } from 'vue';
-import type { IDocumentModel, IDocument } from '@vue3-lowcode/types';
 import { DocumentModel } from '../document/DocumentModel';
 import { Dragon } from '../dragon/Dragon';
 import { Selection } from '../selection/Selection';

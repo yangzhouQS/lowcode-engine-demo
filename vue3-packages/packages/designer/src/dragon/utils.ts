@@ -1,4 +1,4 @@
-import { ISimulatorHost } from '../../simulator/src/simulator';
+import type { ISimulatorHost } from '@vue3-lowcode/types';
 
 /**
  * 判断节点是否为元素节点

@@ -4,4 +4,6 @@
  */
 
 export { Intl } from './Intl';
-export type { IntlOptions, IntlLocale } from './Intl';
+export type { IntlOptions } from './Intl';
+export type { IntlLocale } from './Intl';
+export type { IntlMessages } from './Intl';

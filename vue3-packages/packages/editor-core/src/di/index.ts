@@ -4,4 +4,4 @@
  */
 
 export { DIContainer } from './DIContainer';
-export type { DIContainerOptions, DIHandler } from './DIContainer';
+export type { Factory, Instance, DIOptions, DIContainerOptions, DIHandler } from './DIContainer';

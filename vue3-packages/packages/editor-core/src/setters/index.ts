@@ -4,4 +4,4 @@
  */
 
 export { SetterRegistry } from './SetterRegistry';
-export type { SetterRegistryOptions, SetterInfo } from './SetterRegistry';
+export type { SetterConfig, SetterRegistryOptions, SetterInfo } from './SetterRegistry';
