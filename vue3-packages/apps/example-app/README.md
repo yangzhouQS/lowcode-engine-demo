@@ -1,27 +1,64 @@
 # Vue3 低代码引擎 - 示例应用
 
-这是一个基于 Vue3 低代码引擎的示例应用，展示了如何使用 Vue3 LowCode Engine 构建低代码平台。
+这是一个基于 Vue3 低代码引擎的示例应用，展示了如何使用 Vue3 LowCode Engine 构建完整的低代码开发平台。
+
+## 📋 目录
+
+- [项目概述](#项目概述)
+- [核心功能](#核心功能)
+- [技术栈](#技术栈)
+- [快速开始](#快速开始)
+- [项目结构](#项目结构)
+- [功能详解](#功能详解)
+- [使用指南](#使用指南)
+- [API 文档](#api-文档)
+- [开发指南](#开发指南)
+- [常见问题](#常见问题)
+- [贡献指南](#贡献指南)
 
 ## 项目概述
 
-本示例应用完整集成了 Vue3 低代码引擎的所有核心功能，包括：
+本示例应用是一个功能完整的低代码编辑器，提供了可视化拖拽设计、实时预览、属性配置等核心功能。通过这个示例，您可以了解如何：
 
-- 基于 Vue3 Composition API 的组件开发
-- 集成 Element Plus UI 组件库
-- 使用 Vite 5 作为构建工具
-- 完整的 TypeScript 类型支持
-- **完整的 Shell API 集成**
-- **实时引擎状态监控**
-- **事件系统**
-- **插件系统架构**
-- **可扩展的设计器**
-- **灵活的渲染器**
-- **完整的工作区管理**
-- 响应式设计和现代化 UI
+- 集成 Vue3 低代码引擎的各个模块
+- 构建可视化拖拽编辑器
+- 实现组件物料库
+- 管理页面 Schema 数据
+- 实现撤销/重做、保存/加载等功能
+
+## 核心功能
+
+### 1. 可视化拖拽编辑器
+
+- **组件面板**：左侧提供丰富的组件库，支持拖拽添加到画布
+- **画布区域**：中间区域展示页面结构，支持组件选择、删除、移动
+- **属性面板**：右侧面板配置选中组件的属性、样式和事件
+
+### 2. 组件物料库
+
+支持以下组件类型：
+
+- **基础组件**：按钮、链接、文本、图标
+- **表单组件**：输入框、数字输入、选择器、开关、滑块、时间选择、日期选择、评分、颜色选择、穿梭框、表单、单选框、多选框
+- **数据展示**：表格、标签、进度条、树形控件、分页、标记、头像、骨架屏、空状态、描述列表、结果、统计数值
+- **反馈组件**：警告、加载、消息提示、弹窗、通知、对话框、抽屉、气泡确认框、弹出框、文字提示
+- **布局组件**：容器、行、列、卡片、折叠面板、标签页、面包屑、页头、分割线、间距
+
+### 3. 数据管理
+
+- **撤销/重做**：支持操作历史记录，可随时撤销或重做
+- **保存/加载**：支持将当前方案保存到本地存储，或从本地存储加载
+- **导出/导入**：支持将方案导出为 JSON 文件，或从 JSON 文件导入
+- **清空画布**：一键清空画布，重新开始设计
+
+### 4. 实时预览
+
+- 支持实时预览页面效果
+- 在预览模式下查看组件的实际渲染效果
 
 ## 技术栈
 
-- **框架**: Vue 3.4+
+- **框架**: Vue 3.4+ (Composition API)
 - **UI 库**: Element Plus 2.4+
 - **构建工具**: Vite 5.0+
 - **语言**: TypeScript 5.3+
@@ -38,20 +75,27 @@
 ### 安装依赖
 
 ```bash
+# 进入 vue3-packages 目录
 cd vue3-packages
+
+# 安装所有依赖
 pnpm install
 ```
 
 ### 构建所有包
 
 ```bash
+# 构建所有 @vue3-lowcode/* 包
 pnpm build
 ```
 
 ### 启动开发服务器
 
 ```bash
+# 进入示例应用目录
 cd apps/example-app
+
+# 启动开发服务器
 pnpm dev
 ```
 
@@ -74,413 +118,373 @@ pnpm preview
 ```
 example-app/
 ├── src/
-│   ├── App.vue          # 主应用组件（展示引擎状态）
-│   └── main.ts          # 应用入口（初始化 Shell）
-├── index.html            # HTML 模板
-├── package.json          # 项目配置
-├── tsconfig.json        # TypeScript 配置
-├── vite.config.ts       # Vite 配置
-└── README.md            # 项目文档
+│   ├── components/
+│   │   └── editor/
+│   │       ├── EditorLayout.vue      # 编辑器主布局
+│   │       ├── ComponentPanel.vue    # 左侧组件面板
+│   │       ├── CanvasPanel.vue      # 中间画布区域
+│   │       ├── SchemaNode.vue       # Schema 节点组件
+│   │       ├── PropertyPanel.vue    # 右侧属性面板
+│   │       ├── PreviewPanel.vue     # 预览面板
+│   │       └── SchemaRenderer.vue   # Schema 渲染器
+│   ├── App.vue                    # 应用根组件
+│   └── main.ts                   # 应用入口
+├── index.html                     # HTML 模板
+├── package.json                   # 项目配置
+├── tsconfig.json                 # TypeScript 配置
+├── vite.config.ts                # Vite 配置
+└── README.md                    # 项目文档
 ```
 
-## 核心特性
+## 功能详解
 
-### 1. Vue3 Composition API
+### 编辑器布局
 
-使用 Vue3 的 Composition API 构建组件，提供更好的代码组织和类型推断。
+编辑器采用经典的三栏布局：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  顶部工具栏                          │
+├──────────┬──────────────────────────────┬───────────┤
+│          │                              │           │
+│  组件面板  │           画布区域              │  属性面板   │
+│          │                              │           │
+│          │                              │           │
+└──────────┴──────────────────────────────┴───────────┘
+```
+
+### 组件面板
+
+组件面板按类别组织组件，每个类别可折叠展开：
 
 ```vue
-<script setup lang="ts">
-import { ref, reactive } from 'vue';
-
-const count = ref(0);
-const form = reactive({
-  name: '',
-  email: ''
-});
-</script>
+<el-collapse v-model="activeNames" accordion>
+  <el-collapse-item title="基础组件" name="basic">
+    <!-- 组件列表 -->
+  </el-collapse-item>
+  <el-collapse-item title="表单组件" name="form">
+    <!-- 组件列表 -->
+  </el-collapse-item>
+  <!-- 更多类别... -->
+</el-collapse>
 ```
 
-### 2. Element Plus 集成
+### 画布区域
 
-集成 Element Plus 组件库，提供丰富的 UI 组件。
+画布区域支持以下操作：
 
-```vue
-<template>
-  <el-button type="primary" @click="handleClick">
-    点击我
-  </el-button>
-</template>
-```
+- **拖拽添加**：从组件面板拖拽组件到画布
+- **选择组件**：点击组件进行选中
+- **移动组件**：通过上移/下移按钮调整组件顺序
+- **删除组件**：通过删除按钮移除组件
+- **缩放画布**：通过放大/缩小按钮调整画布显示比例
 
-### 3. TypeScript 支持
+### 属性面板
 
-完整的 TypeScript 类型支持，提供更好的开发体验和代码质量。
+属性面板包含三个配置区域：
 
-```typescript
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+#### 1. 基础信息
 
-const user: User = {
-  id:1,
-  name: 'John Doe',
-  email: 'john@example.com'
-};
-```
+- 组件 ID（只读）
+- 组件名称（只读）
+- 显示名称（可编辑）
 
-### 4. Shell API 集成
+#### 2. 属性配置
 
-本示例应用已完整集成 Vue3 低代码引擎的 Shell API，在应用启动时会自动初始化引擎。
+- 动态显示组件的所有属性
+- 根据属性类型显示不同的输入控件
+- 支持添加自定义属性
 
-**初始化代码（在 `src/main.ts` 中）：**
+属性类型支持：
+- 字符串：文本输入框
+- 数字：数字输入框
+- 布尔：开关
+- 数组：多选下拉框
+- 对象：JSON 编辑器
 
-```typescript
-import { Shell } from '@vue3-lowcode/shell';
+#### 3. 样式配置
 
-const shell = new Shell({
-  container: document.getElementById('app'),
-  locale: 'zh-CN',
-  editorConfig: {
-    debug: true,
-    locale: 'zh-CN',
-  },
-  designerConfig: {
-    maxHistorySize: 50,
-  },
-});
+支持配置以下样式属性：
+- 宽度
+- 高度
+- 内边距
+- 外边距
+- 背景色
+- 文字颜色
+- 字体大小
+- 圆角
+- 边框
 
-// 初始化并启动
-await shell.init();
-await shell.start();
+#### 4. 事件配置
 
-// 将 shell 挂载到 window 对象，方便调试
-(window as any).__LOWCODE_SHELL__ = shell;
-```
-
-**访问引擎模块：**
-
-```typescript
-// 获取编辑器
-const editor = shell.getEditor();
-
-// 获取设计器
-const designer = shell.getDesigner();
-
-// 获取文档模型
-const documentModel = shell.getDocumentModel();
-
-// 获取事件总线
-const eventBus = shell.getEventBus();
-
-// 获取命令系统
-const command = shell.getCommand();
-```
-
-**监听引擎事件：**
-
-```typescript
-const eventBus = shell.getEventBus();
-
-eventBus.on('shell:init', () => {
-  console.log('Shell initialized');
-});
-
-eventBus.on('shell:start', () => {
-  console.log('Shell started');
-});
-```
-
-**导出和导入状态：**
-
-```typescript
-// 导出当前状态
-const state = shell.export();
-console.log('Current state:', state);
-
-// 导入状态
-await shell.import(savedState);
-```
-
-**调试引擎：**
-
-在浏览器控制台中，您可以通过 `window.__LOWCODE_SHELL__` 访问 Shell 实例：
-
-```javascript
-// 查看引擎状态
-console.log(window.__LOWCODE_SHELL__.export());
-
-// 获取编辑器
-console.log(window.__LOWCODE_SHELL__.getEditor());
-
-// 获取设计器
-console.log(window.__LOWCODE_SHELL__.getDesigner());
-```
-
-### 5. 响应式设计
-
-使用 CSS Grid 和 Flexbox 实现响应式布局。
-
-```css
-.container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-```
+支持配置以下事件：
+- 点击 (click)
+- 双击 (dblclick)
+- 输入 (input)
+- 改变 (change)
+- 聚焦 (focus)
+- 失焦 (blur)
+- 提交 (submit)
+- 重置 (reset)
 
 ## 使用指南
 
-### 基础组件使用
+### 基础操作
 
-#### 按钮
+#### 1. 添加组件
 
-```vue
-<el-button type="primary">主要按钮</el-button>
-<el-button type="success">成功按钮</el-button>
-<el-button type="warning">警告按钮</el-button>
-<el-button type="danger">危险按钮</el-button>
-```
+1. 在左侧组件面板中找到需要的组件
+2. 按住鼠标左键拖拽组件
+3. 将组件拖拽到中间画布区域
+4. 松开鼠标完成添加
 
-#### 表单
+#### 2. 选择组件
 
-```vue
-<el-form :model="form" label-width="100px">
-  <el-form-item label="用户名">
-    <el-input v-model="form.username"></el-input>
-  </el-form-item>
-  <el-form-item label="密码">
-    <el-input v-model="form.password" type="password"></el-input>
-  </el-form-item>
-</el-form>
-```
+1. 在画布区域点击任意组件
+2. 组件会被高亮显示
+3. 右侧属性面板会显示该组件的配置
 
-#### 对话框
+#### 3. 配置组件
 
-```vue
-<el-dialog v-model="visible" title="提示">
-  <p>这是一个对话框内容</p>
-  <template #footer>
-    <el-button @click="visible = false">取消</el-button>
-    <el-button type="primary" @click="handleConfirm">确定</el-button>
-  </template>
-</el-dialog>
-```
+1. 选中需要配置的组件
+2. 在右侧属性面板中修改属性、样式或事件
+3. 修改会实时反映在画布上
+
+#### 4. 移动组件
+
+1. 选中需要移动的组件
+2. 点击组件上方的上移/下移按钮
+3. 组件会移动到新位置
+
+#### 5. 删除组件
+
+1. 选中需要删除的组件
+2. 点击组件上方的删除按钮
+3. 确认删除操作
+
+#### 6. 撤销/重做
+
+- 点击工具栏的"撤销"按钮撤销上一步操作
+- 点击工具栏的"重做"按钮重做已撤销的操作
+
+#### 7. 保存方案
+
+1. 点击工具栏的"保存"按钮
+2. 方案会保存到浏览器的本地存储
+3. 刷新页面后可以通过"加载"按钮恢复
+
+#### 8. 导出方案
+
+1. 点击工具栏的"导出"按钮
+2. 方案会下载为 JSON 文件
+3. 可以将文件分享给其他人或备份
+
+#### 9. 导入方案
+
+1. 点击工具栏的"导入"按钮
+2. 选择之前导出的 JSON 文件
+3. 方案会加载到画布中
+
+#### 10. 预览页面
+
+1. 点击工具栏的"预览"按钮
+2. 在新窗口中查看页面的实际效果
+3. 点击"关闭"按钮返回编辑器
 
 ### 高级功能
 
-#### 1. 插件系统
+#### 自定义组件
 
-Vue3 低代码引擎提供了强大的插件系统，支持扩展编辑器功能。
+您可以通过修改 `ComponentPanel.vue` 中的组件列表来添加自定义组件：
 
 ```typescript
-import { VuePlugin } from '@vue3-lowcode/plugin';
+const customComponents = [
+  { name: 'MyComponent', label: '我的组件', icon: 'Star', componentName: 'MyComponent' },
+];
+```
 
-class MyPlugin extends VuePlugin {
-  async onStart() {
-    console.log('插件启动');
-  }
-  
-  async onStop() {
-    console.log('插件停止');
+#### 自定义属性
+
+在属性面板中，您可以添加自定义属性：
+
+1. 在"属性配置"区域找到"添加属性"部分
+2. 输入属性名
+3. 选择属性类型（字符串、数字、布尔、数组）
+4. 点击"添加"按钮
+
+#### 自定义样式
+
+在"样式配置"区域，您可以：
+
+1. 修改组件的尺寸（宽度、高度）
+2. 调整间距（内边距、外边距）
+3. 设置颜色（背景色、文字颜色）
+4. 调整字体（字体大小）
+5. 设置边框和圆角
+
+#### 自定义事件
+
+在"事件配置"区域，您可以：
+
+1. 从下拉列表中选择事件类型
+2. 输入事件处理函数名称
+3. 点击"添加"按钮
+
+## API 文档
+
+### Schema 数据结构
+
+```typescript
+interface Schema {
+  componentName: string;    // 组件名称
+  id: string;              // 组件 ID
+  label?: string;          // 显示名称
+  props?: Record<string, any>;  // 组件属性
+  style?: Record<string, string>; // 组件样式
+  events?: Record<string, string>; // 组件事件
+  children?: Schema[];     // 子组件
+}
+```
+
+### 组件属性配置
+
+每个组件都有默认属性，例如：
+
+```typescript
+// 按钮组件默认属性
+const buttonProps = {
+  type: 'primary',    // 按钮类型
+  size: 'default',    // 按钮尺寸
+  disabled: false,     // 是否禁用
+  loading: false,     // 是否加载中
+};
+```
+
+### 事件处理
+
+事件处理函数名称会存储在 Schema 中：
+
+```typescript
+{
+  events: {
+    click: 'handleClick',
+    change: 'handleChange'
   }
 }
-
-export default new MyPlugin({
-  name: 'my-plugin',
-  version: '1.0.0'
-});
-```
-
-#### 2. 设计器集成
-
-集成设计器实现可视化拖拽编辑。
-
-```typescript
-import { Designer } from '@vue3-lowcode/designer';
-
-const designer = new Designer({
-  // 配置选项
-});
-```
-
-#### 3. 渲染器使用
-
-使用渲染器实时预览页面效果。
-
-```typescript
-import { VueRenderer } from '@vue3-lowcode/vue-renderer';
-
-const renderer = new VueRenderer({
-  // 配置选项
-});
 ```
 
 ## 开发指南
 
 ### 添加新组件
 
-1. 在 `src/components` 目录下创建新组件
-2. 在 `App.vue` 中导入并使用组件
-
-```vue
-<template>
-  <div>
-    <MyComponent />
-  </div>
-</template>
-
-<script setup lang="ts">
-import MyComponent from './components/MyComponent.vue';
-</script>
-```
-
-### 样式开发
-
-使用 scoped CSS 确保样式隔离。
-
-```vue
-<style scoped>
-.my-component {
-  color: #333;
-}
-</style>
-```
-
-### 状态管理
-
-使用 Vue3 的响应式 API 管理组件状态。
+1. 在 `ComponentPanel.vue` 中添加组件定义：
 
 ```typescript
-import { ref, computed } from 'vue';
-
-const count = ref(0);
-const doubleCount = computed(() => count.value * 2);
-
-function increment() {
-  count.value++;
-}
-```
-
-## 部署
-
-### 构建生产版本
-
-```bash
-pnpm build
-```
-
-构建产物将输出到 `dist` 目录。
-
-### 部署到静态服务器
-
-将 `dist` 目录部署到任何静态文件服务器，如：
-
-- Nginx
-- Apache
-- Vercel
-- Netlify
-- GitHub Pages
-
-## 性能优化
-
-### 代码分割
-
-使用动态导入实现代码分割。
-
-```typescript
-const Component = defineAsyncComponent(() => import('./Component.vue'));
-```
-
-### 懒加载
-
-使用路由懒加载优化首屏加载。
-
-```typescript
-const routes = [
-  {
-    path: '/about',
-    component: () => import('./views/About.vue')
-  }
+const newComponents = [
+  { name: 'NewComponent', label: '新组件', icon: 'Star', componentName: 'ElNewComponent' },
 ];
 ```
 
-### 资源优化
+2. 在 `SchemaRenderer.vue` 中注册组件：
 
-- 压缩图片
-- 使用 CDN 加速资源
-- 启用 Gzip 压缩
+```typescript
+const componentMap: Record<string, any> = {
+  // ... 其他组件
+  ElNewComponent: ElementPlus.ElNewComponent,
+};
+```
+
+3. 在 `CanvasPanel.vue` 的 `getDefaultProps` 方法中添加默认属性：
+
+```typescript
+const getDefaultProps = (componentName: string): any => {
+  const defaultProps: Record<string, any> = {
+    // ... 其他组件
+    ElNewComponent: { prop1: 'value1', prop2: 'value2' },
+  };
+  return defaultProps[componentName] || {};
+};
+```
+
+### 扩展属性面板
+
+您可以扩展 `PropertyPanel.vue` 来支持更多的属性类型：
+
+```vue
+<el-form-item :label="key">
+  <!-- 自定义属性编辑器 -->
+  <MyCustomEditor v-model="value" />
+</el-form-item>
+```
+
+### 自定义主题
+
+修改全局样式文件 `src/App.vue` 中的 CSS 变量：
+
+```css
+:root {
+  --primary-color: #409eff;
+  --success-color: #67c23a;
+  --warning-color: #e6a23c;
+  --danger-color: #f56c6c;
+}
+```
 
 ## 常见问题
 
-### Q: 如何自定义主题？
+### Q: 如何清空画布？
 
-A: Element Plus 支持主题定制，可以通过 CSS 变量或 SCSS 变量自定义主题。
+A: 点击工具栏的"清空"按钮，确认后画布会被清空。
 
-### Q: 如何添加新的 UI 组件？
+### Q: 如何撤销操作？
 
-A: 可以在 `src/components` 目录下创建新组件，然后在需要的地方导入使用。
+A: 点击工具栏的"撤销"按钮，或使用快捷键 Ctrl+Z。
 
-### Q: 如何集成其他第三方库？
+### Q: 如何重做操作？
 
-A: 通过 `pnpm add` 安装依赖，然后在组件中导入使用。
+A: 点击工具栏的"重做"按钮，或使用快捷键 Ctrl+Y。
 
-### Q: 如何调试低代码引擎？
+### Q: 如何保存我的设计？
 
-A: 在开发模式下，Shell 会输出详细的日志信息，可以在浏览器控制台查看。也可以通过 `window.__LOWCODE_SHELL__` 访问引擎实例：
+A: 点击工具栏的"保存"按钮，方案会保存到本地存储。刷新页面后可以通过"加载"按钮恢复。
 
-```javascript
-// 查看引擎状态
-console.log(window.__LOWCODE_SHELL__.export());
+### Q: 如何导出设计？
 
-// 获取编辑器
-console.log(window.__LOWCODE_SHELL__.getEditor());
+A: 点击工具栏的"导出"按钮，方案会下载为 JSON 文件。
 
-// 获取设计器
-console.log(window.__LOWCODE_SHELL__.getDesigner());
+### Q: 如何导入设计？
 
-// 获取文档模型
-console.log(window.__LOWCODE_SHELL__.getDocumentModel());
-```
+A: 点击工具栏的"导入"按钮，选择之前导出的 JSON 文件。
 
-### Q: 引擎初始化失败怎么办？
+### Q: 如何预览页面？
 
-A: 请检查以下几点：
-1. 确保所有依赖包都已正确构建（在 `vue3-packages` 目录下运行 `pnpm build`）
-2. 检查浏览器控制台的错误信息
-3. 确认 Node.js 版本 >= 18.0.0
-4. 确认 pnpm 版本 >= 8.0.0
-5. 检查 `@vue3-lowcode/*` 包是否正确安装
+A: 点击工具栏的"预览"按钮，在新窗口中查看页面效果。
 
-### Q: 如何切换语言？
+### Q: 如何添加自定义组件？
 
-A: 在 `src/main.ts` 中修改 Shell 的 locale 配置：
+A: 修改 `ComponentPanel.vue` 中的组件列表，并在 `SchemaRenderer.vue` 中注册组件。
 
-```typescript
-const shell = new Shell({
-  locale: 'en-US', // 切换为英文
-  // ... 其他配置
-});
-```
+### Q: 如何修改组件默认属性？
 
-### Q: 如何导出和导入引擎状态？
+A: 在 `CanvasPanel.vue` 的 `getDefaultProps` 方法中修改对应组件的默认属性。
 
-A: 使用 Shell 的 export 和 import 方法：
+### Q: 如何自定义样式？
 
-```typescript
-// 导出当前状态
-const state = shell.export();
-console.log('Current state:', state);
+A: 在属性面板的"样式配置"区域修改样式属性，或在全局样式文件中修改 CSS 变量。
 
-// 保存到 localStorage
-localStorage.setItem('lowcode-state', JSON.stringify(state));
+### Q: 组件拖拽不工作怎么办？
 
-// 从 localStorage 导入
-const savedState = JSON.parse(localStorage.getItem('lowcode-state') || '{}');
-await shell.import(savedState);
-```
+A: 请检查：
+1. 浏览器是否支持 HTML5 拖拽 API
+2. 是否有 JavaScript 错误
+3. 组件是否正确设置了 `draggable="true"` 属性
+
+### Q: 预览功能不工作怎么办？
+
+A: 请检查：
+1. Schema 数据是否正确
+2. 组件是否在 `SchemaRenderer.vue` 中正确注册
+3. 浏览器控制台是否有错误信息
 
 ## 贡献指南
 
