@@ -1,8 +1,11 @@
+import type { IShellConfig } from './IShellConfig';
+import type { IShellModel } from './IShellModel';
+
 /**
  * IShell Interface
- * 
+ *
  * Shell API 接口,提供对低代码引擎的统一访问入口
- * 
+ *
  * @public
  */
 export interface IShell {

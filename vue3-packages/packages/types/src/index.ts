@@ -28,6 +28,7 @@ export * from './renderer/IRuntime'
 export * from './renderer/IRenderer'
 export * from './renderer/IRendererProps'
 export * from './renderer/IBaseRendererInstance'
+export * from './renderer/ISimulatorHost'
 
 // Plugin Types
 export * from './plugin/IPlugin'
@@ -41,6 +42,10 @@ export * from './material/IPropMeta'
 export * from './material/IEventMeta'
 export * from './material/ISlotMeta'
 export * from './material/ISchema'
+export * from './material/I18nData'
+
+// Dragon Types
+export * from './dragon/IDragon'
 
 // Vue3 Specific Types
 export * from './vue/IVueComponent'

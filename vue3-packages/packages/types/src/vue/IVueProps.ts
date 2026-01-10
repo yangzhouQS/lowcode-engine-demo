@@ -39,11 +39,6 @@ export interface PropOptions<T = any> {
    * 属性验证器
    */
   validator?: (value: T) => boolean;
-
-  /**
-   * 属性是否必需
-   */
-  required?: boolean;
 }
 
 /**
@@ -53,11 +48,9 @@ export interface PropOptions<T = any> {
  * 
  * @public
  */
-export type PropType<T> = {
-  new (...args: any[]): T & {};
-} | {
-  (): T;
-} | PropConstructor<T>;
+export type PropType<T> =
+  | { new (...args: any[]): T & {} }
+  | { (): T };
 
 /**
  * PropConstructor Interface
@@ -68,8 +61,7 @@ export type PropType<T> = {
  */
 export type PropConstructor<T> =
   | { new (...args: any[]): T & {} }
-  | { (): T }
-  | PropType<T>;
+  | { (): T };
 
 /**
  * PropDefinition Interface
